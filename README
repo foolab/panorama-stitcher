@@ -1,0 +1,31 @@
+git clone https://android.googlesource.com/platform/packages/apps/Camera
+cd Camera
+git filter-branch --prune-empty --subdirectory-filter jni master
+git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch Android.mk' --prune-empty --tag-name-filter cat -- --all
+# Go make some coffee
+
+cd ..
+git clone https://android.googlesource.com/platform/packages/apps/Camera2
+cd Camera2
+git filter-branch --prune-empty --subdirectory-filter jni master
+git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch Android.mk' --prune-empty --tag-name-filter cat -- --all
+# Drink the coffee
+git reset --hard 4f173e51f4fa3cb0bf4adc2a4a4a479a5af7a9fc
+
+git pull --rebase ../Camera
+git gc
+
+cd ..
+
+mkdir android-panorama
+cd android-panorama
+git init
+touch .gitignore
+git add .gitignore
+git commit -m "Added .gitignore"
+
+cd ../Camera2
+git pull --rebase  ../android-panorama/
+git for-each-ref --format='delete %(refname)' refs/original | git update-ref --stdin
+git reflog expire --expire=now --all
+git gc --prune=now
