@@ -16,7 +16,6 @@
 extern int opterr;
 
 int blendingType = Blend::BLEND_TYPE_HORZ;
-int stripType = Blend::STRIP_TYPE_THIN;
 
 struct Format {
   const char *name;
@@ -25,6 +24,8 @@ struct Format {
   {"RGB", 24},
   {NULL, 0},
 };
+
+static const char *strips[] = {"Thin", "Wide"};
 
 static uint64_t timeNow() {
   struct timeval tv;
@@ -48,6 +49,7 @@ static void usage() {
 	    << "  --in, -i input" << std::endl
 	    << "  --out, -o output" << std::endl
 	    << "  --format, -f format" << std::endl
+	    << "  --strip, -s strip type" << std::endl
 	    << "  --time, -t (Use to print times for operations)" << std::endl
 	    << " Supported formats:" << std::endl;
 
@@ -56,6 +58,8 @@ static void usage() {
     std::cout << "  " << (f - Formats) << " is " << f->name << std::endl;
     ++f;
   }
+
+  std::cout << " Supported strip types:\n  0 is thin (default)\n  1 is wide " << std::endl;
 }
 
 static int addFrame(Mosaic& m, unsigned char *data, int& time, bool is_rgb) {
@@ -88,6 +92,7 @@ int main(int argc, char *argv[]) {
   const char *out = NULL;
   Format *fmt = NULL;
   bool time = false;
+  int stripType = Blend::STRIP_TYPE_THIN;
 
   const struct option long_options[] = {
     {"width",  required_argument, 0, 'w'},
@@ -95,6 +100,7 @@ int main(int argc, char *argv[]) {
     {"in",     required_argument, 0, 'i'},
     {"out",    required_argument, 0, 'o'},
     {"format", required_argument, 0, 'f'},
+    {"strip",  required_argument, 0, 's'},
     {"time",   no_argument      , 0, 't'},
     {0,        0,                 0, 0}
   };
@@ -107,7 +113,7 @@ int main(int argc, char *argv[]) {
   }
 
   while (1) {
-    c = getopt_long(argc, argv, "w:h:i:o:f:t", long_options, NULL);
+    c = getopt_long(argc, argv, "w:h:i:o:f:s:t", long_options, NULL);
     if (c == -1) {
       break;
     }
@@ -137,6 +143,10 @@ int main(int argc, char *argv[]) {
       time = true;
       break;
 
+    case 's':
+      stripType = atoi(optarg);
+      break;
+
     case '?':
       usage();
       return 0;
@@ -164,6 +174,11 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  if (stripType < 0 || stripType > 1) {
+    std::cerr << "invalid strip type " << stripType << std::endl;
+    return 1;
+  }
+
   if (format < 0 || format >= sizeof (Formats) / sizeof (struct Format)) {
     std::cerr << "invalid format " << format << std::endl;
     return 1;
@@ -180,6 +195,9 @@ int main(int argc, char *argv[]) {
 
 
   int size = (width * height * fmt->bpp) / 8;
+
+  std::cout << "input width = " << width << ", height = " << height << std::endl;
+  std::cout << "strip type: " << stripType << " (" << strips[stripType] << ")" << std::endl;
 
   // initialize our mosaicer
   Mosaic m;
