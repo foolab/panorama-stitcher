@@ -32,10 +32,6 @@ typedef ImageTypeBase *ImageType;
 typedef short ImageTypeShortBase;
 typedef ImageTypeShortBase *ImageTypeShort;
 
-typedef float ImageTypeFloatBase;
-typedef ImageTypeFloatBase *ImageTypeFloat;
-
-
 class ImageUtils {
 public:
 
@@ -90,16 +86,6 @@ public:
    */
   static ImageType rgb2gray(ImageType in, int width, int height);
   static ImageType rgb2gray(ImageType out, ImageType in, int width, int height);
-
-  /**
-   *  Read a binary PPM image
-   */
-  static ImageType readBinaryPPM(const char *filename, int &width, int &height);
-
-  /**
-   *  Write a binary PPM image
-   */
-  static void writeBinaryPPM(ImageType image, const char *filename, int width, int height, int numChannels = IMAGE_TYPE_NUM_CHANNELS);
 
   /**
    *  Allocate space for a standard image.

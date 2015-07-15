@@ -277,59 +277,6 @@ void ImageUtils::yvu2bgr(ImageType out, ImageType in, int width, int height)
   }
 }
 
-
-ImageType ImageUtils::readBinaryPPM(const char *filename, int &width, int &height)
-{
-
-  FILE *imgin = NULL;
-  int mval=0, format=0, eret;
-  ImageType ret = IMAGE_TYPE_NOIMAGE;
-
-  imgin = fopen(filename, "r");
-  if (imgin == NULL) {
-    fprintf(stderr, "Error: Filename %s not found\n", filename);
-    return ret;
-  }
-
-  eret = fscanf(imgin, "P%d\n", &format);
-  if (format != 6) {
-    fprintf(stderr, "Error: readBinaryPPM only supports PPM format (P6)\n");
-    return ret;
-  }
-
-  eret = fscanf(imgin, "%d %d\n", &width, &height);
-  eret = fscanf(imgin, "%d\n", &mval);
-  ret  = allocateImage(width, height, IMAGE_TYPE_NUM_CHANNELS);
-  eret = fread(ret, sizeof(ImageTypeBase), IMAGE_TYPE_NUM_CHANNELS*width*height, imgin);
-
-  fclose(imgin);
-
-  return ret;
-
-}
-
-void ImageUtils::writeBinaryPPM(ImageType image, const char *filename, int width, int height, int numChannels)
-{
-  FILE *imgout = fopen(filename, "w");
-
-  if (imgout == NULL) {
-    fprintf(stderr, "Error: Filename %s could not be opened for writing\n", filename);
-    return;
-  }
-
-  if (numChannels == 3) {
-    fprintf(imgout, "P6\n%d %d\n255\n", width, height);
-  } else if (numChannels == 1) {
-    fprintf(imgout, "P5\n%d %d\n255\n", width, height);
-  } else {
-    fprintf(stderr, "Error: writeBinaryPPM: Unsupported number of channels\n");
-  }
-  fwrite(image, sizeof(ImageTypeBase), numChannels*width*height, imgout);
-
-  fclose(imgout);
-
-}
-
 ImageType ImageUtils::allocateImage(int width, int height, int numChannels, short int border)
 {
   int overallocation = 256;

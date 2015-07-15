@@ -25,7 +25,6 @@
 
 #include "dbreg/dbreg.h"
 #include <db_utilities_camera.h>
-
 #include "ImageUtils.h"
 #include "MatrixUtils.h"
 
@@ -62,7 +61,6 @@ public:
 
   // Add a frame.  Note: The alignment computation is performed
   // in this function
-  int addFrameRGB(ImageType image);
   int addFrame(ImageType image);
 
   // Obtain the TRS matrix from the last two frames
@@ -86,7 +84,6 @@ protected:
 
   bool quarter_res;     // Whether to process at quarter resolution
   float thresh_still;   // Translation threshold in pixels to detect still camera
-  ImageType imageGray;
 };
 
 

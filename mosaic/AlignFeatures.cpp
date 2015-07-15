@@ -42,9 +42,6 @@ Align::Align()
 
 Align::~Align()
 {
-  // Free gray-scale image
-  if (imageGray != ImageUtils::IMAGE_TYPE_NOIMAGE)
-    ImageUtils::freeImage(imageGray);
 }
 
 char* Align::getRegProfileString()
@@ -87,26 +84,18 @@ int Align::initialize(int width, int height, bool _quarter_res, float _thresh_st
   this->width = width;
   this->height = height;
 
-  imageGray = ImageUtils::allocateImage(width, height, 1);
-
   if (reg.Initialized())
     return ALIGN_RET_OK;
   else
     return ALIGN_RET_ERROR;
 }
 
-int Align::addFrameRGB(ImageType imageRGB)
-{
-  ImageUtils::rgb2gray(imageGray, imageRGB, width, height);
-  return addFrame(imageGray);
-}
-
-int Align::addFrame(ImageType imageGray_)
+int Align::addFrame(ImageType imageGray)
 {
   int ret_code = ALIGN_RET_OK;
 
  // Obtain a vector of pointers to rows in image and pass in to dbreg
-  ImageType *m_rows = ImageUtils::imageTypeToRowPointers(imageGray_, width, height);
+  ImageType *m_rows = ImageUtils::imageTypeToRowPointers(imageGray, width, height);
 
   if (frame_number == 0)
   {
