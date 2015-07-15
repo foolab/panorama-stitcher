@@ -76,22 +76,15 @@ int Mosaic::initialize(int blendingType, int stripType, int width, int height, i
     mosaicWidth = mosaicHeight = 0;
     imageMosaicYVU = NULL;
 
+    if (nframes > 0) {
+      max_frames = nframes;
+    }
+
     frames = new MosaicFrame *[max_frames];
     rframes = new MosaicFrame *[max_frames];
 
-    if(nframes>-1)
-    {
-        for(int i=0; i<nframes; i++)
-        {
-            frames[i] = new MosaicFrame(this->width,this->height,false); // Do no allocate memory for YUV data
-        }
-    }
-    else
-    {
-        for(int i=0; i<max_frames; i++)
-        {
-            frames[i] = NULL;
-        }
+    for(int i=0; i<max_frames; i++) {
+      frames[i] = NULL;
     }
 
     owned_frames = new ImageType[max_frames];
