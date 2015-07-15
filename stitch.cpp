@@ -20,9 +20,9 @@ int stripType = Blend::STRIP_TYPE_THIN;
 
 struct Format {
   const char *name;
-  int bpp; /* bytes per pixel */
+  int bpp; /* bits per pixel */
 } Formats[] = {
-  {"RGB", 3},
+  {"RGB", 24},
   {NULL, 0},
 };
 
@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
   }
 
 
-  int size = width * height * fmt->bpp;
+  int size = (width * height * fmt->bpp) / 8;
 
   // initialize our mosaicer
   Mosaic m;
