@@ -135,6 +135,16 @@ static int addFrame(Mosaic& m, unsigned char *data, int& time, bool is_rgb) {
   return ret;
 }
 
+int count_frames(int fd, int size) {
+  struct stat buf;
+  if (fstat(fd, &buf) != 0) {
+    perror("fstat");
+    return -1;
+  }
+
+  return buf.st_size / size;
+}
+
 int main(int argc, char *argv[]) {
   opterr = 0;
 
@@ -252,9 +262,19 @@ int main(int argc, char *argv[]) {
   std::cout << "input width = " << width << ", height = " << height << std::endl;
   std::cout << "strip type: " << stripType << " (" << strips[stripType] << ")" << std::endl;
 
+  int frames = count_frames(fd, size);
+
+  if (frames == -1) {
+    close(fd);
+    return 1;
+  }
+
+  // skip the last 2 frames because they are just gray in my test video
+  frames -= 2;
+
   // initialize our mosaicer
   Mosaic m;
-  if (!m.initialize(blendingType, stripType, width, height, -1, true, 5.0f)) {
+  if (!m.initialize(blendingType, stripType, width, height, frames, true, 5.0f)) {
     std::cerr << "Failed to initialize mosaicer" << std::endl;
     close(fd);
     return 1;
@@ -263,8 +283,7 @@ int main(int argc, char *argv[]) {
   int added_frames = 0;
 
   std::vector<int> times;
-
-  do {
+  for (int x = 0; x < frames; x++) {
     // allocate:
     unsigned char *in_data = new unsigned char[size];
 
@@ -281,7 +300,7 @@ int main(int argc, char *argv[]) {
     } else {
       break;
     }
-  } while (added_frames < 200);
+  }
 
   close(fd);
 
