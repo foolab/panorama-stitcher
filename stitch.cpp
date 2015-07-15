@@ -8,6 +8,10 @@
 #include <stdio.h>
 #include "mosaic/Mosaic.h"
 #include "mosaic/ImageUtils.h"
+#include <vector>
+#include <stdint.h>
+#include <sys/time.h>
+#include <numeric>
 
 extern int opterr;
 
@@ -22,6 +26,20 @@ struct Format {
   {NULL, 0},
 };
 
+static uint64_t timeNow() {
+  struct timeval tv;
+
+  if (gettimeofday(&tv, NULL) == -1) {
+    return -1;
+  }
+
+  uint64_t ret = tv.tv_usec;
+  ret /= 1000;
+  ret += (tv.tv_sec * 1000);
+
+  return ret;
+}
+
 static void usage() {
   std::cout << "This application continuously reads frames from an input file, runs" << std::endl
 	    << "them through mosaic and stitches the final result" << std::endl << std::endl
@@ -30,6 +48,7 @@ static void usage() {
 	    << "  --in, -i input" << std::endl
 	    << "  --out, -o output" << std::endl
 	    << "  --format, -f format" << std::endl
+	    << "  --time, -t (Use to print times for operations)" << std::endl
 	    << " Supported formats:" << std::endl;
 
   struct Format *f = Formats;
@@ -48,6 +67,7 @@ int main(int argc, char *argv[]) {
   const char *in = NULL;
   const char *out = NULL;
   Format *fmt = NULL;
+  bool time = false;
 
   const struct option long_options[] = {
     {"width",  required_argument, 0, 'w'},
@@ -55,6 +75,7 @@ int main(int argc, char *argv[]) {
     {"in",     required_argument, 0, 'i'},
     {"out",    required_argument, 0, 'o'},
     {"format", required_argument, 0, 'f'},
+    {"time",   no_argument      , 0, 't'},
     {0,        0,                 0, 0}
   };
 
@@ -66,7 +87,7 @@ int main(int argc, char *argv[]) {
   }
 
   while (1) {
-    c = getopt_long(argc, argv, "w:h:i:o:f:", long_options, NULL);
+    c = getopt_long(argc, argv, "w:h:i:o:f:t", long_options, NULL);
     if (c == -1) {
       break;
     }
@@ -90,6 +111,10 @@ int main(int argc, char *argv[]) {
 
     case 'f':
       format = atoi(optarg);
+      break;
+
+    case 't':
+      time = true;
       break;
 
     case '?':
@@ -147,9 +172,15 @@ int main(int argc, char *argv[]) {
   unsigned char *in_data = new unsigned char[size];
   int added_frames = 0;
 
+  std::vector<int> times;
+
   while (read(fd, in_data, size) == size) {
     // process
+    uint64_t t = timeNow();
+
     int ret = m.addFrameRGB(in_data);
+
+    times.push_back(timeNow() - t);
 
     if (ret == Mosaic::MOSAIC_RET_OK || ret == Mosaic::MOSAIC_RET_FEW_INLIERS) {
       ++added_frames;
@@ -171,10 +202,14 @@ int main(int argc, char *argv[]) {
   float progress = 0;
   bool cancel = false;
 
+  int64_t stitchingTime = timeNow();
+
   if (m.createMosaic(progress, cancel) != Mosaic::MOSAIC_RET_OK) {
     std::cerr << "Failed to stitch" << std::endl;
     return 1;
   }
+
+  stitchingTime = timeNow() - stitchingTime;
 
   ImageType yuv = m.getMosaic(width, height);
   ImageType rgb = ImageUtils::allocateImage(width, height, 3, 0);
@@ -199,5 +234,11 @@ int main(int argc, char *argv[]) {
   close(fd);
   std::cout << "Wrote mosaic image to " << out << std::endl;
   std::cout << "Width = " << width << " height = " << height << std::endl;
+
+  if (time) {
+    std::cout << "Average frame time = " << std::accumulate(times.begin(), times.end(), 0) / times.size() << "ms" << std::endl;
+    std::cout << "Final stitching time = " << stitchingTime << "ms" << std::endl;
+  }
+
   return 0;
 }
