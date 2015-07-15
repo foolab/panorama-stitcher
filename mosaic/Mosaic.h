@@ -27,6 +27,7 @@
 #include "AlignFeatures.h"
 #include "Blend.h"
 #include "MosaicTypes.h"
+#include <vector>
 
 /*! \mainpage Mosaic
 
@@ -184,8 +185,7 @@ protected:
   /**
     * Implicitly created frames, should be freed by Mosaic.
     */
-  ImageType *owned_frames;
-  int owned_size;
+  std::vector<ImageType> owned_frames;
 
   /**
    * Initialization state.
