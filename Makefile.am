@@ -10,6 +10,7 @@ libpanorama_stitcher_la_SOURCES = \
 	mosaic/Blend.cpp \
 	mosaic/ImageUtils.cpp \
 	mosaic/Pyramid.cpp \
+	mosaic/Log.cpp \
 	dbreg/dbreg.cpp \
 	dbreg/dbstabsmooth.cpp \
 	dbreg/vp_motionmodel.c \

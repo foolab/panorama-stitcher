@@ -16,8 +16,16 @@
 #ifndef LOG_H_
 #define LOG_H
 
-#define LOGV(...) printf(__VA_ARGS__)
-#define LOGI(...) printf(__VA_ARGS__)
-#define LOGE(...) printf(__VA_ARGS__)
+typedef enum {
+  LOG_VERBOSE = 0,
+  LOG_INFO = 1,
+  LOG_ERROR = 2,
+} LogLevel;
+
+void __log (LogLevel level, ...);
+
+#define LOGV(...) __log(LOG_VERBOSE, __VA_ARGS__)
+#define LOGI(...) __log(LOG_INFO, __VA_ARGS__)
+#define LOGE(...) __log(LOG_ERROR, __VA_ARGS__)
 
 #endif
