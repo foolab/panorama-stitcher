@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <numeric>
+#include <png.h>
 
 extern int opterr;
 
@@ -26,6 +27,58 @@ struct Format {
 };
 
 static const char *strips[] = {"Thin", "Wide"};
+
+static bool write_png(const char *out, ImageType rgb, int width, int height) {
+  FILE *fp = NULL;
+  png_structp png_ptr;
+  png_infop info_ptr;
+  png_bytep row;
+
+  fp = fopen(out, "w");
+  if (!fp) {
+    perror("fopen");
+    return false;
+  }
+
+  png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  if (!png_ptr) {
+    std::cerr << "Could not allocate write struct" << std::endl;
+    fclose(fp);
+    return false;
+  }
+
+  info_ptr = png_create_info_struct(png_ptr);
+  if (!info_ptr) {
+    std::cerr << "Could not allocate info struct" << std::endl;
+    fclose(fp);
+    return false;
+  }
+
+  if (setjmp(png_jmpbuf(png_ptr))) {
+    std::cerr << "Error during png creation" << std::endl;
+    fclose(fp);
+    return false;
+  }
+
+  png_init_io(png_ptr, fp);
+  png_set_IHDR(png_ptr, info_ptr, width, height,
+	       8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE,
+	       PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+
+  png_write_info(png_ptr, info_ptr);
+
+  for (int x = 0; x < height; x++) {
+    png_write_row(png_ptr, &rgb[width * x * 3]);
+  }
+
+  png_write_end(png_ptr, NULL);
+  fclose(fp);
+
+  png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
+  png_destroy_write_struct(&png_ptr, NULL);
+
+  return true;
+}
 
 static uint64_t timeNow() {
   struct timeval tv;
@@ -252,23 +305,12 @@ int main(int argc, char *argv[]) {
   ImageType rgb = ImageUtils::allocateImage(width, height, 3, 0);
   ImageUtils::yvu2rgb(rgb, yuv, width, height);
 
-  fd = open(out, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-  if (fd == -1) {
-    perror("open");
-    ImageUtils::freeImage(rgb);
-    return 1;
-  }
-
-  size = width * height * 3;
-  if (write(fd, rgb, size) != size) {
-    perror("write");
-    ImageUtils::freeImage(rgb);
-    close(fd);
-    return 1;
-  }
-
+  bool res = write_png(out, rgb, width, height);
   ImageUtils::freeImage(rgb);
-  close(fd);
+  if (!res) {
+    return 1;
+  }
+
   std::cout << "Wrote mosaic image to " << out << std::endl;
   std::cout << "Width = " << width << " height = " << height << std::endl;
 
