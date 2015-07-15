@@ -120,10 +120,9 @@ int Mosaic::addFrameRGB(ImageType imageRGB)
     imageYVU = ImageUtils::allocateImage(this->width, this->height, ImageUtils::IMAGE_TYPE_NUM_CHANNELS);
     ImageUtils::rgb2yvu(imageYVU, imageRGB, width, height);
 
-    int existing_frames_size = frames_size;
     int ret = addFrame(imageYVU);
 
-    if (frames_size > existing_frames_size)
+    if (ret == MOSAIC_RET_OK || ret == MOSAIC_RET_FEW_INLIERS)
         owned_frames.push_back(imageYVU);
     else
         ImageUtils::freeImage(imageYVU);
