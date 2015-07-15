@@ -58,6 +58,26 @@ static void usage() {
   }
 }
 
+static int addFrame(Mosaic& m, unsigned char *data, int& time, bool is_rgb) {
+  uint64_t t = timeNow();
+  int ret = m.addFrameRGB(data);
+  time = timeNow() - t;
+
+  if (is_rgb) {
+    // free the frame and return.
+    delete[] data;
+    return ret;
+  }
+
+  if (ret == Mosaic::MOSAIC_RET_OK || ret == Mosaic::MOSAIC_RET_FEW_INLIERS) {
+    // keep the frame.
+    return ret;
+  }
+
+  delete[] data;
+  return ret;
+}
+
 int main(int argc, char *argv[]) {
   opterr = 0;
 
@@ -169,31 +189,30 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  unsigned char *in_data = new unsigned char[size];
   int added_frames = 0;
 
   std::vector<int> times;
 
-  while (read(fd, in_data, size) == size) {
-    // process
-    uint64_t t = timeNow();
+  do {
+    // allocate:
+    unsigned char *in_data = new unsigned char[size];
 
-    int ret = m.addFrameRGB(in_data);
+    if (read(fd, in_data, size) == size) {
+      // process
+      int time = 0;
+      int ret = addFrame(m, in_data, time, true);
+      times.push_back(time);
 
-    times.push_back(timeNow() - t);
+      if (ret == Mosaic::MOSAIC_RET_OK || ret == Mosaic::MOSAIC_RET_FEW_INLIERS) {
+	++added_frames;
+      }
 
-    if (ret == Mosaic::MOSAIC_RET_OK || ret == Mosaic::MOSAIC_RET_FEW_INLIERS) {
-      ++added_frames;
-    }
-
-    // TODO: seems 200 is a hardcoded maximum
-    if (added_frames == 200) {
+    } else {
       break;
     }
-  }
+  } while (added_frames < 200);
 
   close(fd);
-  delete[] in_data;
 
   std::cout << "Used " << added_frames << " frames" << std::endl;
 
