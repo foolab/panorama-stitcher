@@ -90,7 +90,7 @@ public:
   /**
    *  Allocate space for a standard image.
    */
-  static ImageType allocateImage(int width, int height, int numChannels, short int border = 0);
+  static ImageType allocateImage(int width, int height, int numChannels);
 
   /**
    *  Free memory of image

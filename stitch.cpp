@@ -321,7 +321,7 @@ int main(int argc, char *argv[]) {
   stitchingTime = timeNow() - stitchingTime;
 
   ImageType yuv = m.getMosaic(width, height);
-  ImageType rgb = ImageUtils::allocateImage(width, height, 3, 0);
+  ImageType rgb = ImageUtils::allocateImage(width, height, 3);
   ImageUtils::yvu2rgb(rgb, yuv, width, height);
 
   bool res = write_png(out, rgb, width, height);
