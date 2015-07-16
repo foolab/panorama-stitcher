@@ -44,8 +44,8 @@ Mosaic::~Mosaic()
         if (frames[i])
             delete frames[i];
     }
-    delete frames;
-    delete rframes;
+    delete[] frames;
+    delete[] rframes;
 
     for (int j = 0; j < owned_frames.size(); j++)
         delete owned_frames[j];
