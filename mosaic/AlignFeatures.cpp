@@ -104,6 +104,7 @@ int Align::addFrame(ImageType imageGray)
 
       if (num_corner_ref < MIN_NR_REF_CORNERS)
       {
+          delete[] m_rows;
           return ALIGN_RET_LOW_TEXTURE;
       }
   }
@@ -144,6 +145,7 @@ int Align::addFrame(ImageType imageGray)
 
     if(fabs(Hcurr[2])<thresh_still && fabs(Hcurr[5])<thresh_still)  // Still camera
     {
+        delete[] m_rows;
         return ALIGN_RET_ERROR;
     }
 
@@ -175,6 +177,7 @@ int Align::addFrame(ImageType imageGray)
 
   frame_number++;
 
+  delete[] m_rows;
   return ret_code;
 }
 
