@@ -18,14 +18,6 @@ extern int opterr;
 
 int blendingType = Blend::BLEND_TYPE_HORZ;
 
-struct Format {
-  const char *name;
-  int bpp; /* bits per pixel */
-} Formats[] = {
-  {"RGB", 24},
-  {NULL, 0},
-};
-
 static const char *strips[] = {"Thin", "Wide"};
 
 static bool write_png(const char *out, ImageType rgb, int width, int height) {
@@ -101,38 +93,9 @@ static void usage() {
 	    << "  --height, -h height" << std::endl
 	    << "  --in, -i input" << std::endl
 	    << "  --out, -o output" << std::endl
-	    << "  --format, -f format" << std::endl
 	    << "  --strip, -s strip type" << std::endl
 	    << "  --time, -t (Use to print times for operations)" << std::endl
-	    << " Supported formats:" << std::endl;
-
-  struct Format *f = Formats;
-  while (f->name) {
-    std::cout << "  " << (f - Formats) << " is " << f->name << std::endl;
-    ++f;
-  }
-
-  std::cout << " Supported strip types:\n  0 is thin (default)\n  1 is wide " << std::endl;
-}
-
-static int addFrame(Mosaic& m, unsigned char *data, int& time, bool is_rgb) {
-  uint64_t t = timeNow();
-  int ret = m.addFrameRGB(data);
-  time = timeNow() - t;
-
-  if (is_rgb) {
-    // free the frame and return.
-    delete[] data;
-    return ret;
-  }
-
-  if (ret == Mosaic::MOSAIC_RET_OK || ret == Mosaic::MOSAIC_RET_FEW_INLIERS) {
-    // keep the frame.
-    return ret;
-  }
-
-  delete[] data;
-  return ret;
+	    << " Supported strip types:\n  0 is thin (default)\n  1 is wide " << std::endl;
 }
 
 int count_frames(int fd, int size) {
@@ -150,10 +113,8 @@ int main(int argc, char *argv[]) {
 
   int width = -1;
   int height = -1;
-  int format = -1;
   const char *in = NULL;
   const char *out = NULL;
-  Format *fmt = NULL;
   bool time = false;
   int stripType = Blend::STRIP_TYPE_THIN;
 
@@ -162,7 +123,6 @@ int main(int argc, char *argv[]) {
     {"height", required_argument, 0, 'h'},
     {"in",     required_argument, 0, 'i'},
     {"out",    required_argument, 0, 'o'},
-    {"format", required_argument, 0, 'f'},
     {"strip",  required_argument, 0, 's'},
     {"time",   no_argument      , 0, 't'},
     {0,        0,                 0, 0}
@@ -176,7 +136,7 @@ int main(int argc, char *argv[]) {
   }
 
   while (1) {
-    c = getopt_long(argc, argv, "w:h:i:o:f:s:t", long_options, NULL);
+    c = getopt_long(argc, argv, "w:h:i:o:s:t", long_options, NULL);
     if (c == -1) {
       break;
     }
@@ -196,10 +156,6 @@ int main(int argc, char *argv[]) {
 
     case 'o':
       out = optarg;
-      break;
-
-    case 'f':
-      format = atoi(optarg);
       break;
 
     case 't':
@@ -242,13 +198,6 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  if (format < 0 || format >= sizeof (Formats) / sizeof (struct Format)) {
-    std::cerr << "invalid format " << format << std::endl;
-    return 1;
-  }
-
-  fmt = &Formats[format];
-
   // input
   int fd = open(in, O_RDONLY);
   if (fd == -1) {
@@ -257,7 +206,7 @@ int main(int argc, char *argv[]) {
   }
 
 
-  int size = (width * height * fmt->bpp) / 8;
+  int size = (width * height * 12) / 8;
 
   std::cout << "input width = " << width << ", height = " << height << std::endl;
   std::cout << "strip type: " << stripType << " (" << strips[stripType] << ")" << std::endl;
@@ -280,31 +229,40 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  int added_frames = 0;
-
   std::vector<int> times;
+  std::vector<unsigned char *> mosaic_frames;
+  unsigned char *in_data = NULL;
+
   for (int x = 0; x < frames; x++) {
     // allocate:
-    unsigned char *in_data = new unsigned char[size];
+    if (!in_data) {
+      in_data = new unsigned char[size];
+    }
 
     if (read(fd, in_data, size) == size) {
       // process
-      int time = 0;
-      int ret = addFrame(m, in_data, time, true);
+      int time = timeNow();
+      int ret = m.addFrame(in_data);
+      time = timeNow() - time;
+
       times.push_back(time);
 
       if (ret == Mosaic::MOSAIC_RET_OK || ret == Mosaic::MOSAIC_RET_FEW_INLIERS) {
-	++added_frames;
+	mosaic_frames.push_back(in_data);
+	in_data = NULL;
       }
-
     } else {
       break;
     }
   }
 
+  if (in_data) {
+    delete[] in_data;
+  }
+
   close(fd);
 
-  std::cout << "Used " << added_frames << " frames" << std::endl;
+  std::cout << "Used " << mosaic_frames.size() << " frames" << std::endl;
 
   // output
   // TODO: what are those?
@@ -323,6 +281,12 @@ int main(int argc, char *argv[]) {
   ImageType yuv = m.getMosaic(width, height);
   ImageType rgb = ImageUtils::allocateImage(width, height, 3);
   ImageUtils::yvu2rgb(rgb, yuv, width, height);
+
+  for (int x = 0; x < mosaic_frames.size(); x++) {
+    delete[] mosaic_frames[x];
+  }
+
+  mosaic_frames.clear();
 
   bool res = write_png(out, rgb, width, height);
   ImageUtils::freeImage(rgb);

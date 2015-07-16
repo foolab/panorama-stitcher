@@ -113,23 +113,6 @@ int Mosaic::initialize(int blendingType, int stripType, int width, int height, i
     return MOSAIC_RET_OK;
 }
 
-int Mosaic::addFrameRGB(ImageType imageRGB)
-{
-    ImageType imageYVU;
-    // Convert to YVU24 which is used by blending
-    imageYVU = ImageUtils::allocateImage(this->width, this->height, ImageUtils::IMAGE_TYPE_NUM_CHANNELS);
-    ImageUtils::rgb2yvu(imageYVU, imageRGB, width, height);
-
-    int ret = addFrame(imageYVU);
-
-    if (ret == MOSAIC_RET_OK || ret == MOSAIC_RET_FEW_INLIERS)
-        owned_frames.push_back(imageYVU);
-    else
-        ImageUtils::freeImage(imageYVU);
-
-    return ret;
-}
-
 int Mosaic::addFrame(ImageType imageYVU)
 {
     if(frames[frames_size]==NULL)

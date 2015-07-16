@@ -106,13 +106,6 @@ public:
   int addFrame(ImageType imageYVU);
 
    /*!
-    *   Adds a RGB frame to the mosaic.
-    *   \param imageRGB     Pointer to a RGB image.
-    *   \return             Return code signifying success or failure.
-    */
-  int addFrameRGB(ImageType imageRGB);
-
-   /*!
     *   After adding all frames, call this function to perform the final blending.
     *   \param progress     Variable to set the current progress in.
     *   \return             Return code signifying success or failure.

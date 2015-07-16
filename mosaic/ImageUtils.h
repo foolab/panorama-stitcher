@@ -46,20 +46,6 @@ public:
   static const int IMAGE_TYPE_NOIMAGE = 0;
 
   /**
-   *  Convert image from BGR (interlaced) to YVU (non-interlaced)
-   *
-   *  Arguments:
-   *    out: Resulting image (note must be preallocated before
-   *    call)
-   *    in: Input image
-   *    width: Width of input image
-   *    height: Height of input image
-   */
-  static void rgb2yvu(ImageType out, ImageType in, int width, int height);
-
-  static void rgba2yvu(ImageType out, ImageType in, int width, int height);
-
-  /**
    *  Convert image from YVU (non-interlaced) to BGR (interlaced)
    *
    *  Arguments:
