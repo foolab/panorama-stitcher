@@ -279,8 +279,7 @@ void ImageUtils::yvu2bgr(ImageType out, ImageType in, int width, int height)
 
 ImageType ImageUtils::allocateImage(int width, int height, int numChannels)
 {
-  int overallocation = 256;
- return (ImageType) calloc(width*height*numChannels+overallocation, sizeof(ImageTypeBase));
+ return (ImageType) calloc(width*height*numChannels, sizeof(ImageTypeBase));
 }
 
 
