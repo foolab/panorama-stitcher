@@ -23,7 +23,9 @@ libpanorama_stitcher_la_SOURCES = \
 	db_vlvm/db_image_homography.cpp \
 	db_vlvm/db_utilities_linalg.cpp \
 	db_vlvm/db_rob_image_homography.cpp \
-	db_vlvm/db_utilities_poly.cpp
+	db_vlvm/db_utilities_poly.cpp \
+	stitcher/stitcher.cpp \
+	stitcher/tracker.cpp
 
 bin_PROGRAMS = stitch
 stitch_SOURCES = stitch.cpp
