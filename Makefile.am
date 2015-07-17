@@ -27,5 +27,5 @@ libpanorama_stitcher_la_SOURCES = \
 
 bin_PROGRAMS = stitch
 stitch_SOURCES = stitch.cpp
-stitch_CFLAGS = $(PNG_CFLAGS)
+stitch_CXXFLAGS = $(AM_CXXFLAGS) $(PNG_CFLAGS)
 stitch_LDADD = libpanorama-stitcher.la $(PNG_LIBS)
