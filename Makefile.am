@@ -1,6 +1,10 @@
 ACLOCAL_AMFLAGS = -I m4
 AM_CXXFLAGS = -I./db_vlvm/
 
+if GPROF
+AM_CXXFLAGS += -pg
+endif
+
 lib_LTLIBRARIES = libpanorama-stitcher.la
 libpanorama_stitcher_la_SOURCES = \
 	mosaic/AlignFeatures.cpp \

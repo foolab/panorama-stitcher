@@ -15,6 +15,15 @@ fi
 
 AM_CONDITIONAL([STITCH2], [test "x$swscale" == "xyes"])
 
+AC_ARG_ENABLE([gprof],
+[  --enable-gprof    Turn on gprof profiling],
+[case "${enableval}" in
+  yes) gprof=true ;;
+  no)  gprof=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-gprof]) ;;
+esac],[debug=gprof])
+AM_CONDITIONAL([GPROF], [test x$gprof = xtrue])
+
 LT_INIT
 AC_CONFIG_FILES(Makefile)
 AC_OUTPUT
