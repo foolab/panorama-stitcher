@@ -8,6 +8,12 @@ AC_PROG_CC
 AC_PROG_CXX
 
 PKG_CHECK_MODULES(PNG, libpng)
+PKG_CHECK_MODULES(SWSCALE, libswscale, [swscale=yes], [swscale=no])
+if test "x$swscale" == "xno"; then
+AC_MSG_NOTICE([disabling stitch2 example])
+fi
+
+AM_CONDITIONAL([STITCH2], [test "x$swscale" == "xyes"])
 
 LT_INIT
 AC_CONFIG_FILES(Makefile)
