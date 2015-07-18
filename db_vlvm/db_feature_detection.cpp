@@ -589,8 +589,8 @@ void db_HarrisStrength_u(float **s, const unsigned char * const *img,int w,int h
         next_x=x+124;
 
         // mayban: to revert to the original full chunks state, change the line below to: nc = 128;
-        nc = db_mini(128,last-x+1);
-        //nc = 128;
+        //nc = db_mini(128,last-x+1);
+        nc = 128;
 
         /*Compute the Harris strength of a chunk*/
         db_HarrisStrengthChunk_u(s,img,x,3,h-4,temp,nc);
