@@ -109,18 +109,4 @@ public:
   void linkNeighbors(SEdgeVector *edge, int nedge, int nsite);
 };
 
-#define onext(a) next[a]
-#define oprev(a) rot(onext(rot(a)))
-#define lnext(a) rot(onext(rotinv(a)))
-#define lprev(a) sym(onext(a))
-#define rnext(a) rotinv(onext(rot(a)))
-#define rprev(a) onext(sym(a))
-#define dnext(a) sym(onext(sym(a)))
-#define dprev(a) rotinv(onext(rotinv(a)))
-
-#define orig(a) org[a]
-#define dest(a) orig(sym(a))
-#define left(a) orig(rotinv(a))
-#define right(a) orig(rot(a))
-
 #endif
