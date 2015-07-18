@@ -13,6 +13,7 @@
 #include <sys/time.h>
 #include <numeric>
 #include <png.h>
+#include <sys/param.h>
 
 extern int opterr;
 
@@ -94,6 +95,7 @@ static void usage() {
 	    << "  --in, -i input" << std::endl
 	    << "  --out, -o output" << std::endl
 	    << "  --strip, -s strip type" << std::endl
+	    << "  --max, -m maximum frames to process" << std::endl
 	    << "  --time, -t (Use to print times for operations)" << std::endl
 	    << " Supported strip types:\n  0 is thin (default)\n  1 is wide " << std::endl;
 }
@@ -113,6 +115,7 @@ int main(int argc, char *argv[]) {
 
   int width = -1;
   int height = -1;
+  int max_frames = -1;
   const char *in = NULL;
   const char *out = NULL;
   bool time = false;
@@ -124,6 +127,7 @@ int main(int argc, char *argv[]) {
     {"in",     required_argument, 0, 'i'},
     {"out",    required_argument, 0, 'o'},
     {"strip",  required_argument, 0, 's'},
+    {"max",    required_argument, 0, 'm'},
     {"time",   no_argument      , 0, 't'},
     {0,        0,                 0, 0}
   };
@@ -136,7 +140,7 @@ int main(int argc, char *argv[]) {
   }
 
   while (1) {
-    c = getopt_long(argc, argv, "w:h:i:o:s:t", long_options, NULL);
+    c = getopt_long(argc, argv, "w:h:i:o:s:m:t", long_options, NULL);
     // TODO: investigate why Harmattan returns 255
     if (c == -1 || c == 255) {
       break;
@@ -165,6 +169,10 @@ int main(int argc, char *argv[]) {
 
     case 's':
       stripType = atoi(optarg);
+      break;
+
+    case 'm':
+      max_frames = atoi(optarg);
       break;
 
     case '?':
@@ -219,8 +227,9 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  // skip the last 2 frames because they are just gray in my test video
-  frames -= 2;
+  if (max_frames > 0) {
+    frames = MIN(frames, max_frames);
+  }
 
   // initialize our mosaicer
   Mosaic m;
