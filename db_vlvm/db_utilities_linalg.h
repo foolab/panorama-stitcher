@@ -33,7 +33,7 @@
 /*!
  \ingroup LMBasicUtilities
  */
-inline void db_MultiplyScalar6(double A[6],double mult)
+inline void db_MultiplyScalar6(float A[6],float mult)
 {
     (*A++) *= mult; (*A++) *= mult; (*A++) *= mult; (*A++) *= mult; (*A++) *= mult;
     (*A++) *= mult;
@@ -41,7 +41,7 @@ inline void db_MultiplyScalar6(double A[6],double mult)
 /*!
  \ingroup LMBasicUtilities
  */
-inline void db_MultiplyScalar7(double A[7],double mult)
+inline void db_MultiplyScalar7(float A[7],float mult)
 {
     (*A++) *= mult; (*A++) *= mult; (*A++) *= mult; (*A++) *= mult; (*A++) *= mult;
     (*A++) *= mult; (*A++) *= mult;
@@ -49,7 +49,7 @@ inline void db_MultiplyScalar7(double A[7],double mult)
 /*!
  \ingroup LMBasicUtilities
  */
-inline void db_MultiplyScalar9(double A[9],double mult)
+inline void db_MultiplyScalar9(float A[9],float mult)
 {
     (*A++) *= mult; (*A++) *= mult; (*A++) *= mult; (*A++) *= mult; (*A++) *= mult;
     (*A++) *= mult; (*A++) *= mult; (*A++) *= mult; (*A++) *= mult;
@@ -58,7 +58,7 @@ inline void db_MultiplyScalar9(double A[9],double mult)
 /*!
  \ingroup LMBasicUtilities
  */
-inline double db_SquareSum6Stride7(const double *x)
+inline float db_SquareSum6Stride7(const float *x)
 {
     return(db_sqr(x[0])+db_sqr(x[7])+db_sqr(x[14])+
         db_sqr(x[21])+db_sqr(x[28])+db_sqr(x[35]));
@@ -67,7 +67,7 @@ inline double db_SquareSum6Stride7(const double *x)
 /*!
  \ingroup LMBasicUtilities
  */
-inline double db_SquareSum8Stride9(const double *x)
+inline float db_SquareSum8Stride9(const float *x)
 {
     return(db_sqr(x[0])+db_sqr(x[9])+db_sqr(x[18])+
         db_sqr(x[27])+db_sqr(x[36])+db_sqr(x[45])+
@@ -80,14 +80,14 @@ inline double db_SquareSum8Stride9(const double *x)
 part of A is used from the input. The Cholesky factor is output as
 subdiagonal part in A and diagonal in d, which is 6-dimensional
 1.9 microseconds on 450MHz*/
-DB_API void db_CholeskyDecomp6x6(double A[36],double d[6]);
+DB_API void db_CholeskyDecomp6x6(float A[36],float d[6]);
 
 /*!
  \ingroup LMLinAlg
  Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of a 6 x 6 matrix and the right hand side b. The vector b is unchanged
 1.3 microseconds on 450MHz*/
-DB_API void db_CholeskyBacksub6x6(double x[6],const double A[36],const double d[6],const double b[6]);
+DB_API void db_CholeskyBacksub6x6(float x[6],const float A[36],const float d[6],const float b[6]);
 
 /*!
  \ingroup LMLinAlg
@@ -95,13 +95,13 @@ DB_API void db_CholeskyBacksub6x6(double x[6],const double A[36],const double d[
 above diagonal of A is used from the input, diagonal of A is assumed to
 be stored in d. The Cholesky factor is output as
 subdiagonal part in A and diagonal in d, which is n-dimensional*/
-DB_API void db_CholeskyDecompSeparateDiagonal(double **A,double *d,int n);
+DB_API void db_CholeskyDecompSeparateDiagonal(float **A,float *d,int n);
 
 /*!
  \ingroup LMLinAlg
  Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of an n x n matrix and the right hand side b. The vector b is unchanged*/
-DB_API void db_CholeskyBacksub(double *x,const double * const *A,const double *d,int n,const double *b);
+DB_API void db_CholeskyBacksub(float *x,const float * const *A,const float *d,int n,const float *b);
 
 /*!
  \ingroup LMLinAlg
@@ -109,18 +109,18 @@ DB_API void db_CholeskyBacksub(double *x,const double * const *A,const double *d
 above diagonal of A is used from the input, diagonal of A is assumed to
 be stored in d. The Cholesky factor is output as subdiagonal part in A
 and diagonal in d, which is 3-dimensional*/
-DB_API void db_CholeskyDecomp3x3SeparateDiagonal(double A[9],double d[3]);
+DB_API void db_CholeskyDecomp3x3SeparateDiagonal(float A[9],float d[3]);
 
 /*!
  \ingroup LMLinAlg
  Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of a 3 x 3 matrix and the right hand side b. The vector b is unchanged*/
-DB_API void db_CholeskyBacksub3x3(double x[3],const double A[9],const double d[3],const double b[3]);
+DB_API void db_CholeskyBacksub3x3(float x[3],const float A[9],const float d[3],const float b[3]);
 
 /*!
  \ingroup LMLinAlg
  perform A-=B*mult*/
-inline void db_RowOperation3(double A[3],const double B[3],double mult)
+inline void db_RowOperation3(float A[3],const float B[3],float mult)
 {
     *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++);
 }
@@ -128,7 +128,7 @@ inline void db_RowOperation3(double A[3],const double B[3],double mult)
 /*!
  \ingroup LMLinAlg
  */
-inline void db_RowOperation7(double A[7],const double B[7],double mult)
+inline void db_RowOperation7(float A[7],const float B[7],float mult)
 {
     *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++);
     *A++ -= mult*(*B++); *A++ -= mult*(*B++);
@@ -137,7 +137,7 @@ inline void db_RowOperation7(double A[7],const double B[7],double mult)
 /*!
  \ingroup LMLinAlg
  */
-inline void db_RowOperation9(double A[9],const double B[9],double mult)
+inline void db_RowOperation9(float A[9],const float B[9],float mult)
 {
     *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++);
     *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++); *A++ -= mult*(*B++);
@@ -147,9 +147,9 @@ inline void db_RowOperation9(double A[9],const double B[9],double mult)
  \ingroup LMBasicUtilities
  Swap values of A[7] and B[7]
  */
-inline void db_Swap7(double A[7],double B[7])
+inline void db_Swap7(float A[7],float B[7])
 {
-    double temp;
+    float temp;
     temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;
     temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;
     temp= *A; *A++ = *B; *B++ =temp;
@@ -159,9 +159,9 @@ inline void db_Swap7(double A[7],double B[7])
  \ingroup LMBasicUtilities
  Swap values of A[9] and B[9]
  */
-inline void db_Swap9(double A[9],double B[9])
+inline void db_Swap9(float A[9],float B[9])
 {
-    double temp;
+    float temp;
     temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;
     temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;
     temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;    temp= *A; *A++ = *B; *B++ =temp;
@@ -171,19 +171,19 @@ inline void db_Swap9(double A[9],double B[9])
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_Orthogonalize6x7(double A[42],int orthonormalize=0);
+DB_API void db_Orthogonalize6x7(float A[42],int orthonormalize=0);
 
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_Orthogonalize8x9(double A[72],int orthonormalize=0);
+DB_API void db_Orthogonalize8x9(float A[72],int orthonormalize=0);
 
 /*!
  \ingroup LMLinAlg
  */
-inline double db_OrthogonalizePair7(double *x,const double *v,double ssv)
+inline float db_OrthogonalizePair7(float *x,const float *v,float ssv)
 {
-    double m,sp,sp_m;
+    float m,sp,sp_m;
 
     m=db_SafeReciprocal(ssv);
     sp=db_ScalarProduct7(x,v);
@@ -195,9 +195,9 @@ inline double db_OrthogonalizePair7(double *x,const double *v,double ssv)
 /*!
  \ingroup LMLinAlg
  */
-inline double db_OrthogonalizePair9(double *x,const double *v,double ssv)
+inline float db_OrthogonalizePair9(float *x,const float *v,float ssv)
 {
-    double m,sp,sp_m;
+    float m,sp,sp_m;
 
     m=db_SafeReciprocal(ssv);
     sp=db_ScalarProduct9(x,v);
@@ -209,9 +209,9 @@ inline double db_OrthogonalizePair9(double *x,const double *v,double ssv)
 /*!
  \ingroup LMLinAlg
  */
-inline void db_OrthogonalizationSwap7(double *A,int i,double *ss)
+inline void db_OrthogonalizationSwap7(float *A,int i,float *ss)
 {
-    double temp;
+    float temp;
 
     db_Swap7(A,A+7*i);
     temp=ss[0]; ss[0]=ss[i]; ss[i]=temp;
@@ -219,9 +219,9 @@ inline void db_OrthogonalizationSwap7(double *A,int i,double *ss)
 /*!
  \ingroup LMLinAlg
  */
-inline void db_OrthogonalizationSwap9(double *A,int i,double *ss)
+inline void db_OrthogonalizationSwap9(float *A,int i,float *ss)
 {
-    double temp;
+    float temp;
 
     db_Swap9(A,A+9*i);
     temp=ss[0]; ss[0]=ss[i]; ss[i]=temp;
@@ -230,16 +230,16 @@ inline void db_OrthogonalizationSwap9(double *A,int i,double *ss)
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_NullVectorOrthonormal6x7(double x[7],const double A[42]);
+DB_API void db_NullVectorOrthonormal6x7(float x[7],const float A[42]);
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_NullVectorOrthonormal8x9(double x[9],const double A[72]);
+DB_API void db_NullVectorOrthonormal8x9(float x[9],const float A[72]);
 
 /*!
  \ingroup LMLinAlg
  */
-inline void db_NullVector6x7Destructive(double x[7],double A[42])
+inline void db_NullVector6x7Destructive(float x[7],float A[42])
 {
     db_Orthogonalize6x7(A,1);
     db_NullVectorOrthonormal6x7(x,A);
@@ -248,7 +248,7 @@ inline void db_NullVector6x7Destructive(double x[7],double A[42])
 /*!
  \ingroup LMLinAlg
  */
-inline void db_NullVector8x9Destructive(double x[9],double A[72])
+inline void db_NullVector8x9Destructive(float x[9],float A[72])
 {
     db_Orthogonalize8x9(A,1);
     db_NullVectorOrthonormal8x9(x,A);

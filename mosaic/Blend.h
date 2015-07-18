@@ -98,15 +98,15 @@ protected:
   unsigned short Mwidth, Mheight;
 
   // Helper functions
-  void FrameToMosaic(double trs[3][3], double x, double y, double &wx, double &wy);
-  void MosaicToFrame(double trs[3][3], double x, double y, double &wx, double &wy);
-  void FrameToMosaicRect(int width, int height, double trs[3][3], BlendRect &brect);
+  void FrameToMosaic(float trs[3][3], float x, float y, float &wx, float &wy);
+  void MosaicToFrame(float trs[3][3], float x, float y, float &wx, float &wy);
+  void FrameToMosaicRect(int width, int height, float trs[3][3], BlendRect &brect);
   void ClipBlendRect(CSite *csite, BlendRect &brect);
   void AlignToMiddleFrame(MosaicFrame **frames, int frames_size);
 
   int  DoMergeAndBlend(MosaicFrame **frames, int nsite,  int width, int height, YUVinfo &imgMos, MosaicRect &rect, MosaicRect &cropping_rect, float &progress, bool &cancelComputation);
   void ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, int site_idx);
-  void ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, double trs[3][3], int site_idx);
+  void ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, float trs[3][3], int site_idx);
 
   int  FillFramePyramid(MosaicFrame *mb);
 

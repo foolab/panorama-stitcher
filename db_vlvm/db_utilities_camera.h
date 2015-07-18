@@ -49,12 +49,12 @@ focal length = (w+h)/2.0*f_correction.
 \param field        set to 1 if this is a field image (fy = fx/2)
 \return K(3x3) intrinsic calibration matrix
 */
-DB_API void db_Approx3DCalMat(double K[9],double Kinv[9],int im_width,int im_height,double f_correction=1.0,int field=0);
+DB_API void db_Approx3DCalMat(float K[9],float Kinv[9],int im_width,int im_height,float f_correction=1.0,int field=0);
 
 /*!
  Make a 2x2 identity matrix
  */
-void inline db_Identity2x2(double A[4])
+void inline db_Identity2x2(float A[4])
 {
     A[0]=1;A[1]=0;
     A[2]=0;A[3]=1;
@@ -62,7 +62,7 @@ void inline db_Identity2x2(double A[4])
 /*!
  Make a 3x3 identity matrix
  */
-void inline db_Identity3x3(double A[9])
+void inline db_Identity3x3(float A[9])
 {
     A[0]=1;A[1]=0;A[2]=0;
     A[3]=0;A[4]=1;A[5]=0;
@@ -72,9 +72,9 @@ void inline db_Identity3x3(double A[9])
  Invert intrinsic calibration matrix K(3x3)
  If fx or fy is 0, I is returned.
  */
-void inline db_InvertCalibrationMatrix(double Kinv[9],const double K[9])
+void inline db_InvertCalibrationMatrix(float Kinv[9],const float K[9])
 {
-    double a,b,c,d,e,f,ainv,dinv,adinv;
+    float a,b,c,d,e,f,ainv,dinv,adinv;
 
     a=K[0];b=K[1];c=K[2];d=K[4];e=K[5];f=K[8];
     if((a==0.0)||(d==0.0)) db_Identity3x3(Kinv);
@@ -101,9 +101,9 @@ void inline db_InvertCalibrationMatrix(double Kinv[9],const double K[9])
  \param xd  destination point
  \param xs  source point
  */
-void inline db_DeHomogenizeImagePoint(double xd[2],const double xs[3])
+void inline db_DeHomogenizeImagePoint(float xd[2],const float xs[3])
 {
-    double temp,div;
+    float temp,div;
 
     temp=xs[2];
     if(temp!=0)
@@ -121,9 +121,9 @@ void inline db_DeHomogenizeImagePoint(double xd[2],const double xs[3])
 /*!
  Orthonormalize 3D rotation R
  */
-inline void db_OrthonormalizeRotation(double R[9])
+inline void db_OrthonormalizeRotation(float R[9])
 {
-    double s,mult;
+    float s,mult;
     /*Normalize first vector*/
     s=db_sqr(R[0])+db_sqr(R[1])+db_sqr(R[2]);
     mult=sqrt(1.0/(s?s:1));
@@ -143,9 +143,9 @@ inline void db_OrthonormalizeRotation(double R[9])
 /*!
 Update a rotation with the update dx=[sin(phi) sin(ohm) sin(kap)]
 */
-inline void db_UpdateRotation(double R_p_dx[9],double R[9],const double dx[3])
+inline void db_UpdateRotation(float R_p_dx[9],float R[9],const float dx[3])
 {
-    double R_temp[9];
+    float R_temp[9];
     /*Update rotation*/
     db_IncrementalRotationMatrix(R_temp,dx);
     db_Multiply3x3_3x3(R_p_dx,R_temp,R);
@@ -153,9 +153,9 @@ inline void db_UpdateRotation(double R_p_dx[9],double R[9],const double dx[3])
 /*!
  Compute xp = Hx for inhomogenous image points.
  */
-inline void db_ImageHomographyInhomogenous(double xp[2],const double H[9],const double x[2])
+inline void db_ImageHomographyInhomogenous(float xp[2],const float H[9],const float x[2])
 {
-    double x3,m;
+    float x3,m;
 
     x3=H[6]*x[0]+H[7]*x[1]+H[8];
     if(x3!=0.0)
@@ -169,9 +169,9 @@ inline void db_ImageHomographyInhomogenous(double xp[2],const double H[9],const 
         xp[0]=xp[1]=0.0;
     }
 }
-inline double db_FocalFromCamRotFocalHomography(const double H[9])
+inline float db_FocalFromCamRotFocalHomography(const float H[9])
 {
-    double k1,k2;
+    float k1,k2;
 
     k1=db_sqr(H[2])+db_sqr(H[5]);
     k2=db_sqr(H[6])+db_sqr(H[7]);
@@ -185,9 +185,9 @@ inline double db_FocalFromCamRotFocalHomography(const double H[9])
     }
 }
 
-inline double db_FocalAndRotFromCamRotFocalHomography(double R[9],const double H[9])
+inline float db_FocalAndRotFromCamRotFocalHomography(float R[9],const float H[9])
 {
-    double back,fi;
+    float back,fi;
 
     back=db_FocalFromCamRotFocalHomography(H);
     fi=db_SafeReciprocal(back);
@@ -209,7 +209,7 @@ The Jacobian at zero of the homogenous coordinates with respect to
 \endcode
 
 */
-inline void db_JacobianOfRotatedPointStride(double J[9],const double x[3],int stride)
+inline void db_JacobianOfRotatedPointStride(float J[9],const float x[3],int stride)
 {
     /*The Jacobian at zero of the homogenous coordinates with respect to
     [sin(phi) sin(ohm) sin(kap)] is
@@ -233,9 +233,9 @@ inline void db_JacobianOfRotatedPointStride(double J[9],const double x[3],int st
  \param H       input matrix
  \return true if success and false if matrix is ill-conditioned (det < 1e-7)
  */
-inline bool db_InvertAffineTransform(double Hinv[9],const double H[9])
+inline bool db_InvertAffineTransform(float Hinv[9],const float H[9])
 {
-    double det=H[0]*H[4]-H[3]*H[1];
+    float det=H[0]*H[4]-H[3]*H[1];
     if (det<1e-7)
     {
         db_Copy9(Hinv,H);
@@ -260,7 +260,7 @@ Update of upper 2x2 is multiplication by
 [0 s][-sin(theta) cos(theta)]
 \endcode
 */
-inline void db_MultiplyScaleOntoImageHomography(double H[9],double s)
+inline void db_MultiplyScaleOntoImageHomography(float H[9],float s)
 {
 
     H[0]*=s;
@@ -275,9 +275,9 @@ Update of upper 2x2 is multiplication by
 [0 s][-sin(theta) cos(theta)]
 \endcode
 */
-inline void db_MultiplyRotationOntoImageHomography(double H[9],double theta)
+inline void db_MultiplyRotationOntoImageHomography(float H[9],float theta)
 {
-    double c,s,H0,H1;
+    float c,s,H0,H1;
 
 
     c=cos(theta);
@@ -290,13 +290,13 @@ inline void db_MultiplyRotationOntoImageHomography(double H[9],double theta)
     H[1]=H1;
 }
 
-inline void db_UpdateImageHomographyAffine(double H_p_dx[9],const double H[9],const double dx[6])
+inline void db_UpdateImageHomographyAffine(float H_p_dx[9],const float H[9],const float dx[6])
 {
     db_AddVectors6(H_p_dx,H,dx);
     db_Copy3(H_p_dx+6,H+6);
 }
 
-inline void db_UpdateImageHomographyProjective(double H_p_dx[9],const double H[9],const double dx[8],int frozen_coord)
+inline void db_UpdateImageHomographyProjective(float H_p_dx[9],const float H[9],const float dx[8],int frozen_coord)
 {
     int i,j;
 
@@ -311,10 +311,10 @@ inline void db_UpdateImageHomographyProjective(double H_p_dx[9],const double H[9
     }
 }
 
-inline void db_UpdateRotFocalHomography(double H_p_dx[9],const double H[9],const double dx[4])
+inline void db_UpdateRotFocalHomography(float H_p_dx[9],const float H[9],const float dx[4])
 {
-    double f,fp,fpi;
-    double R[9],dR[9];
+    float f,fp,fpi;
+    float R[9],dR[9];
 
     /*Updated matrix is diag(f+df,f+df)*dR*R*diag(1/(f+df),1/(f+df),1)*/
     f=db_FocalAndRotFromCamRotFocalHomography(R,H);

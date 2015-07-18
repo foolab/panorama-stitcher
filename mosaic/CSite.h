@@ -31,8 +31,8 @@ typedef struct
 
 typedef struct
 {
-    double x;
-    double y;
+    float x;
+    float y;
 } SVec2d;
 
 class CSite
@@ -51,8 +51,8 @@ public:
     inline SEdgeVector* getNeighbor() { return neighbor; }
     inline int getNumNeighbors() { return numNeighbors; }
     inline SVec2d& getVCenter() { return voronoiCenter; }
-    inline double X() { return voronoiCenter.x; }
-    inline double Y() { return voronoiCenter.y; }
+    inline float X() { return voronoiCenter.x; }
+    inline float Y() { return voronoiCenter.y; }
 
     inline void incrNumNeighbors() { numNeighbors++; }
     inline void setNumNeighbors(int num) { numNeighbors = num; }

@@ -39,22 +39,22 @@
  {
      int nr_points;
      int nr_inliers;
-     double inlier_fraction;
-     double cost;
-     double one_over_scale2;
-     double lambda1;
-     double lambda2;
-     double lambda3;
+     float inlier_fraction;
+     float cost;
+     float one_over_scale2;
+     float lambda1;
+     float lambda2;
+     float lambda3;
      int nr_parameters;
      int model_dimension;
-     double gric;
-     double inlier_evidence;
-     double posestd[6];
-     double rotationvecCov[9];
-     double translationvecCov[9];
+     float gric;
+     float inlier_evidence;
+     float posestd[6];
+     float rotationvecCov[9];
+     float translationvecCov[9];
      int posecov_inliercount;
      int posecovready;
-     double median_reprojection_error;
+     float median_reprojection_error;
  };
  typedef db_stat_struct db_Statistics;
 

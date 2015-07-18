@@ -62,8 +62,8 @@ public:
                             int target_nr_corners=DB_DEFAULT_TARGET_NR_CORNERS,
                             int nr_horizontal_blocks=DB_DEFAULT_NR_FEATURE_BLOCKS,
                             int nr_vertical_blocks=DB_DEFAULT_NR_FEATURE_BLOCKS,
-                            double absolute_threshold=DB_DEFAULT_ABS_CORNER_THRESHOLD,
-                            double relative_threshold=DB_DEFAULT_REL_CORNER_THRESHOLD);
+                            float absolute_threshold=DB_DEFAULT_ABS_CORNER_THRESHOLD,
+                            float relative_threshold=DB_DEFAULT_REL_CORNER_THRESHOLD);
 
     /*!
      * Detect the corners.
@@ -80,17 +80,17 @@ public:
      * \param msk       row array pointer to mask image
      * \param fgnd      foreground value in the mask
      */
-    virtual void DetectCorners(const unsigned char * const *img,double *x_coord,double *y_coord,int *nr_corners,
+    virtual void DetectCorners(const unsigned char * const *img,float *x_coord,float *y_coord,int *nr_corners,
         const unsigned char * const * msk=NULL, unsigned char fgnd=255) const;
 
     /*!
      Set absolute feature threshold
      */
-    virtual void SetAbsoluteThreshold(double a_thresh) { m_a_thresh = a_thresh; };
+    virtual void SetAbsoluteThreshold(float a_thresh) { m_a_thresh = a_thresh; };
     /*!
      Set relative feature threshold
      */
-    virtual void SetRelativeThreshold(double r_thresh) { m_r_thresh = r_thresh; };
+    virtual void SetRelativeThreshold(float r_thresh) { m_r_thresh = r_thresh; };
 
     /*!
      Extract corners from a pre-computed strength image.
@@ -99,22 +99,22 @@ public:
      \param y_coord corner locations
      \param nr_corners  actual number of corners computed
      */
-    virtual void ExtractCorners(float ** strength, double *x_coord, double *y_coord, int *nr_corners);
+    virtual void ExtractCorners(float ** strength, float *x_coord, float *y_coord, int *nr_corners);
 protected:
     virtual void Clean();
     /*The absolute threshold to this function should be 16.0 times
     normal*/
     unsigned long Start(int im_width,int im_height,
             int block_width,int block_height,unsigned long area_factor,
-            double absolute_threshold,double relative_threshold);
+            float absolute_threshold,float relative_threshold);
 
     int m_w,m_h,m_bw,m_bh;
     /*Area factor holds the maximum number of corners to detect
     per 10000 pixels*/
     unsigned long m_area_factor,m_max_nr;
-    double m_a_thresh,m_r_thresh;
+    float m_a_thresh,m_r_thresh;
     int *m_temp_i;
-    double *m_temp_d;
+    float *m_temp_d;
     float **m_strength,*m_strength_mem;
 };
 

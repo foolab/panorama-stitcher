@@ -60,7 +60,7 @@ public:
   /**
    *  Conver ta 9x1 matrix to a 3x3 matrix
    */
-  static void convert9to33(double out[3][3], double in[9]) {
+  static void convert9to33(float out[3][3], float in[9]) {
     out[0][0] = in[0];
     out[0][1] = in[1];
     out[0][2] = in[2];
@@ -76,7 +76,7 @@ public:
   }
 
   /* Matrix data */
-  double mat[3][3];
+  float mat[3][3];
 
 };
 
@@ -118,7 +118,7 @@ public:
   /**
    *  Conver ta 3x3 matrix to a 9x1 matrix
    */
-  static void convert33to9(double out[9], double in[3][3]) {
+  static void convert33to9(float out[9], float in[3][3]) {
     out[0] = in[0][0];
     out[1] = in[0][1];
     out[2] = in[0][2];
@@ -134,7 +134,7 @@ public:
   }
 
   /* Matrix data */
-  double mat[9];
+  float mat[9];
 
 };
 

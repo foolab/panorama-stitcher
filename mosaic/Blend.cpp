@@ -74,8 +74,8 @@ int Blend::initialize(int blendingType, int stripType, int frame_width, int fram
     return BLEND_RET_OK;
 }
 
-inline double max(double a, double b) { return a > b ? a : b; }
-inline double min(double a, double b) { return a < b ? a : b; }
+inline float max(float a, float b) { return a > b ? a : b; }
+inline float min(float a, float b) { return a < b ? a : b; }
 
 void Blend::AlignToMiddleFrame(MosaicFrame **frames, int frames_size)
 {
@@ -83,13 +83,13 @@ void Blend::AlignToMiddleFrame(MosaicFrame **frames, int frames_size)
     MosaicFrame *mb = NULL;
     MosaicFrame *ref = frames[int(frames_size/2)];    // Middle frame
 
-    double invtrs[3][3];
+    float invtrs[3][3];
     inv33d(ref->trs, invtrs);
 
     for(int mfit = 0; mfit < frames_size; mfit++)
     {
         mb = frames[mfit];
-        double temp[3][3];
+        float temp[3][3];
         mult33d(temp, invtrs, mb->trs);
         memcpy(mb->trs, temp, sizeof(temp));
         normProjMat33d(mb->trs);
@@ -138,20 +138,20 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
     global_rect.lft = global_rect.bot = 2e30; // min values
     global_rect.rgt = global_rect.top = -2e30; // max values
     MosaicFrame *mb = NULL;
-    double halfwidth = width / 2.0;
-    double halfheight = height / 2.0;
+    float halfwidth = width / 2.0;
+    float halfheight = height / 2.0;
 
-    double z, x0, y0, x1, y1, x2, y2, x3, y3;
+    float z, x0, y0, x1, y1, x2, y2, x3, y3;
 
     // Corners of the left-most and right-most frames respectively in the
     // mosaic coordinate system.
-    double xLeftCorners[2] = {2e30, 2e30};
-    double xRightCorners[2] = {-2e30, -2e30};
+    float xLeftCorners[2] = {2e30, 2e30};
+    float xRightCorners[2] = {-2e30, -2e30};
 
     // Corners of the top-most and bottom-most frames respectively in the
     // mosaic coordinate system.
-    double yTopCorners[2] = {2e30, 2e30};
-    double yBottomCorners[2] = {-2e30, -2e30};
+    float yTopCorners[2] = {2e30, 2e30};
+    float yBottomCorners[2] = {-2e30, -2e30};
 
 
     // Determine the extents of the final mosaic
@@ -851,15 +851,15 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
     for (int j = b; j <= t; j++)
     {
         int jj = j;
-        double sj = jj + rect.top;
+        float sj = jj + rect.top;
 
         for (int i = l; i <= r; i++)
         {
             int ii = i;
             // project point and then triangulate to neighbors
-            double si = ii + rect.left;
+            float si = ii + rect.left;
 
-            double dself = hypotSq(csite->getVCenter().x - si, csite->getVCenter().y - sj);
+            float dself = hypotSq(csite->getVCenter().x - si, csite->getVCenter().y - sj);
             int inMask = ((unsigned) ii < imgMos.Y.width &&
                     (unsigned) jj < imgMos.Y.height) ? 1 : 0;
 
@@ -872,7 +872,7 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
             int ecnt;
             for (ce = csite->getNeighbor(), ecnt = csite->getNumNeighbors(); ecnt--; ce++)
             {
-                double d1 = hypotSq(m_AllSites[ce->second].getVCenter().x - si,
+                float d1 = hypotSq(m_AllSites[ce->second].getVCenter().x - si,
                         m_AllSites[ce->second].getVCenter().y - sj);
                 if (d1 < dself)
                 {
@@ -887,10 +887,10 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
     }
 }
 
-void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, double trs[3][3], int site_idx)
+void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, float trs[3][3], int site_idx)
 {
     // Put the Region of interest (for all levels) into m_pMosaicYPyr
-    double inv_trs[3][3];
+    float inv_trs[3][3];
     inv33d(trs, inv_trs);
 
     // Process each pyramid level
@@ -935,13 +935,13 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
         for (int j = b; j <= t; j++)
         {
             int jj = (j << dscale);
-            double sj = jj + rect.top;
+            float sj = jj + rect.top;
 
             for (int i = l; i <= r; i++)
             {
                 int ii = (i << dscale);
                 // project point and then triangulate to neighbors
-                double si = ii + rect.left;
+                float si = ii + rect.left;
 
                 int inMask = ((unsigned) ii < imgMos.Y.width &&
                         (unsigned) jj < imgMos.Y.height) ? 1 : 0;
@@ -953,9 +953,9 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
 
                 // Setup weights for cross-fading
                 // Weight of the intensity already in the output pixel
-                double wt0 = 0.0;
+                float wt0 = 0.0;
                 // Weight of the intensity from the input pixel (current frame)
-                double wt1 = 1.0;
+                float wt1 = 1.0;
 
                 if (m_wb.stripType == STRIP_TYPE_WIDE)
                 {
@@ -973,14 +973,14 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                         {
                             wt0 = 1.0;
                             wt1 = ((imgMos.Y.ptr[jj][ii] == site_idx) ?
-                                    (double)imgMos.U.ptr[jj][ii] / 100.0 :
-                                    1.0 - (double)imgMos.U.ptr[jj][ii] / 100.0);
+                                    (float)imgMos.U.ptr[jj][ii] / 100.0 :
+                                    1.0 - (float)imgMos.U.ptr[jj][ii] / 100.0);
                         }
                     }
                 }
 
                 // Project this mosaic point into the original frame coordinate space
-                double xx, yy;
+                float xx, yy;
 
                 MosaicToFrame(inv_trs, si, sj, xx, yy);
 
@@ -1006,8 +1006,8 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                 if(inSegment(x1, sptr->width, BORDER-1) &&
                         inSegment(y1, sptr->height, BORDER-1))
                 {
-                    double xfrac = xx - x1;
-                    double yfrac = yy - y1;
+                    float xfrac = xx - x1;
+                    float yfrac = yy - y1;
                     dptr->ptr[j][i] = (short) (wt0 * dptr->ptr[j][i] + .5 +
                             wt1 * ciCalc(sptr, x1, y1, xfrac, yfrac));
                     if (dvptr >= m_pMosaicVPyr && nC > 0)
@@ -1023,11 +1023,11 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                 {
                     int x2 = x1 + 1;
                     int y2 = y1 + 1;
-                    double xfrac = xx - x1;
-                    double yfrac = yy - y1;
-                    double y1val = sptr->ptr[y1][x1] +
+                    float xfrac = xx - x1;
+                    float yfrac = yy - y1;
+                    float y1val = sptr->ptr[y1][x1] +
                         (sptr->ptr[y1][x2] - sptr->ptr[y1][x1]) * xfrac;
-                    double y2val = sptr->ptr[y2][x1] +
+                    float y2val = sptr->ptr[y2][x1] +
                         (sptr->ptr[y2][x2] - sptr->ptr[y2][x1]) * xfrac;
                     dptr->ptr[j][i] = (short) (y1val + yfrac * (y2val - y1val));
 
@@ -1069,9 +1069,9 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
     }
 }
 
-void Blend::MosaicToFrame(double trs[3][3], double x, double y, double &wx, double &wy)
+void Blend::MosaicToFrame(float trs[3][3], float x, float y, float &wx, float &wy)
 {
-    double X, Y, z;
+    float X, Y, z;
     if (m_wb.theta == 0.0)
     {
         X = x;
@@ -1079,21 +1079,21 @@ void Blend::MosaicToFrame(double trs[3][3], double x, double y, double &wx, doub
     }
     else if (m_wb.horizontal)
     {
-        double alpha = x * m_wb.direction / m_wb.width;
-        double length = (y - alpha * m_wb.correction) * m_wb.direction + m_wb.radius;
-        double deltaTheta = m_wb.theta * alpha;
-        double sinTheta = sin(deltaTheta);
-        double cosTheta = sqrt(1.0 - sinTheta * sinTheta) * m_wb.direction;
+        float alpha = x * m_wb.direction / m_wb.width;
+        float length = (y - alpha * m_wb.correction) * m_wb.direction + m_wb.radius;
+        float deltaTheta = m_wb.theta * alpha;
+        float sinTheta = sin(deltaTheta);
+        float cosTheta = sqrt(1.0 - sinTheta * sinTheta) * m_wb.direction;
         X = length * sinTheta + m_wb.x;
         Y = length * cosTheta + m_wb.y;
     }
     else
     {
-        double alpha = y * m_wb.direction / m_wb.width;
-        double length = (x - alpha * m_wb.correction) * m_wb.direction + m_wb.radius;
-        double deltaTheta = m_wb.theta * alpha;
-        double sinTheta = sin(deltaTheta);
-        double cosTheta = sqrt(1.0 - sinTheta * sinTheta) * m_wb.direction;
+        float alpha = y * m_wb.direction / m_wb.width;
+        float length = (x - alpha * m_wb.correction) * m_wb.direction + m_wb.radius;
+        float deltaTheta = m_wb.theta * alpha;
+        float sinTheta = sin(deltaTheta);
+        float cosTheta = sqrt(1.0 - sinTheta * sinTheta) * m_wb.direction;
         Y = length * sinTheta + m_wb.y;
         X = length * cosTheta + m_wb.x;
     }
@@ -1102,12 +1102,12 @@ void Blend::MosaicToFrame(double trs[3][3], double x, double y, double &wx, doub
     wy = ProjY(trs, X, Y, z, 1.0);
 }
 
-void Blend::FrameToMosaic(double trs[3][3], double x, double y, double &wx, double &wy)
+void Blend::FrameToMosaic(float trs[3][3], float x, float y, float &wx, float &wy)
 {
     // Project into the intermediate Mosaic coordinate system
-    double z = ProjZ(trs, x, y, 1.0);
-    double X = ProjX(trs, x, y, z, 1.0);
-    double Y = ProjY(trs, x, y, z, 1.0);
+    float z = ProjZ(trs, x, y, 1.0);
+    float X = ProjX(trs, x, y, z, 1.0);
+    float Y = ProjY(trs, x, y, z, 1.0);
 
     if (m_wb.theta == 0.0)
     {
@@ -1117,21 +1117,21 @@ void Blend::FrameToMosaic(double trs[3][3], double x, double y, double &wx, doub
     }
     else if (m_wb.horizontal)
     {
-        double deltaX = X - m_wb.x;
-        double deltaY = Y - m_wb.y;
-        double length = sqrt(deltaX * deltaX + deltaY * deltaY);
-        double deltaTheta = asin(deltaX / length);
-        double alpha = deltaTheta / m_wb.theta;
+        float deltaX = X - m_wb.x;
+        float deltaY = Y - m_wb.y;
+        float length = sqrt(deltaX * deltaX + deltaY * deltaY);
+        float deltaTheta = asin(deltaX / length);
+        float alpha = deltaTheta / m_wb.theta;
         wx = alpha * m_wb.width * m_wb.direction;
         wy = (length - m_wb.radius) * m_wb.direction + alpha * m_wb.correction;
     }
     else
     {
-        double deltaX = X - m_wb.x;
-        double deltaY = Y - m_wb.y;
-        double length = sqrt(deltaX * deltaX + deltaY * deltaY);
-        double deltaTheta = asin(deltaY / length);
-        double alpha = deltaTheta / m_wb.theta;
+        float deltaX = X - m_wb.x;
+        float deltaY = Y - m_wb.y;
+        float length = sqrt(deltaX * deltaX + deltaY * deltaY);
+        float deltaTheta = asin(deltaY / length);
+        float alpha = deltaTheta / m_wb.theta;
         wy = alpha * m_wb.width * m_wb.direction;
         wx = (length - m_wb.radius) * m_wb.direction + alpha * m_wb.correction;
     }
@@ -1148,12 +1148,12 @@ void Blend::ClipBlendRect(CSite *csite, BlendRect &brect)
       for (ce = csite->getNeighbor(), ecnt = csite->getNumNeighbors(); ecnt--; ce++)
       {
         // calculate the Voronoi bisector intersection
-        const double epsilon = 1e-5;
-        double dx = (m_AllSites[ce->second].getVCenter().x - m_AllSites[ce->first].getVCenter().x);
-        double dy = (m_AllSites[ce->second].getVCenter().y - m_AllSites[ce->first].getVCenter().y);
-        double xmid = m_AllSites[ce->first].getVCenter().x + dx/2.0;
-        double ymid = m_AllSites[ce->first].getVCenter().y + dy/2.0;
-        double inter;
+        const float epsilon = 1e-5;
+        float dx = (m_AllSites[ce->second].getVCenter().x - m_AllSites[ce->first].getVCenter().x);
+        float dy = (m_AllSites[ce->second].getVCenter().y - m_AllSites[ce->first].getVCenter().y);
+        float xmid = m_AllSites[ce->first].getVCenter().x + dx/2.0;
+        float ymid = m_AllSites[ce->first].getVCenter().y + dy/2.0;
+        float inter;
 
         if (dx > epsilon)
         {
@@ -1182,29 +1182,29 @@ void Blend::ClipBlendRect(CSite *csite, BlendRect &brect)
       }
 }
 
-void Blend::FrameToMosaicRect(int width, int height, double trs[3][3], BlendRect &brect)
+void Blend::FrameToMosaicRect(int width, int height, float trs[3][3], BlendRect &brect)
 {
     // We need to walk the perimeter since the borders can be bent.
     brect.lft = brect.bot = 2e30;
     brect.rgt = brect.top = -2e30;
-    double xpos, ypos;
-    double lasty = height - 1.0;
-    double lastx = width - 1.0;
+    float xpos, ypos;
+    float lasty = height - 1.0;
+    float lastx = width - 1.0;
     int i;
 
     for (i = width; i--;)
     {
 
-        FrameToMosaic(trs, (double) i, 0.0, xpos, ypos);
+        FrameToMosaic(trs, (float) i, 0.0, xpos, ypos);
         ClipRect(xpos, ypos, brect);
-        FrameToMosaic(trs, (double) i, lasty, xpos, ypos);
+        FrameToMosaic(trs, (float) i, lasty, xpos, ypos);
         ClipRect(xpos, ypos, brect);
     }
     for (i = height; i--;)
     {
-        FrameToMosaic(trs, 0.0, (double) i, xpos, ypos);
+        FrameToMosaic(trs, 0.0, (float) i, xpos, ypos);
         ClipRect(xpos, ypos, brect);
-        FrameToMosaic(trs, lastx, (double) i, xpos, ypos);
+        FrameToMosaic(trs, lastx, (float) i, xpos, ypos);
         ClipRect(xpos, ypos, brect);
     }
 }
@@ -1216,14 +1216,14 @@ void Blend::SelectRelevantFrames(MosaicFrame **frames, int frames_size,
     MosaicFrame *last = frames[frames_size-1];
     MosaicFrame *mb;
 
-    double fxpos = first->trs[0][2], fypos = first->trs[1][2];
+    float fxpos = first->trs[0][2], fypos = first->trs[1][2];
 
-    double midX = last->width / 2.0;
-    double midY = last->height / 2.0;
-    double z = ProjZ(first->trs, midX, midY, 1.0);
-    double firstX, firstY;
-    double prevX = firstX = ProjX(first->trs, midX, midY, z, 1.0);
-    double prevY = firstY = ProjY(first->trs, midX, midY, z, 1.0);
+    float midX = last->width / 2.0;
+    float midY = last->height / 2.0;
+    float z = ProjZ(first->trs, midX, midY, 1.0);
+    float firstX, firstY;
+    float prevX = firstX = ProjX(first->trs, midX, midY, z, 1.0);
+    float prevY = firstY = ProjY(first->trs, midX, midY, z, 1.0);
 
     relevant_frames[0] = first; // Add first frame by default
     relevant_frames_size = 1;
@@ -1231,13 +1231,13 @@ void Blend::SelectRelevantFrames(MosaicFrame **frames, int frames_size,
     for (int i = 0; i < frames_size - 1; i++)
     {
         mb = frames[i];
-        double currX, currY;
+        float currX, currY;
         z = ProjZ(mb->trs, midX, midY, 1.0);
         currX = ProjX(mb->trs, midX, midY, z, 1.0);
         currY = ProjY(mb->trs, midX, midY, z, 1.0);
-        double deltaX = currX - prevX;
-        double deltaY = currY - prevY;
-        double center2centerDist = sqrt(deltaY * deltaY + deltaX * deltaX);
+        float deltaX = currX - prevX;
+        float deltaY = currY - prevY;
+        float center2centerDist = sqrt(deltaY * deltaY + deltaX * deltaX);
 
         if (fabs(deltaX) > STRIP_SEPARATION_THRESHOLD_PXLS ||
                 fabs(deltaY) > STRIP_SEPARATION_THRESHOLD_PXLS)
@@ -1269,19 +1269,19 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
     MosaicFrame *last = frames[frames_size-1];
     MosaicFrame *mb;
 
-    double lxpos = last->trs[0][2], lypos = last->trs[1][2];
-    double fxpos = first->trs[0][2], fypos = first->trs[1][2];
+    float lxpos = last->trs[0][2], lypos = last->trs[1][2];
+    float fxpos = first->trs[0][2], fypos = first->trs[1][2];
 
     // Calculate warp to produce proper stitching.
     // get x, y displacement
-    double midX = last->width / 2.0;
-    double midY = last->height / 2.0;
-    double z = ProjZ(first->trs, midX, midY, 1.0);
-    double firstX, firstY;
-    double prevX = firstX = ProjX(first->trs, midX, midY, z, 1.0);
-    double prevY = firstY = ProjY(first->trs, midX, midY, z, 1.0);
+    float midX = last->width / 2.0;
+    float midY = last->height / 2.0;
+    float z = ProjZ(first->trs, midX, midY, 1.0);
+    float firstX, firstY;
+    float prevX = firstX = ProjX(first->trs, midX, midY, z, 1.0);
+    float prevY = firstY = ProjY(first->trs, midX, midY, z, 1.0);
 
-    double arcLength, lastTheta;
+    float arcLength, lastTheta;
     m_wb.theta = lastTheta = arcLength = 0.0;
 
     // Step through all the frames to compute the total arc-length of the cone
@@ -1289,12 +1289,12 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
     for (int i = 0; i < frames_size; i++)
     {
         mb = frames[i];
-        double currX, currY;
+        float currX, currY;
         z = ProjZ(mb->trs, midX, midY, 1.0);
         currX = ProjX(mb->trs, midX, midY, z, 1.0);
         currY = ProjY(mb->trs, midX, midY, z, 1.0);
-        double deltaX = currX - prevX;
-        double deltaY = currY - prevY;
+        float deltaX = currX - prevX;
+        float deltaY = currY - prevY;
 
         // The arcLength is computed by summing the lengths of the chords
         // connecting the pairwise projected image centers of the input image frames.
@@ -1302,7 +1302,7 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
 
         if (!is360)
         {
-            double thisTheta = asin(mb->trs[1][0]);
+            float thisTheta = asin(mb->trs[1][0]);
             m_wb.theta += thisTheta - lastTheta;
             lastTheta = thisTheta;
         }
@@ -1320,15 +1320,15 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
     // If there is no rotation, we're done.
     if (m_wb.theta != 0.0)
     {
-        double dx = prevX - firstX;
-        double dy = prevY - firstY;
+        float dx = prevX - firstX;
+        float dy = prevY - firstY;
 
         // If the mosaic was captured by sweeping horizontally
         if (abs(lxpos - fxpos) > abs(lypos - fypos))
         {
             m_wb.horizontal = 1;
             // Calculate radius position to make ends exactly the same Y offset
-            double radiusTheta = dx / cos(3.14159 / 2.0 - m_wb.theta);
+            float radiusTheta = dx / cos(3.14159 / 2.0 - m_wb.theta);
             m_wb.radius = dy + radiusTheta * cos(m_wb.theta);
             if (m_wb.radius < 0.0) m_wb.radius = -m_wb.radius;
         }
@@ -1336,7 +1336,7 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
         {
             m_wb.horizontal = 0;
             // Calculate radius position to make ends exactly the same Y offset
-            double radiusTheta = dy / cos(3.14159 / 2.0 - m_wb.theta);
+            float radiusTheta = dy / cos(3.14159 / 2.0 - m_wb.theta);
             m_wb.radius = dx + radiusTheta * cos(m_wb.theta);
             if (m_wb.radius < 0.0) m_wb.radius = -m_wb.radius;
         }
@@ -1399,10 +1399,10 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
         }
 
         // Calculate the correct correction factor
-        double deltaX = prevX - m_wb.x;
-        double deltaY = prevY - m_wb.y;
-        double length = sqrt(deltaX * deltaX + deltaY * deltaY);
-        double deltaTheta = (m_wb.horizontal) ? deltaX : deltaY;
+        float deltaX = prevX - m_wb.x;
+        float deltaY = prevY - m_wb.y;
+        float length = sqrt(deltaX * deltaX + deltaY * deltaY);
+        float deltaTheta = (m_wb.horizontal) ? deltaX : deltaY;
         deltaTheta = asin(deltaTheta / length);
         m_wb.correction = ((m_wb.radius - length) * m_wb.direction) /
             (deltaTheta / m_wb.theta);

@@ -28,10 +28,10 @@
 *****************************************************************/
 /*! Get the inhomogenous 2D-point centroid of nr_point inhomogenous
 points in X*/
-inline void db_PointCentroid2D(double c[2],const double *X,int nr_points)
+inline void db_PointCentroid2D(float c[2],const float *X,int nr_points)
 {
     int i;
-    double cx,cy,m;
+    float cx,cy,m;
 
     cx=0;cy=0;
     for(i=0;i<nr_points;i++)
@@ -41,18 +41,18 @@ inline void db_PointCentroid2D(double c[2],const double *X,int nr_points)
     }
     if(nr_points)
     {
-        m=1.0/((double)nr_points);
+        m=1.0/((float)nr_points);
         c[0]=cx*m;
         c[1]=cy*m;
     }
     else c[0]=c[1]=0;
 }
 
-inline void db_PointCentroid2D(double c[2],const double * const *X,int nr_points)
+inline void db_PointCentroid2D(float c[2],const float * const *X,int nr_points)
 {
     int i;
-    double cx,cy,m;
-    const double *temp;
+    float cx,cy,m;
+    const float *temp;
 
     cx=0;cy=0;
     for(i=0;i<nr_points;i++)
@@ -63,7 +63,7 @@ inline void db_PointCentroid2D(double c[2],const double * const *X,int nr_points
     }
     if(nr_points)
     {
-        m=1.0/((double)nr_points);
+        m=1.0/((float)nr_points);
         c[0]=cx*m;
         c[1]=cy*m;
     }
@@ -72,10 +72,10 @@ inline void db_PointCentroid2D(double c[2],const double * const *X,int nr_points
 
 /*! Get the inhomogenous 3D-point centroid of nr_point inhomogenous
 points in X*/
-inline void db_PointCentroid3D(double c[3],const double *X,int nr_points)
+inline void db_PointCentroid3D(float c[3],const float *X,int nr_points)
 {
     int i;
-    double cx,cy,cz,m;
+    float cx,cy,cz,m;
 
     cx=0;cy=0;cz=0;
     for(i=0;i<nr_points;i++)
@@ -86,7 +86,7 @@ inline void db_PointCentroid3D(double c[3],const double *X,int nr_points)
     }
     if(nr_points)
     {
-        m=1.0/((double)nr_points);
+        m=1.0/((float)nr_points);
         c[0]=cx*m;
         c[1]=cy*m;
         c[2]=cz*m;
@@ -94,11 +94,11 @@ inline void db_PointCentroid3D(double c[3],const double *X,int nr_points)
     else c[0]=c[1]=c[2]=0;
 }
 
-inline void db_PointCentroid3D(double c[3],const double * const *X,int nr_points)
+inline void db_PointCentroid3D(float c[3],const float * const *X,int nr_points)
 {
     int i;
-    double cx,cy,cz,m;
-    const double *temp;
+    float cx,cy,cz,m;
+    const float *temp;
 
     cx=0;cy=0;cz=0;
     for(i=0;i<nr_points;i++)
@@ -110,7 +110,7 @@ inline void db_PointCentroid3D(double c[3],const double * const *X,int nr_points
     }
     if(nr_points)
     {
-        m=1.0/((double)nr_points);
+        m=1.0/((float)nr_points);
         c[0]=cx*m;
         c[1]=cy*m;
         c[2]=cz*m;

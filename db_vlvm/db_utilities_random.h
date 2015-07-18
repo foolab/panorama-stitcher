@@ -32,19 +32,19 @@
 /*\{*/
 /*!
  Random Number generator. Initialize with non-zero
-integer value r. A double between zero and one is
+integer value r. A float between zero and one is
 returned.
 \param r    seed
-\return random double
+\return random float
 */
-inline double db_QuickRandomDouble(int &r)
+inline float db_QuickRandomDouble(int &r)
 {
     int c;
     c=r/127773;
     r=16807*(r-c*127773)-2836*c;
     if(r<0) r+=2147483647;
-    return((1.0/((double)2147483647))*r);
-    //return (((double)rand())/(double)RAND_MAX);
+    return((1.0/((float)2147483647))*r);
+    //return (((float)rand())/(float)RAND_MAX);
 }
 
 /*!
@@ -56,7 +56,7 @@ integer value r. An int between and including 0 and max
 */
 inline int db_RandomInt(int &r,int max)
 {
-    double dtemp;
+    float dtemp;
     int itemp;
     dtemp=db_QuickRandomDouble(r)*(max+1);
     itemp=(int) dtemp;

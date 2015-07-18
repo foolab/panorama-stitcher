@@ -35,9 +35,9 @@
  \param R rotation matrix (out)
  \param q quaternion
  */
-inline void db_QuaternionToRotation(double R[9],const double q[4])
+inline void db_QuaternionToRotation(float R[9],const float q[4])
 {
-    double q0q0,q0qx,q0qy,q0qz,qxqx,qxqy,qxqz,qyqy,qyqz,qzqz;
+    float q0q0,q0qx,q0qy,q0qz,qxqx,qxqy,qxqz,qyqy,qyqz,qzqz;
 
     q0q0=q[0]*q[0];
     q0qx=q[0]*q[1];

@@ -36,9 +36,9 @@ In debug mode closed form quadratic solving takes on the order of 15 microsecond
 while eig of the companion matrix takes about 1.1 milliseconds
 Speed-optimized code in release mode solves a quadratic in 0.3 microseconds on 450MHz
 */
-inline void db_SolveQuadratic(double *roots,int *nr_roots,double a,double b,double c)
+inline void db_SolveQuadratic(float *roots,int *nr_roots,float a,float b,float c)
 {
-    double rs,srs,q;
+    float rs,srs,q;
 
     /*For non-degenerate quadratics
     [5 mult 2 add 1 sqrt=7flops 1func]*/
@@ -74,29 +74,29 @@ In debug mode closed form cubic solving takes on the order of 45 microseconds
 while eig of the companion matrix takes about 1.3 milliseconds
 Speed-optimized code in release mode solves a cubic in 1.5 microseconds on 450MHz
 For a non-degenerate cubic with two roots, the first root is the single root and
-the second root is the double root
+the second root is the float root
 */
-DB_API void db_SolveCubic(double *roots,int *nr_roots,double a,double b,double c,double d);
+DB_API void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d);
 /*!
 In debug mode closed form quartic solving takes on the order of 0.1 milliseconds
 while eig of the companion matrix takes about 1.5 milliseconds
 Speed-optimized code in release mode solves a quartic in 2.6 microseconds on 450MHz*/
-DB_API void db_SolveQuartic(double *roots,int *nr_roots,double a,double b,double c,double d,double e);
+DB_API void db_SolveQuartic(float *roots,int *nr_roots,float a,float b,float c,float d,float e);
 /*!
 Quartic solving where a solution is forced when splitting into quadratics, which
 can be good if the quartic is sometimes in fact a quadratic, such as in absolute orientation
 when the data is planar*/
-DB_API void db_SolveQuarticForced(double *roots,int *nr_roots,double a,double b,double c,double d,double e);
+DB_API void db_SolveQuarticForced(float *roots,int *nr_roots,float a,float b,float c,float d,float e);
 
-inline double db_PolyEval1(const double p[2],double x)
+inline float db_PolyEval1(const float p[2],float x)
 {
     return(p[0]+x*p[1]);
 }
 
-inline void db_MultiplyPoly1_1(double *d,const double *a,const double *b)
+inline void db_MultiplyPoly1_1(float *d,const float *a,const float *b)
 {
-    double a0,a1;
-    double b0,b1;
+    float a0,a1;
+    float b0,b1;
     a0=a[0];a1=a[1];
     b0=b[0];b1=b[1];
 
@@ -105,10 +105,10 @@ inline void db_MultiplyPoly1_1(double *d,const double *a,const double *b)
     d[2]=      a1*b1;
 }
 
-inline void db_MultiplyPoly0_2(double *d,const double *a,const double *b)
+inline void db_MultiplyPoly0_2(float *d,const float *a,const float *b)
 {
-    double a0;
-    double b0,b1,b2;
+    float a0;
+    float b0,b1,b2;
     a0=a[0];
     b0=b[0];b1=b[1];b2=b[2];
 
@@ -117,10 +117,10 @@ inline void db_MultiplyPoly0_2(double *d,const double *a,const double *b)
     d[2]=a0*b2;
 }
 
-inline void db_MultiplyPoly1_2(double *d,const double *a,const double *b)
+inline void db_MultiplyPoly1_2(float *d,const float *a,const float *b)
 {
-    double a0,a1;
-    double b0,b1,b2;
+    float a0,a1;
+    float b0,b1,b2;
     a0=a[0];a1=a[1];
     b0=b[0];b1=b[1];b2=b[2];
 
@@ -131,10 +131,10 @@ inline void db_MultiplyPoly1_2(double *d,const double *a,const double *b)
 }
 
 
-inline void db_MultiplyPoly1_3(double *d,const double *a,const double *b)
+inline void db_MultiplyPoly1_3(float *d,const float *a,const float *b)
 {
-    double a0,a1;
-    double b0,b1,b2,b3;
+    float a0,a1;
+    float b0,b1,b2,b3;
     a0=a[0];a1=a[1];
     b0=b[0];b1=b[1];b2=b[2];b3=b[3];
 
@@ -146,20 +146,20 @@ inline void db_MultiplyPoly1_3(double *d,const double *a,const double *b)
 }
 /*!
 Multiply d=a*b where a is one degree and b is two degree*/
-inline void db_AddPolyProduct0_1(double *d,const double *a,const double *b)
+inline void db_AddPolyProduct0_1(float *d,const float *a,const float *b)
 {
-    double a0;
-    double b0,b1;
+    float a0;
+    float b0,b1;
     a0=a[0];
     b0=b[0];b1=b[1];
 
     d[0]+=a0*b0;
     d[1]+=a0*b1;
 }
-inline void db_AddPolyProduct0_2(double *d,const double *a,const double *b)
+inline void db_AddPolyProduct0_2(float *d,const float *a,const float *b)
 {
-    double a0;
-    double b0,b1,b2;
+    float a0;
+    float b0,b1,b2;
     a0=a[0];
     b0=b[0];b1=b[1];b2=b[2];
 
@@ -169,20 +169,20 @@ inline void db_AddPolyProduct0_2(double *d,const double *a,const double *b)
 }
 /*!
 Multiply d=a*b where a is one degree and b is two degree*/
-inline void db_SubtractPolyProduct0_0(double *d,const double *a,const double *b)
+inline void db_SubtractPolyProduct0_0(float *d,const float *a,const float *b)
 {
-    double a0;
-    double b0;
+    float a0;
+    float b0;
     a0=a[0];
     b0=b[0];
 
     d[0]-=a0*b0;
 }
 
-inline void db_SubtractPolyProduct0_1(double *d,const double *a,const double *b)
+inline void db_SubtractPolyProduct0_1(float *d,const float *a,const float *b)
 {
-    double a0;
-    double b0,b1;
+    float a0;
+    float b0,b1;
     a0=a[0];
     b0=b[0];b1=b[1];
 
@@ -190,10 +190,10 @@ inline void db_SubtractPolyProduct0_1(double *d,const double *a,const double *b)
     d[1]-=a0*b1;
 }
 
-inline void db_SubtractPolyProduct0_2(double *d,const double *a,const double *b)
+inline void db_SubtractPolyProduct0_2(float *d,const float *a,const float *b)
 {
-    double a0;
-    double b0,b1,b2;
+    float a0;
+    float b0,b1,b2;
     a0=a[0];
     b0=b[0];b1=b[1];b2=b[2];
 
@@ -202,10 +202,10 @@ inline void db_SubtractPolyProduct0_2(double *d,const double *a,const double *b)
     d[2]-=a0*b2;
 }
 
-inline void db_SubtractPolyProduct1_3(double *d,const double *a,const double *b)
+inline void db_SubtractPolyProduct1_3(float *d,const float *a,const float *b)
 {
-    double a0,a1;
-    double b0,b1,b2,b3;
+    float a0,a1;
+    float b0,b1,b2,b3;
     a0=a[0];a1=a[1];
     b0=b[0];b1=b[1];b2=b[2];b3=b[3];
 
@@ -216,15 +216,15 @@ inline void db_SubtractPolyProduct1_3(double *d,const double *a,const double *b)
     d[4]-=      a1*b3;
 }
 
-inline void    db_CharacteristicPolynomial4x4(double p[5],const double A[16])
+inline void    db_CharacteristicPolynomial4x4(float p[5],const float A[16])
 {
     /*All two by two determinants of the first two rows*/
-    double two01[3],two02[3],two03[3],two12[3],two13[3],two23[3];
+    float two01[3],two02[3],two03[3],two12[3],two13[3],two23[3];
     /*Polynomials representing third and fourth row of A*/
-    double P0[2],P1[2],P2[2],P3[2];
-    double P4[2],P5[2],P6[2],P7[2];
+    float P0[2],P1[2],P2[2],P3[2];
+    float P4[2],P5[2],P6[2],P7[2];
     /*All three by three determinants of the first three rows*/
-    double neg_three0[4],neg_three1[4],three2[4],three3[4];
+    float neg_three0[4],neg_three1[4],three2[4],three3[4];
 
     /*Compute 2x2 determinants*/
     two01[0]=A[0]*A[5]-A[1]*A[4];
@@ -281,9 +281,9 @@ inline void    db_CharacteristicPolynomial4x4(double p[5],const double A[16])
     db_SubtractPolyProduct0_2(p,P6,three2);
 }
 
-inline void db_RealEigenvalues4x4(double lambda[4],int *nr_roots,const double A[16],int forced=0)
+inline void db_RealEigenvalues4x4(float lambda[4],int *nr_roots,const float A[16],int forced=0)
 {
-    double p[5];
+    float p[5];
 
     db_CharacteristicPolynomial4x4(p,A);
     if(forced) db_SolveQuarticForced(lambda,nr_roots,p[4],p[3],p[2],p[1],p[0]);
@@ -294,12 +294,12 @@ inline void db_RealEigenvalues4x4(double lambda[4],int *nr_roots,const double A[
 Compute the unit norm eigenvector v of the matrix A corresponding
 to the eigenvalue lambda
 [96mult 60add 1sqrt=156flops 1sqrt]*/
-inline void db_EigenVector4x4(double v[4],double lambda,const double A[16])
+inline void db_EigenVector4x4(float v[4],float lambda,const float A[16])
 {
-    double a0,a5,a10,a15;
-    double d01,d02,d03,d12,d13,d23;
-    double e01,e02,e03,e12,e13,e23;
-    double C[16],n0,n1,n2,n3,m;
+    float a0,a5,a10,a15;
+    float d01,d02,d03,d12,d13,d23;
+    float e01,e02,e03,e12,e13,e23;
+    float C[16],n0,n1,n2,n3,m;
 
     /*Compute diagonal
     [4add=4flops]*/

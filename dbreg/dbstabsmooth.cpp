@@ -22,7 +22,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 static bool vpmotion_add(VP_MOTION *in1, VP_MOTION *in2, VP_MOTION *out);
-static bool vpmotion_multiply(VP_MOTION *in1, double factor, VP_MOTION *out);
+static bool vpmotion_multiply(VP_MOTION *in1, float factor, VP_MOTION *out);
 
 db_StabilizationSmoother::db_StabilizationSmoother()
 {
@@ -67,25 +67,25 @@ bool db_StabilizationSmoother::smoothMotion(VP_MOTION *inmot, VP_MOTION *outmot)
 
     if(f_smoothOn) {
         if(!f_smoothReset) {
-            MXX(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MXX(f_motLF) + (1.0-f_smoothFactor)* (double) MXX(*inmot));
-            MXY(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MXY(f_motLF) + (1.0-f_smoothFactor)* (double) MXY(*inmot));
-            MXZ(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MXZ(f_motLF) + (1.0-f_smoothFactor)* (double) MXZ(*inmot));
-            MXW(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MXW(f_motLF) + (1.0-f_smoothFactor)* (double) MXW(*inmot));
+            MXX(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MXX(f_motLF) + (1.0-f_smoothFactor)* (float) MXX(*inmot));
+            MXY(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MXY(f_motLF) + (1.0-f_smoothFactor)* (float) MXY(*inmot));
+            MXZ(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MXZ(f_motLF) + (1.0-f_smoothFactor)* (float) MXZ(*inmot));
+            MXW(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MXW(f_motLF) + (1.0-f_smoothFactor)* (float) MXW(*inmot));
 
-            MYX(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MYX(f_motLF) + (1.0-f_smoothFactor)* (double) MYX(*inmot));
-            MYY(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MYY(f_motLF) + (1.0-f_smoothFactor)* (double) MYY(*inmot));
-            MYZ(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MYZ(f_motLF) + (1.0-f_smoothFactor)* (double) MYZ(*inmot));
-            MYW(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MYW(f_motLF) + (1.0-f_smoothFactor)* (double) MYW(*inmot));
+            MYX(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MYX(f_motLF) + (1.0-f_smoothFactor)* (float) MYX(*inmot));
+            MYY(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MYY(f_motLF) + (1.0-f_smoothFactor)* (float) MYY(*inmot));
+            MYZ(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MYZ(f_motLF) + (1.0-f_smoothFactor)* (float) MYZ(*inmot));
+            MYW(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MYW(f_motLF) + (1.0-f_smoothFactor)* (float) MYW(*inmot));
 
-            MZX(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MZX(f_motLF) + (1.0-f_smoothFactor)* (double) MZX(*inmot));
-            MZY(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MZY(f_motLF) + (1.0-f_smoothFactor)* (double) MZY(*inmot));
-            MZZ(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MZZ(f_motLF) + (1.0-f_smoothFactor)* (double) MZZ(*inmot));
-            MZW(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MZW(f_motLF) + (1.0-f_smoothFactor)* (double) MZW(*inmot));
+            MZX(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MZX(f_motLF) + (1.0-f_smoothFactor)* (float) MZX(*inmot));
+            MZY(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MZY(f_motLF) + (1.0-f_smoothFactor)* (float) MZY(*inmot));
+            MZZ(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MZZ(f_motLF) + (1.0-f_smoothFactor)* (float) MZZ(*inmot));
+            MZW(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MZW(f_motLF) + (1.0-f_smoothFactor)* (float) MZW(*inmot));
 
-            MWX(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MWX(f_motLF) + (1.0-f_smoothFactor)* (double) MWX(*inmot));
-            MWY(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MWY(f_motLF) + (1.0-f_smoothFactor)* (double) MWY(*inmot));
-            MWZ(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MWZ(f_motLF) + (1.0-f_smoothFactor)* (double) MWZ(*inmot));
-            MWW(f_motLF) = (VP_PAR) (f_smoothFactor*(double) MWW(f_motLF) + (1.0-f_smoothFactor)* (double) MWW(*inmot));
+            MWX(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MWX(f_motLF) + (1.0-f_smoothFactor)* (float) MWX(*inmot));
+            MWY(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MWY(f_motLF) + (1.0-f_smoothFactor)* (float) MWY(*inmot));
+            MWZ(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MWZ(f_motLF) + (1.0-f_smoothFactor)* (float) MWZ(*inmot));
+            MWW(f_motLF) = (VP_PAR) (f_smoothFactor*(float) MWW(f_motLF) + (1.0-f_smoothFactor)* (float) MWW(*inmot));
         }
         else
             vp_copy_motion_no_id(inmot, &f_motLF); // f_smoothFactor = 0.0
@@ -110,14 +110,14 @@ bool db_StabilizationSmoother::smoothMotionAdaptive(/*VP_BIMG *bimg,*/int hsize,
     VP_MOTION tmpMotion, testMotion;
     VP_PAR p1x, p2x, p3x, p4x;
     VP_PAR p1y, p2y, p3y, p4y;
-    double smoothFactor;
-    double minSmoothFactor = f_minDampingFactor;
+    float smoothFactor;
+    float minSmoothFactor = f_minDampingFactor;
 
 //  int hsize = bimg->w;
 //  int vsize = bimg->h;
-    double border_factor = 0.01;//0.2;
-    double border_x = border_factor * hsize;
-    double border_y = border_factor * vsize;
+    float border_factor = 0.01;//0.2;
+    float border_x = border_factor * hsize;
+    float border_y = border_factor * vsize;
 
     VP_MOTION_ID(f_motLF);
     VP_MOTION_ID(f_imotLF);
@@ -149,23 +149,23 @@ bool db_StabilizationSmoother::smoothMotionAdaptive(/*VP_BIMG *bimg,*/int hsize,
             // border pixels are seen at the output.  We test for f_smoothFactor terms
             // between 0.9 and 1.0, in steps of 0.01, and between 0.5 ands 0.9 in steps of 0.1
 
-            (void) vp_zoom_motion2d(&tmpMotion, &testMotion, 1, hsize, vsize, (double)f_zoom); // needs to return bool
+            (void) vp_zoom_motion2d(&tmpMotion, &testMotion, 1, hsize, vsize, (float)f_zoom); // needs to return bool
 
             VP_WARP_POINT_2D(0, 0, testMotion, p1x, p1y);
             VP_WARP_POINT_2D(hsize - 1, 0, testMotion, p2x, p2y);
             VP_WARP_POINT_2D(hsize - 1, vsize - 1, testMotion, p3x, p3y);
             VP_WARP_POINT_2D(0, vsize - 1, testMotion, p4x, p4y);
 
-            if (!is_point_in_rect((double)p1x,(double)p1y,-border_x,-border_y,(double)(hsize+2.0*border_x),(double)(vsize+2.0*border_y))) {
+            if (!is_point_in_rect((float)p1x,(float)p1y,-border_x,-border_y,(float)(hsize+2.0*border_x),(float)(vsize+2.0*border_y))) {
                 continue;
             }
-            if (!is_point_in_rect((double)p2x, (double)p2y,-border_x,-border_y,(double)(hsize+2.0*border_x),(double)(vsize+2.0*border_y))) {
+            if (!is_point_in_rect((float)p2x, (float)p2y,-border_x,-border_y,(float)(hsize+2.0*border_x),(float)(vsize+2.0*border_y))) {
                 continue;
             }
-            if (!is_point_in_rect((double)p3x,(double)p3y,-border_x,-border_y,(double)(hsize+2.0*border_x),(double)(vsize+2.0*border_y))) {
+            if (!is_point_in_rect((float)p3x,(float)p3y,-border_x,-border_y,(float)(hsize+2.0*border_x),(float)(vsize+2.0*border_y))) {
                 continue;
             }
-            if (!is_point_in_rect((double)p4x, (double)p4y,-border_x,-border_y,(double)(hsize+2.0*border_x),(double)(vsize+2.0*border_y))) {
+            if (!is_point_in_rect((float)p4x, (float)p4y,-border_x,-border_y,(float)(hsize+2.0*border_x),(float)(vsize+2.0*border_y))) {
                 continue;
             }
 
@@ -189,32 +189,32 @@ bool db_StabilizationSmoother::smoothMotionAdaptive(/*VP_BIMG *bimg,*/int hsize,
     return true;
 }
 
-bool db_StabilizationSmoother::smoothMotion(VP_MOTION *inmot, VP_MOTION *outmot, double smooth_factor)
+bool db_StabilizationSmoother::smoothMotion(VP_MOTION *inmot, VP_MOTION *outmot, float smooth_factor)
 {
     f_motLF.insid = inmot->refid;
     f_motLF.refid = inmot->insid;
 
     if(f_smoothOn) {
         if(!f_smoothReset) {
-            MXX(f_motLF) = (VP_PAR) (smooth_factor*(double) MXX(f_motLF) + (1.0-smooth_factor)* (double) MXX(*inmot));
-            MXY(f_motLF) = (VP_PAR) (smooth_factor*(double) MXY(f_motLF) + (1.0-smooth_factor)* (double) MXY(*inmot));
-            MXZ(f_motLF) = (VP_PAR) (smooth_factor*(double) MXZ(f_motLF) + (1.0-smooth_factor)* (double) MXZ(*inmot));
-            MXW(f_motLF) = (VP_PAR) (smooth_factor*(double) MXW(f_motLF) + (1.0-smooth_factor)* (double) MXW(*inmot));
+            MXX(f_motLF) = (VP_PAR) (smooth_factor*(float) MXX(f_motLF) + (1.0-smooth_factor)* (float) MXX(*inmot));
+            MXY(f_motLF) = (VP_PAR) (smooth_factor*(float) MXY(f_motLF) + (1.0-smooth_factor)* (float) MXY(*inmot));
+            MXZ(f_motLF) = (VP_PAR) (smooth_factor*(float) MXZ(f_motLF) + (1.0-smooth_factor)* (float) MXZ(*inmot));
+            MXW(f_motLF) = (VP_PAR) (smooth_factor*(float) MXW(f_motLF) + (1.0-smooth_factor)* (float) MXW(*inmot));
 
-            MYX(f_motLF) = (VP_PAR) (smooth_factor*(double) MYX(f_motLF) + (1.0-smooth_factor)* (double) MYX(*inmot));
-            MYY(f_motLF) = (VP_PAR) (smooth_factor*(double) MYY(f_motLF) + (1.0-smooth_factor)* (double) MYY(*inmot));
-            MYZ(f_motLF) = (VP_PAR) (smooth_factor*(double) MYZ(f_motLF) + (1.0-smooth_factor)* (double) MYZ(*inmot));
-            MYW(f_motLF) = (VP_PAR) (smooth_factor*(double) MYW(f_motLF) + (1.0-smooth_factor)* (double) MYW(*inmot));
+            MYX(f_motLF) = (VP_PAR) (smooth_factor*(float) MYX(f_motLF) + (1.0-smooth_factor)* (float) MYX(*inmot));
+            MYY(f_motLF) = (VP_PAR) (smooth_factor*(float) MYY(f_motLF) + (1.0-smooth_factor)* (float) MYY(*inmot));
+            MYZ(f_motLF) = (VP_PAR) (smooth_factor*(float) MYZ(f_motLF) + (1.0-smooth_factor)* (float) MYZ(*inmot));
+            MYW(f_motLF) = (VP_PAR) (smooth_factor*(float) MYW(f_motLF) + (1.0-smooth_factor)* (float) MYW(*inmot));
 
-            MZX(f_motLF) = (VP_PAR) (smooth_factor*(double) MZX(f_motLF) + (1.0-smooth_factor)* (double) MZX(*inmot));
-            MZY(f_motLF) = (VP_PAR) (smooth_factor*(double) MZY(f_motLF) + (1.0-smooth_factor)* (double) MZY(*inmot));
-            MZZ(f_motLF) = (VP_PAR) (smooth_factor*(double) MZZ(f_motLF) + (1.0-smooth_factor)* (double) MZZ(*inmot));
-            MZW(f_motLF) = (VP_PAR) (smooth_factor*(double) MZW(f_motLF) + (1.0-smooth_factor)* (double) MZW(*inmot));
+            MZX(f_motLF) = (VP_PAR) (smooth_factor*(float) MZX(f_motLF) + (1.0-smooth_factor)* (float) MZX(*inmot));
+            MZY(f_motLF) = (VP_PAR) (smooth_factor*(float) MZY(f_motLF) + (1.0-smooth_factor)* (float) MZY(*inmot));
+            MZZ(f_motLF) = (VP_PAR) (smooth_factor*(float) MZZ(f_motLF) + (1.0-smooth_factor)* (float) MZZ(*inmot));
+            MZW(f_motLF) = (VP_PAR) (smooth_factor*(float) MZW(f_motLF) + (1.0-smooth_factor)* (float) MZW(*inmot));
 
-            MWX(f_motLF) = (VP_PAR) (smooth_factor*(double) MWX(f_motLF) + (1.0-smooth_factor)* (double) MWX(*inmot));
-            MWY(f_motLF) = (VP_PAR) (smooth_factor*(double) MWY(f_motLF) + (1.0-smooth_factor)* (double) MWY(*inmot));
-            MWZ(f_motLF) = (VP_PAR) (smooth_factor*(double) MWZ(f_motLF) + (1.0-smooth_factor)* (double) MWZ(*inmot));
-            MWW(f_motLF) = (VP_PAR) (smooth_factor*(double) MWW(f_motLF) + (1.0-smooth_factor)* (double) MWW(*inmot));
+            MWX(f_motLF) = (VP_PAR) (smooth_factor*(float) MWX(f_motLF) + (1.0-smooth_factor)* (float) MWX(*inmot));
+            MWY(f_motLF) = (VP_PAR) (smooth_factor*(float) MWY(f_motLF) + (1.0-smooth_factor)* (float) MWY(*inmot));
+            MWZ(f_motLF) = (VP_PAR) (smooth_factor*(float) MWZ(f_motLF) + (1.0-smooth_factor)* (float) MWZ(*inmot));
+            MWW(f_motLF) = (VP_PAR) (smooth_factor*(float) MWW(f_motLF) + (1.0-smooth_factor)* (float) MWW(*inmot));
         }
         else
             vp_copy_motion_no_id(inmot, &f_motLF); // smooth_factor = 0.0
@@ -236,7 +236,7 @@ bool db_StabilizationSmoother::smoothMotion(VP_MOTION *inmot, VP_MOTION *outmot,
 
 //! Overloaded smoother function that takes in user-specidied smoothing factor
 bool
-db_StabilizationSmoother::smoothMotion1(VP_MOTION *inmot, VP_MOTION *outmot, VP_MOTION *motLF, VP_MOTION *imotLF, double factor)
+db_StabilizationSmoother::smoothMotion1(VP_MOTION *inmot, VP_MOTION *outmot, VP_MOTION *motLF, VP_MOTION *imotLF, float factor)
 {
 
     if(!f_smoothOn) {
@@ -245,25 +245,25 @@ db_StabilizationSmoother::smoothMotion1(VP_MOTION *inmot, VP_MOTION *outmot, VP_
     }
     else {
         if(!f_smoothReset) {
-            MXX(*motLF) = (VP_PAR) (factor*(double) MXX(*motLF) + (1.0-factor)* (double) MXX(*inmot));
-            MXY(*motLF) = (VP_PAR) (factor*(double) MXY(*motLF) + (1.0-factor)* (double) MXY(*inmot));
-            MXZ(*motLF) = (VP_PAR) (factor*(double) MXZ(*motLF) + (1.0-factor)* (double) MXZ(*inmot));
-            MXW(*motLF) = (VP_PAR) (factor*(double) MXW(*motLF) + (1.0-factor)* (double) MXW(*inmot));
+            MXX(*motLF) = (VP_PAR) (factor*(float) MXX(*motLF) + (1.0-factor)* (float) MXX(*inmot));
+            MXY(*motLF) = (VP_PAR) (factor*(float) MXY(*motLF) + (1.0-factor)* (float) MXY(*inmot));
+            MXZ(*motLF) = (VP_PAR) (factor*(float) MXZ(*motLF) + (1.0-factor)* (float) MXZ(*inmot));
+            MXW(*motLF) = (VP_PAR) (factor*(float) MXW(*motLF) + (1.0-factor)* (float) MXW(*inmot));
 
-            MYX(*motLF) = (VP_PAR) (factor*(double) MYX(*motLF) + (1.0-factor)* (double) MYX(*inmot));
-            MYY(*motLF) = (VP_PAR) (factor*(double) MYY(*motLF) + (1.0-factor)* (double) MYY(*inmot));
-            MYZ(*motLF) = (VP_PAR) (factor*(double) MYZ(*motLF) + (1.0-factor)* (double) MYZ(*inmot));
-            MYW(*motLF) = (VP_PAR) (factor*(double) MYW(*motLF) + (1.0-factor)* (double) MYW(*inmot));
+            MYX(*motLF) = (VP_PAR) (factor*(float) MYX(*motLF) + (1.0-factor)* (float) MYX(*inmot));
+            MYY(*motLF) = (VP_PAR) (factor*(float) MYY(*motLF) + (1.0-factor)* (float) MYY(*inmot));
+            MYZ(*motLF) = (VP_PAR) (factor*(float) MYZ(*motLF) + (1.0-factor)* (float) MYZ(*inmot));
+            MYW(*motLF) = (VP_PAR) (factor*(float) MYW(*motLF) + (1.0-factor)* (float) MYW(*inmot));
 
-            MZX(*motLF) = (VP_PAR) (factor*(double) MZX(*motLF) + (1.0-factor)* (double) MZX(*inmot));
-            MZY(*motLF) = (VP_PAR) (factor*(double) MZY(*motLF) + (1.0-factor)* (double) MZY(*inmot));
-            MZZ(*motLF) = (VP_PAR) (factor*(double) MZZ(*motLF) + (1.0-factor)* (double) MZZ(*inmot));
-            MZW(*motLF) = (VP_PAR) (factor*(double) MZW(*motLF) + (1.0-factor)* (double) MZW(*inmot));
+            MZX(*motLF) = (VP_PAR) (factor*(float) MZX(*motLF) + (1.0-factor)* (float) MZX(*inmot));
+            MZY(*motLF) = (VP_PAR) (factor*(float) MZY(*motLF) + (1.0-factor)* (float) MZY(*inmot));
+            MZZ(*motLF) = (VP_PAR) (factor*(float) MZZ(*motLF) + (1.0-factor)* (float) MZZ(*inmot));
+            MZW(*motLF) = (VP_PAR) (factor*(float) MZW(*motLF) + (1.0-factor)* (float) MZW(*inmot));
 
-            MWX(*motLF) = (VP_PAR) (factor*(double) MWX(*motLF) + (1.0-factor)* (double) MWX(*inmot));
-            MWY(*motLF) = (VP_PAR) (factor*(double) MWY(*motLF) + (1.0-factor)* (double) MWY(*inmot));
-            MWZ(*motLF) = (VP_PAR) (factor*(double) MWZ(*motLF) + (1.0-factor)* (double) MWZ(*inmot));
-            MWW(*motLF) = (VP_PAR) (factor*(double) MWW(*motLF) + (1.0-factor)* (double) MWW(*inmot));
+            MWX(*motLF) = (VP_PAR) (factor*(float) MWX(*motLF) + (1.0-factor)* (float) MWX(*inmot));
+            MWY(*motLF) = (VP_PAR) (factor*(float) MWY(*motLF) + (1.0-factor)* (float) MWY(*inmot));
+            MWZ(*motLF) = (VP_PAR) (factor*(float) MWZ(*motLF) + (1.0-factor)* (float) MWZ(*inmot));
+            MWW(*motLF) = (VP_PAR) (factor*(float) MWW(*motLF) + (1.0-factor)* (float) MWW(*inmot));
         }
         else {
             vp_copy_motion(inmot, motLF);
@@ -288,7 +288,7 @@ db_StabilizationSmoother::smoothMotion1(VP_MOTION *inmot, VP_MOTION *outmot, VP_
 
 
 
-bool db_StabilizationSmoother::is_point_in_rect(double px, double py, double rx, double ry, double w, double h)
+bool db_StabilizationSmoother::is_point_in_rect(float px, float py, float rx, float ry, float w, float h)
 {
     if (px < rx)
         return(false);
@@ -316,7 +316,7 @@ static bool vpmotion_add(VP_MOTION *in1, VP_MOTION *in2, VP_MOTION *out)
     return true;
 }
 
-static bool vpmotion_multiply(VP_MOTION *in1, double factor, VP_MOTION *out)
+static bool vpmotion_multiply(VP_MOTION *in1, float factor, VP_MOTION *out)
 {
     int i;
     if(in1 == NULL || out == NULL)

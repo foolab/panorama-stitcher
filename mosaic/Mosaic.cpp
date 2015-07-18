@@ -218,17 +218,17 @@ ImageType Mosaic::getMosaic(int &width, int &height)
 int Mosaic::balanceRotations()
 {
     // Normalize to the mean angle of rotation (Smiley face)
-    double sineAngle = 0.0;
+    float sineAngle = 0.0;
 
     for (int i = 0; i < frames_size; i++) sineAngle += frames[i]->trs[0][1];
     sineAngle /= frames_size;
     // Calculate the cosineAngle (1 - sineAngle*sineAngle) = cosineAngle*cosineAngle
-    double cosineAngle = sqrt(1.0 - sineAngle*sineAngle);
-    double m[3][3] = {
+    float cosineAngle = sqrt(1.0 - sineAngle*sineAngle);
+    float m[3][3] = {
         { cosineAngle, -sineAngle, 0 },
         { sineAngle, cosineAngle, 0},
         { 0, 0, 1}};
-    double tmp[3][3];
+    float tmp[3][3];
 
     for (int i = 0; i < frames_size; i++) {
         memcpy(tmp, frames[i]->trs, sizeof(tmp));

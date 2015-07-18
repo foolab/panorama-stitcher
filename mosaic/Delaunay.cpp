@@ -69,7 +69,7 @@ void CDelaunay::buildTriangulation(int size)
   int i, rows;
   EdgePointer lefte, righte;
 
-  rows = (int)( 0.5 + sqrt( (double) size / log( (double) size )));
+  rows = (int)( 0.5 + sqrt( (float) size / log( (float) size )));
 
   // Sort the pointers by  x-coordinate of site
   for ( i=0 ; i < size ; i++ ) {
@@ -102,7 +102,7 @@ void CDelaunay::build(int lo, int hi, EdgePointer *le, EdgePointer *re, int rows
     }
     lowrows = rows/2;
     split = low - 1 + (int)
-      (0.5 + ((double)(high-low+1) * ((double)lowrows / (double)rows)));
+      (0.5 + ((float)(high-low+1) * ((float)lowrows / (float)rows)));
     build( low, split, &ldo, &ldi, lowrows );
     build( split+1, high, &rdi, &rdo, (rows-lowrows) );
     doMerge(&ldo, ldi, rdi, &rdo);
@@ -282,7 +282,7 @@ EdgePointer CDelaunay::consolidateEdges()
 
 int CDelaunay::xcmpsp(int i, int j)
 {
-  double d = sa[(i>=0)?sp[i]:sp1].X() - sa[(j>=0)?sp[j]:sp1].X();
+  float d = sa[(i>=0)?sp[i]:sp1].X() - sa[(j>=0)?sp[j]:sp1].X();
   if ( d > 0. ) {
     return 1;
   }
@@ -301,7 +301,7 @@ int CDelaunay::xcmpsp(int i, int j)
 
 int CDelaunay::ycmpsp(int i, int j)
 {
-  double d = sa[(i>=0)?sp[i]:sp1].Y() - sa[(j>=0)?sp[j]:sp1].Y();
+  float d = sa[(i>=0)?sp[i]:sp1].Y() - sa[(j>=0)?sp[j]:sp1].Y();
   if ( d > 0. ) {
     return 1;
   }
@@ -485,7 +485,7 @@ void CDelaunay::rcssort(int lowelt, int highelt, int temp,
 // incircle, as in the Guibas-Stolfi paper.
 int CDelaunay::incircle(SitePointer a, SitePointer b, SitePointer c, SitePointer d)
 {
-  double adx, ady, bdx, bdy, cdx, cdy, dx, dy, nad, nbd, ncd;
+  float adx, ady, bdx, bdy, cdx, cdy, dx, dy, nad, nbd, ncd;
   dx = sa[d].X();
   dy = sa[d].Y();
   adx = sa[a].X() - dx;
@@ -507,14 +507,14 @@ int CDelaunay::ccw(SitePointer a, SitePointer b, SitePointer c)
 {
   int result;
 
-  double ax = sa[a].X();
-  double bx = sa[b].X();
-  double cx = sa[c].X();
-  double ay = sa[a].Y();
-  double by = sa[b].Y();
-  double cy = sa[c].Y();
+  float ax = sa[a].X();
+  float bx = sa[b].X();
+  float cx = sa[c].X();
+  float ay = sa[a].Y();
+  float by = sa[b].Y();
+  float cy = sa[c].Y();
 
-  double val = (ax - cx)*(by - cy) - (bx - cx)*(ay - cy);
+  float val = (ax - cx)*(by - cy) - (bx - cx)*(ay - cy);
   if ( val > 0.0) {
     return true;
   }

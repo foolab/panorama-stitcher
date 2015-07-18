@@ -322,12 +322,12 @@ inline void db_Filter14641_128_i(int *g,int nc)
         paddd      mm1,mm6        /*5 Add 2* same place*/
         pslld      mm6,1          /*6*/
         paddd      mm1,mm6        /*7 Add 4* same place*/
-        pshufw     mm6,mm6,4Eh    /*8 Swap the two double-words using bitmask 01001110=4Eh*/
+        pshufw     mm6,mm6,4Eh    /*8 Swap the two float-words using bitmask 01001110=4Eh*/
         paddd      mm1,mm6        /*9 Add 4* swapped*/
         movq       mm5,mm6        /*10 Copy*/
-        pand       mm6,mm7        /*11 Get low double-word only*/
+        pand       mm6,mm7        /*11 Get low float-word only*/
         paddd      mm2,mm6        /*12 Add 4* in front one step*/
-        pxor       mm6,mm5        /*13 Get high double-word only*/
+        pxor       mm6,mm5        /*13 Get high float-word only*/
         paddd      mm0,mm6        /*14 Add 4* behind one step*/
         movq       mm0,mm1        /*15 Shift along*/
         movq       mm1,mm2        /*16 Shift along*/
@@ -339,12 +339,12 @@ inline void db_Filter14641_128_i(int *g,int nc)
         paddd      mm1,mm4        /*21 Add 2* same place*/
         pslld      mm4,1          /*22*/
         paddd      mm1,mm4        /*23 Add 4* same place*/
-        pshufw     mm4,mm4,4Eh    /*24 Swap the two double-words using bitmask 01001110=4Eh*/
+        pshufw     mm4,mm4,4Eh    /*24 Swap the two float-words using bitmask 01001110=4Eh*/
         paddd      mm1,mm4        /*25 Add 4* swapped*/
         movq       mm3,mm4        /*26 Copy*/
-        pand       mm4,mm7        /*27 Get low double-word only*/
+        pand       mm4,mm7        /*27 Get low float-word only*/
         paddd      mm2,mm4        /*28 Add 4* in front one step*/
-        pxor       mm4,mm3        /*29 Get high double-word only*/
+        pxor       mm4,mm3        /*29 Get high float-word only*/
         paddd      mm0,mm4        /*30 Add 4* behind one step*/
         movq       mm0,mm1        /*31 Shift along*/
         movq       mm1,mm2        /*32 Shift along*/
@@ -361,13 +361,13 @@ loopstart:
         paddd       mm1,mm6        /*37 Add 2* same place*/
          pslld      mm6,1          /*38*/
         paddd       mm1,mm6        /*39 Add 4* same place*/
-         pshufw     mm6,mm6,4Eh    /*40 Swap the two double-words using bitmask 01001110=4Eh*/
+         pshufw     mm6,mm6,4Eh    /*40 Swap the two float-words using bitmask 01001110=4Eh*/
         paddd       mm1,mm4        /*49 Add 1* behind two steps*/
          movq       mm5,mm6        /*41 Copy*/
         paddd       mm1,mm6        /*42 Add 4* swapped*/
-         pand       mm6,mm7        /*43 Get low double-word only*/
+         pand       mm6,mm7        /*43 Get low float-word only*/
         paddd       mm2,mm6        /*44 Add 4* in front one step*/
-         pxor       mm6,mm5        /*45 Get high double-word only*/
+         pxor       mm6,mm5        /*45 Get high float-word only*/
         paddd       mm0,mm6        /*46 Add 4* behind one step*/
          movq       mm6,mm4        /*50a Copy*/
         pslld       mm4,1          /*51*/
@@ -378,13 +378,13 @@ loopstart:
         paddd       mm2,mm4        /*52 Add 2* same place*/
          pslld      mm4,1          /*53*/
         paddd       mm2,mm4        /*54 Add 4* same place*/
-         pshufw     mm4,mm4,4Eh    /*55 Swap the two double-words using bitmask 01001110=4Eh*/
+         pshufw     mm4,mm4,4Eh    /*55 Swap the two float-words using bitmask 01001110=4Eh*/
         paddd       mm2,mm4        /*56 Add 4* swapped*/
          movq       mm3,mm4        /*57 Copy*/
-        pand        mm4,mm7        /*58 Get low double-word only*/
+        pand        mm4,mm7        /*58 Get low float-word only*/
          /*Stall*/
         paddd       mm0,mm4        /*59 Add 4* in front one step*/
-         pxor       mm4,mm3        /*60 Get high double-word only*/
+         pxor       mm4,mm3        /*60 Get high float-word only*/
         paddd       mm1,mm4        /*61 Add 4* behind one step*/
          add        eax,16         /*65*/
         dec         esi            /*66*/
@@ -436,62 +436,62 @@ inline void db_HarrisStrength_row_s(float *s,int *gxx,int *gxy,int *gyy,int nc)
         shufps  xmm7,xmm7,0
 
         /*****Warm up 1-10**************************************/
-        cvtpi2ps  xmm0,[eax+8] /*1 Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm0,[eax+8] /*1 Convert two integers into floating point of low float-word*/
          /*Stall*/
-        cvtpi2ps  xmm1,[ebx+8] /*4 Convert two integers into floating point of low double-word*/
-         movlhps  xmm0,xmm0    /*2 Move them to the high double-word*/
-        cvtpi2ps  xmm2,[ecx+8] /*7 Convert two integers into floating point of low double-word*/
-         movlhps  xmm1,xmm1    /*5 Move them to the high double-word*/
-        cvtpi2ps  xmm0,[eax]   /*3 Convert two integers into floating point of low double-word*/
-         movlhps  xmm2,xmm2    /*8 Move them to the high double-word*/
-        cvtpi2ps  xmm1,[ebx]   /*6 Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm1,[ebx+8] /*4 Convert two integers into floating point of low float-word*/
+         movlhps  xmm0,xmm0    /*2 Move them to the high float-word*/
+        cvtpi2ps  xmm2,[ecx+8] /*7 Convert two integers into floating point of low float-word*/
+         movlhps  xmm1,xmm1    /*5 Move them to the high float-word*/
+        cvtpi2ps  xmm0,[eax]   /*3 Convert two integers into floating point of low float-word*/
+         movlhps  xmm2,xmm2    /*8 Move them to the high float-word*/
+        cvtpi2ps  xmm1,[ebx]   /*6 Convert two integers into floating point of low float-word*/
          movaps   xmm3,xmm0    /*10 Copy Cxx*/
-        cvtpi2ps  xmm2,[ecx]   /*9 Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm2,[ecx]   /*9 Convert two integers into floating point of low float-word*/
          /*Stall*/
 loopstart:
         /*****First part of loop 11-18***********************/
         mulps     xmm0,xmm2     /*11 Multiply to get Gxx*Gyy*/
          addps    xmm2,xmm3     /*12 Add to get Gxx+Gyy*/
-        cvtpi2ps  xmm4,[eax+24] /*19 Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm4,[eax+24] /*19 Convert two integers into floating point of low float-word*/
          mulps    xmm1,xmm1     /*13 Multiply to get Gxy*Gxy*/
         mulps     xmm2,xmm2     /*14 Multiply to get (Gxx+Gyy)*(Gxx+Gyy)*/
-         movlhps  xmm4,xmm4     /*20 Move them to the high double-word*/
-        cvtpi2ps  xmm4,[eax+16] /*21 Convert two integers into floating point of low double-word*/
+         movlhps  xmm4,xmm4     /*20 Move them to the high float-word*/
+        cvtpi2ps  xmm4,[eax+16] /*21 Convert two integers into floating point of low float-word*/
          /*Stall*/
         subps     xmm0,xmm1     /*15 Subtract to get Gxx*Gyy-Gxy*Gxy*/
          mulps    xmm2,xmm7     /*16 Multiply to get k*(Gxx+Gyy)*(Gxx+Gyy)*/
-        cvtpi2ps  xmm5,[ebx+24] /*22 Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm5,[ebx+24] /*22 Convert two integers into floating point of low float-word*/
          /*Stall*/
-        movlhps   xmm5,xmm5     /*23 Move them to the high double-word*/
+        movlhps   xmm5,xmm5     /*23 Move them to the high float-word*/
          /*Stall*/
-        cvtpi2ps  xmm5,[ebx+16] /*24 Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm5,[ebx+16] /*24 Convert two integers into floating point of low float-word*/
          subps    xmm0,xmm2     /*17 Subtract to get Gxx*Gyy-Gxy*Gxy-k*(Gxx+Gyy)*(Gxx+Gyy)*/
-        cvtpi2ps  xmm6,[ecx+24] /*25 Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm6,[ecx+24] /*25 Convert two integers into floating point of low float-word*/
          /*Stall*/
         movaps    [edx],xmm0    /*18 Store*/
         /*****Second part of loop 26-40***********************/
-         movlhps  xmm6,xmm6     /*26 Move them to the high double-word*/
-        cvtpi2ps  xmm6,[ecx+16] /*27 Convert two integers into floating point of low double-word*/
+         movlhps  xmm6,xmm6     /*26 Move them to the high float-word*/
+        cvtpi2ps  xmm6,[ecx+16] /*27 Convert two integers into floating point of low float-word*/
          movaps   xmm3,xmm4     /*28 Copy Cxx*/
         mulps     xmm4,xmm6     /*29 Multiply to get Gxx*Gyy*/
          addps    xmm6,xmm3     /*30 Add to get Gxx+Gyy*/
-        cvtpi2ps  xmm0,[eax+40] /*(1 Next) Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm0,[eax+40] /*(1 Next) Convert two integers into floating point of low float-word*/
          mulps    xmm5,xmm5     /*31 Multiply to get Gxy*Gxy*/
-        cvtpi2ps  xmm1,[ebx+40] /*(4 Next) Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm1,[ebx+40] /*(4 Next) Convert two integers into floating point of low float-word*/
          mulps    xmm6,xmm6     /*32 Multiply to get (Gxx+Gyy)*(Gxx+Gyy)*/
-        cvtpi2ps  xmm2,[ecx+40] /*(7 Next) Convert two integers into floating point of low double-word*/
-         movlhps  xmm0,xmm0     /*(2 Next) Move them to the high double-word*/
+        cvtpi2ps  xmm2,[ecx+40] /*(7 Next) Convert two integers into floating point of low float-word*/
+         movlhps  xmm0,xmm0     /*(2 Next) Move them to the high float-word*/
         subps     xmm4,xmm5     /*33 Subtract to get Gxx*Gyy-Gxy*Gxy*/
-         movlhps  xmm1,xmm1     /*(5 Next) Move them to the high double-word*/
-        cvtpi2ps  xmm0,[eax+32] /*(3 Next)Convert two integers into floating point of low double-word*/
+         movlhps  xmm1,xmm1     /*(5 Next) Move them to the high float-word*/
+        cvtpi2ps  xmm0,[eax+32] /*(3 Next)Convert two integers into floating point of low float-word*/
          mulps    xmm6,xmm7     /*34 Multiply to get k*(Gxx+Gyy)*(Gxx+Gyy)*/
-        cvtpi2ps  xmm1,[ebx+32] /*(6 Next) Convert two integers into floating point of low double-word*/
-         movlhps  xmm2,xmm2     /*(8 Next) Move them to the high double-word*/
+        cvtpi2ps  xmm1,[ebx+32] /*(6 Next) Convert two integers into floating point of low float-word*/
+         movlhps  xmm2,xmm2     /*(8 Next) Move them to the high float-word*/
         movaps    xmm3,xmm0     /*(10 Next) Copy Cxx*/
          add      eax,32        /*37*/
         subps     xmm4,xmm6     /*35 Subtract to get Gxx*Gyy-Gxy*Gxy-k*(Gxx+Gyy)*(Gxx+Gyy)*/
          add      ebx,32        /*38*/
-        cvtpi2ps  xmm2,[ecx+32] /*(9 Next) Convert two integers into floating point of low double-word*/
+        cvtpi2ps  xmm2,[ecx+32] /*(9 Next) Convert two integers into floating point of low float-word*/
          /*Stall*/
         movaps    [edx+16],xmm4 /*36 Store*/
          /*Stall*/
@@ -1275,7 +1275,7 @@ void db_MaxSuppressFilter_5x5_Aligned16_f(float **sf,float **s,int left,int top,
 
 /*Extract corners from the chunk (left,top) to (right,bottom). Store in x_temp,y_temp and s_temp
 which should point to space of at least as many positions as there are pixels in the chunk*/
-inline int db_CornersFromChunk(float **strength,int left,int top,int right,int bottom,float threshold,double *x_temp,double *y_temp,double *s_temp)
+inline int db_CornersFromChunk(float **strength,int left,int top,int right,int bottom,float threshold,float *x_temp,float *y_temp,float *s_temp)
 {
     int i,j,nr;
     float s;
@@ -1292,9 +1292,9 @@ inline int db_CornersFromChunk(float **strength,int left,int top,int right,int b
             s>strength[i+1][j-2] && s>strength[i+1][j-1] && s>strength[i+1][j] && s>strength[i+1][j+1] && s>strength[i+1][j+2] &&
             s>strength[i+2][j-2] && s>strength[i+2][j-1] && s>strength[i+2][j] && s>strength[i+2][j+1] && s>strength[i+2][j+2])
         {
-            x_temp[nr]=(double) j;
-            y_temp[nr]=(double) i;
-            s_temp[nr]=(double) s;
+            x_temp[nr]=(float) j;
+            y_temp[nr]=(float) i;
+            s_temp[nr]=(float) s;
             nr++;
         }
     }
@@ -1303,7 +1303,7 @@ inline int db_CornersFromChunk(float **strength,int left,int top,int right,int b
 
 
 //Sub-pixel accuracy using 2D quadratic interpolation.(YCJ)
-inline void db_SubPixel(float **strength, const double xd, const double yd, double &xs, double &ys)
+inline void db_SubPixel(float **strength, const float xd, const float yd, float &xs, float &ys)
 {
     int x = (int) xd;
     int y = (int) yd;
@@ -1349,11 +1349,11 @@ The pointer temp_d should point to at least 5*bw*bh positions.
 area_factor holds how many corners max to extract per 10000 pixels*/
 void db_ExtractCornersSaturated(float **strength,int left,int top,int right,int bottom,
                                 int bw,int bh,unsigned long area_factor,
-                                float threshold,double *temp_d,
-                                double *x_coord,double *y_coord,int *nr_corners)
+                                float threshold,float *temp_d,
+                                float *x_coord,float *y_coord,int *nr_corners)
 {
-    double *x_temp,*y_temp,*s_temp,*select_temp;
-    double loc_thresh;
+    float *x_temp,*y_temp,*s_temp,*select_temp;
+    float loc_thresh;
     unsigned long bwbh,area,saturation;
     int x,next_x,last_x;
     int y,next_y,last_y;
@@ -1456,7 +1456,7 @@ void db_CornerDetector_u::Clean()
 
 unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr_corners,
                             int nr_horizontal_blocks,int nr_vertical_blocks,
-                            double absolute_threshold,double relative_threshold)
+                            float absolute_threshold,float relative_threshold)
 {
     int block_width,block_height;
     unsigned long area_factor;
@@ -1467,8 +1467,8 @@ unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr
     block_width=db_maxi(1,active_width/nr_horizontal_blocks);
     block_height=db_maxi(1,active_height/nr_vertical_blocks);
 
-    area_factor=db_minl(1000,db_maxl(1,(long)(10000.0*((double)target_nr_corners)/
-        (((double)active_width)*((double)active_height)))));
+    area_factor=db_minl(1000,db_maxl(1,(long)(10000.0*((float)target_nr_corners)/
+        (((float)active_width)*((float)active_height)))));
 
     return(Start(im_width,im_height,block_width,block_height,area_factor,
         16.0*absolute_threshold,relative_threshold));
@@ -1476,7 +1476,7 @@ unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr
 
 unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
                              int block_width,int block_height,unsigned long area_factor,
-                             double absolute_threshold,double relative_threshold)
+                             float absolute_threshold,float relative_threshold)
 {
     Clean();
 
@@ -1490,13 +1490,13 @@ unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
     m_max_nr=db_maxl(1,1+(m_w*m_h*m_area_factor)/10000);
 
     m_temp_i=new int[18*128];
-    m_temp_d=new double[5*m_bw*m_bh];
+    m_temp_d=new float[5*m_bw*m_bh];
     m_strength=db_AllocStrengthImage_f(&m_strength_mem,m_w,m_h);
 
     return(m_max_nr);
 }
 
-void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,double *x_coord,double *y_coord,int *nr_corners,
+void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,float *x_coord,float *y_coord,int *nr_corners,
                                         const unsigned char * const *msk, unsigned char fgnd) const
 {
     float max_val,threshold;
@@ -1534,7 +1534,7 @@ void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,double 
     }
 }
 
-void db_CornerDetector_u::ExtractCorners(float ** strength, double *x_coord, double *y_coord, int *nr_corners) {
+void db_CornerDetector_u::ExtractCorners(float ** strength, float *x_coord, float *y_coord, int *nr_corners) {
     if ( m_w!=0 )
         db_ExtractCornersSaturated(strength,BORDER,BORDER,m_w-BORDER-1,m_h-BORDER-1,m_bw,m_bh,m_area_factor,float(m_a_thresh),
             m_temp_d,x_coord,y_coord,nr_corners);

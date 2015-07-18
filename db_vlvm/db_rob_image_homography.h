@@ -67,7 +67,7 @@ Calibration matrices:
 
  Temporary space:
 
- \param temp_d      pre-allocated space of size 12*nr_samples+10*nr_points doubles
+ \param temp_d      pre-allocated space of size 12*nr_samples+10*nr_points floats
  \param temp_i      pre-allocated space of size max(nr_samples,nr_points) ints
 
  Statistics for this estimation
@@ -86,22 +86,22 @@ Calibration matrices:
 */
 DB_API void db_RobImageHomography(
                               /*Best homography*/
-                              double H[9],
+                              float H[9],
                               /*2DPoint to 2DPoint constraints
                               Points are assumed to be given in
                               homogenous coordinates*/
-                              double *im,double *im_p,
+                              float *im,float *im_p,
                               /*Nr of points in total*/
                               int nr_points,
                               /*Calibration matrices
                               used to normalize the points*/
-                              double K[9],
-                              double Kp[9],
+                              float K[9],
+                              float Kp[9],
                               /*Pre-allocated space temp_d
                               should point to at least
                               12*nr_samples+10*nr_points
                               allocated positions*/
-                              double *temp_d,
+                              float *temp_d,
                               /*Pre-allocated space temp_i
                               should point to at least
                               max(nr_samples,nr_points)
@@ -111,7 +111,7 @@ DB_API void db_RobImageHomography(
                               db_Statistics *stat=NULL,
                               int max_iterations=DB_DEFAULT_MAX_ITERATIONS,
                               int max_points=DB_DEFAULT_MAX_POINTS,
-                              double scale=DB_POINT_STANDARDDEV,
+                              float scale=DB_POINT_STANDARDDEV,
                               int nr_samples=DB_DEFAULT_NR_SAMPLES,
                               int chunk_size=DB_DEFAULT_CHUNK_SIZE,
                               ///////////////////////////////////////////////////
@@ -121,28 +121,28 @@ DB_API void db_RobImageHomography(
                               // need to input
                               ///////////////////////////////////////////////////
                               // 3D coordinates
-                              double *wp=NULL,
+                              float *wp=NULL,
                               // its corresponding stereo pair's points
-                              double *im_r=NULL,
+                              float *im_r=NULL,
                               // raw image coordinates
-                              double *im_raw=NULL, double *im_raw_p=NULL,
+                              float *im_raw=NULL, float *im_raw_p=NULL,
                               // final matches
                               int *final_NumE=0);
 
-DB_API double db_RobImageHomography_Cost(double H[9],int point_count,double *x_i,
-                                                double *xp_i,double one_over_scale2);
+DB_API float db_RobImageHomography_Cost(float H[9],int point_count,float *x_i,
+                                                float *xp_i,float one_over_scale2);
 
 
-DB_API void db_RobCamRotation_Polish(double H[9],int point_count,double *x_i,
-                                     double *xp_i, double one_over_scale2,
+DB_API void db_RobCamRotation_Polish(float H[9],int point_count,float *x_i,
+                                     float *xp_i, float one_over_scale2,
                                      int max_iterations=DB_DEFAULT_MAX_ITERATIONS,
-                                     double improvement_requirement=DB_DEFAULT_IMP_REQ);
+                                     float improvement_requirement=DB_DEFAULT_IMP_REQ);
 
 
-DB_API void db_RobCamRotation_Polish_Generic(double H[9],int point_count,int homography_type,
-                                             double *x_i,double *xp_i,double one_over_scale2,
+DB_API void db_RobCamRotation_Polish_Generic(float H[9],int point_count,int homography_type,
+                                             float *x_i,float *xp_i,float one_over_scale2,
                                              int max_iterations=DB_DEFAULT_MAX_ITERATIONS,
-                                             double improvement_requirement=DB_DEFAULT_IMP_REQ);
+                                             float improvement_requirement=DB_DEFAULT_IMP_REQ);
 
 
 #endif /* DB_ROB_IMAGE_HOMOGRAPHY */

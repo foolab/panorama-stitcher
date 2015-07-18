@@ -52,10 +52,10 @@ char* Align::getRegProfileString()
 int Align::initialize(int width, int height, bool _quarter_res, float _thresh_still)
 {
   int    nr_corners = DEFAULT_NR_CORNERS;
-  double max_disparity = DEFAULT_MAX_DISPARITY;
+  float max_disparity = DEFAULT_MAX_DISPARITY;
   int    motion_model_type = DEFAULT_MOTION_MODEL;
   int nrsamples = DB_DEFAULT_NR_SAMPLES;
-  double scale = DB_POINT_STANDARDDEV;
+  float scale = DB_POINT_STANDARDDEV;
   int chunk_size = DB_DEFAULT_CHUNK_SIZE;
   int nrhorz = width/48;  // Empirically determined number of horizontal
   int nrvert = height/60; // and vertical buckets for harris corner detection.
@@ -150,9 +150,9 @@ int Align::addFrame(ImageType imageGray)
     }
 
     // compute the homography:
-    double Hinv33[3][3];
-    double Hprev33[3][3];
-    double Hcurr33[3][3];
+    float Hinv33[3][3];
+    float Hprev33[3][3];
+    float Hcurr33[3][3];
 
     // Invert and multiple with previous transformation
     Matrix33::convert9to33(Hcurr33, Hcurr);
@@ -182,7 +182,7 @@ int Align::addFrame(ImageType imageGray)
 }
 
 // Get current transformation
-int Align::getLastTRS(double trs[3][3])
+int Align::getLastTRS(float trs[3][3])
 {
   if (frame_number < 1)
   {
@@ -205,9 +205,9 @@ int Align::getLastTRS(double trs[3][3])
   // correct transformation. For the frames we do use for mosaicing, we already
   // append their Hcurr to Hprev in AddFrame() and then set Hcurr to identity.
 
-  double Hinv33[3][3];
-  double Hprev33[3][3];
-  double Hcurr33[3][3];
+  float Hinv33[3][3];
+  float Hprev33[3][3];
+  float Hcurr33[3][3];
 
   Matrix33::convert9to33(Hcurr33, Hcurr);
   normProjMat33d(Hcurr33);

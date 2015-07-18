@@ -25,12 +25,12 @@
 *    Lean and mean begins here                                   *
 *****************************************************************/
 
-void db_SolveCubic(double *roots,int *nr_roots,double a,double b,double c,double d)
+void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d)
 {
-    double bp,bp2,cp,dp,q,r,srq;
-    double r2_min_q3,theta,bp_through3,theta_through3;
-    double cos_theta_through3,sin_theta_through3,min2_cos_theta_plu,min2_cos_theta_min;
-    double si_r_srq,A;
+    float bp,bp2,cp,dp,q,r,srq;
+    float r2_min_q3,theta,bp_through3,theta_through3;
+    float cos_theta_through3,sin_theta_through3,min2_cos_theta_plu,min2_cos_theta_min;
+    float si_r_srq,A;
 
     /*For nondegenerate cubics with three roots
     [24 mult 9 add 2sqrt 1acos 1cos=33flops 4func]
@@ -91,17 +91,17 @@ void db_SolveCubic(double *roots,int *nr_roots,double a,double b,double c,double
     }
 }
 
-void db_SolveQuartic(double *roots,int *nr_roots,double a,double b,double c,double d,double e)
+void db_SolveQuartic(float *roots,int *nr_roots,float a,float b,float c,float d,float e)
 {
     /*Normalized coefficients*/
-    double c0,c1,c2,c3;
+    float c0,c1,c2,c3;
     /*Temporary coefficients*/
-    double c3through2,c3through4,c3c3through4_min_c2,min4_c0;
-    double lz,ms,ns,mn,m,n,lz_through2;
+    float c3through2,c3through4,c3c3through4_min_c2,min4_c0;
+    float lz,ms,ns,mn,m,n,lz_through2;
     /*Cubic polynomial roots, nr of roots and coefficients*/
-    double c_roots[3];
+    float c_roots[3];
     int nr_c_roots;
-    double k0,k1;
+    float k0,k1;
     /*nr additional roots from second quadratic*/
     int addroots;
 
@@ -163,17 +163,17 @@ void db_SolveQuartic(double *roots,int *nr_roots,double a,double b,double c,doub
     }
 }
 
-void db_SolveQuarticForced(double *roots,int *nr_roots,double a,double b,double c,double d,double e)
+void db_SolveQuarticForced(float *roots,int *nr_roots,float a,float b,float c,float d,float e)
 {
     /*Normalized coefficients*/
-    double c0,c1,c2,c3;
+    float c0,c1,c2,c3;
     /*Temporary coefficients*/
-    double c3through2,c3through4,c3c3through4_min_c2,min4_c0;
-    double lz,ms,ns,mn,m,n,lz_through2;
+    float c3through2,c3through4,c3c3through4_min_c2,min4_c0;
+    float lz,ms,ns,mn,m,n,lz_through2;
     /*Cubic polynomial roots, nr of roots and coefficients*/
-    double c_roots[3];
+    float c_roots[3];
     int nr_c_roots;
-    double k0,k1;
+    float k0,k1;
     /*nr additional roots from second quadratic*/
     int addroots;
 

@@ -1120,7 +1120,7 @@ inline void db_SignedSquareNormCorr11x11_PreAlign_u(short *patch,const unsigned 
     *recip= (float)((den!=0.0)?1.0/den:0.0);
 }
 
-void AffineWarpPointOffset(float &r_w,float &c_w,double Hinv[9],int r,int c)
+void AffineWarpPointOffset(float &r_w,float &c_w,float Hinv[9],int r,int c)
 {
     r_w=(float)(Hinv[3]*c+Hinv[4]*r);
     c_w=(float)(Hinv[0]*c+Hinv[1]*r);
@@ -1137,7 +1137,7 @@ bilinear method is used.
  */
 inline void db_SignedSquareNormCorr11x11_PreAlign_AffinePatchWarp_u(short *patch,const unsigned char * const *f_img,
                                                                     int xi,int yi,float *sum,float *recip,
-                                                                    const double Hinv[9],int affine)
+                                                                    const float Hinv[9],int affine)
 {
     float den;
     short f;
@@ -2694,7 +2694,7 @@ void db_EmptyBuckets_u(db_Bucket_u **bp,int nr_h,int nr_v)
     for(i= -1;i<=nr_v;i++) for(j= -1;j<=nr_h;j++) bp[i][j].nr=0;
 }
 
-float* db_FillBuckets_f(float *patch_space,const float * const *f_img,db_Bucket_f **bp,int bw,int bh,int nr_h,int nr_v,int bd,const double *x,const double *y,int nr_corners)
+float* db_FillBuckets_f(float *patch_space,const float * const *f_img,db_Bucket_f **bp,int bw,int bh,int nr_h,int nr_v,int bd,const float *x,const float *y,int nr_corners)
 {
     int i,xi,yi,xpos,ypos,nr;
     db_Bucket_f *br;
@@ -2729,7 +2729,7 @@ float* db_FillBuckets_f(float *patch_space,const float * const *f_img,db_Bucket_
     return(patch_space);
 }
 
-short* db_FillBuckets_u(short *patch_space,const unsigned char * const *f_img,db_Bucket_u **bp,int bw,int bh,int nr_h,int nr_v,int bd,const double *x,const double *y,int nr_corners,int use_smaller_matching_window, int use_21)
+short* db_FillBuckets_u(short *patch_space,const unsigned char * const *f_img,db_Bucket_u **bp,int bw,int bh,int nr_h,int nr_v,int bd,const float *x,const float *y,int nr_corners,int use_smaller_matching_window, int use_21)
 {
     int i,xi,yi,xpos,ypos,nr;
     db_Bucket_u *br;
@@ -2782,12 +2782,12 @@ short* db_FillBuckets_u(short *patch_space,const unsigned char * const *f_img,db
 
 
 
-float* db_FillBucketsPrewarped_f(float *patch_space,const float *const *f_img,db_Bucket_f **bp,int bw,int bh,int nr_h,int nr_v,int bd,const double *x,const double *y,int nr_corners,const double H[9])
+float* db_FillBucketsPrewarped_f(float *patch_space,const float *const *f_img,db_Bucket_f **bp,int bw,int bh,int nr_h,int nr_v,int bd,const float *x,const float *y,int nr_corners,const float H[9])
 {
     int i,xi,yi,xpos,ypos,nr,wxi,wyi;
     db_Bucket_f *br;
     db_PointInfo_f *pir;
-    double xd[2],wx[2];
+    float xd[2],wx[2];
 
     db_EmptyBuckets_f(bp,nr_h,nr_v);
     for(i=0;i<nr_corners;i++)
@@ -2825,13 +2825,13 @@ float* db_FillBucketsPrewarped_f(float *patch_space,const float *const *f_img,db
 }
 
 short* db_FillBucketsPrewarped_u(short *patch_space,const unsigned char * const *f_img,db_Bucket_u **bp,
-                                 int bw,int bh,int nr_h,int nr_v,int bd,const double *x,const double *y,
-                                 int nr_corners,const double H[9])
+                                 int bw,int bh,int nr_h,int nr_v,int bd,const float *x,const float *y,
+                                 int nr_corners,const float H[9])
 {
     int i,xi,yi,xpos,ypos,nr,wxi,wyi;
     db_Bucket_u *br;
     db_PointInfo_u *pir;
-    double xd[2],wx[2];
+    float xd[2],wx[2];
 
     db_EmptyBuckets_u(bp,nr_h,nr_v);
     for(i=0;i<nr_corners;i++)
@@ -2871,14 +2871,14 @@ short* db_FillBucketsPrewarped_u(short *patch_space,const unsigned char * const 
 
 
 short* db_FillBucketsPrewarpedAffine_u(short *patch_space,const unsigned char * const *f_img,db_Bucket_u **bp,
-                                 int bw,int bh,int nr_h,int nr_v,int bd,const double *x,const double *y,
-                                 int nr_corners,const double H[9],const double Hinv[9],const int warpboundsp[4],
+                                 int bw,int bh,int nr_h,int nr_v,int bd,const float *x,const float *y,
+                                 int nr_corners,const float H[9],const float Hinv[9],const int warpboundsp[4],
                                  int affine)
 {
     int i,xi,yi,xpos,ypos,nr,wxi,wyi;
     db_Bucket_u *br;
     db_PointInfo_u *pir;
-    double xd[2],wx[2];
+    float xd[2],wx[2];
 
     db_EmptyBuckets_u(bp,nr_h,nr_v);
     for(i=0;i<nr_corners;i++)
@@ -2927,7 +2927,7 @@ inline void db_MatchPointPair_f(db_PointInfo_f *pir_l,db_PointInfo_f *pir_r,
                             unsigned long kA,unsigned long kB)
 {
     int x_l,y_l,x_r,y_r,xm,ym;
-    double score;
+    float score;
 
     x_l=pir_l->x;
     y_l=pir_l->y;
@@ -2965,7 +2965,7 @@ inline void db_MatchPointPair_u(db_PointInfo_u *pir_l,db_PointInfo_u *pir_r,
                             unsigned long kA,unsigned long kB, unsigned int rect_window,bool use_smaller_matching_window, int use_21)
 {
     int xm,ym;
-    double score;
+    float score;
     bool compute_score;
 
 
@@ -3196,20 +3196,20 @@ void db_Matcher_f::Clean()
     m_w=0; m_h=0;
 }
 
-unsigned long db_Matcher_f::Init(int im_width,int im_height,double max_disparity,int target_nr_corners)
+unsigned long db_Matcher_f::Init(int im_width,int im_height,float max_disparity,int target_nr_corners)
 {
     Clean();
     m_w=im_width;
     m_h=im_height;
-    m_bw=db_maxi(1,(int) (max_disparity*((double)im_width)));
-    m_bh=db_maxi(1,(int) (max_disparity*((double)im_height)));
+    m_bw=db_maxi(1,(int) (max_disparity*((float)im_width)));
+    m_bh=db_maxi(1,(int) (max_disparity*((float)im_height)));
     m_nr_h=1+(im_width-1)/m_bw;
     m_nr_v=1+(im_height-1)/m_bh;
-    m_bd=db_maxi(1,(int)(((double)target_nr_corners)*
+    m_bd=db_maxi(1,(int)(((float)target_nr_corners)*
         max_disparity*max_disparity));
     m_target=target_nr_corners;
-    m_kA=(long)(256.0*((double)(m_w*m_w))/((double)(m_h*m_h)));
-    m_kB=(long)(256.0*max_disparity*max_disparity*((double)(m_w*m_w)));
+    m_kA=(long)(256.0*((float)(m_w*m_w))/((float)(m_h*m_h)));
+    m_kB=(long)(256.0*max_disparity*max_disparity*((float)(m_w*m_w)));
 
     /*Alloc bucket structure*/
     m_bp_l=db_AllocBuckets_f(m_nr_h,m_nr_v,m_bd);
@@ -3223,8 +3223,8 @@ unsigned long db_Matcher_f::Init(int im_width,int im_height,double max_disparity
 }
 
 void db_Matcher_f::Match(const float * const *l_img,const float * const *r_img,
-        const double *x_l,const double *y_l,int nr_l,const double *x_r,const double *y_r,int nr_r,
-        int *id_l,int *id_r,int *nr_matches,const double H[9])
+        const float *x_l,const float *y_l,int nr_l,const float *x_r,const float *y_r,int nr_r,
+        int *id_l,int *id_r,int *nr_matches,const float H[9])
 {
     float *ps;
 
@@ -3281,8 +3281,8 @@ void db_Matcher_u::Clean()
 }
 
 
-unsigned long db_Matcher_u::Init(int im_width,int im_height,double max_disparity,int target_nr_corners,
-                                 double max_disparity_v, bool use_smaller_matching_window, int use_21)
+unsigned long db_Matcher_u::Init(int im_width,int im_height,float max_disparity,int target_nr_corners,
+                                 float max_disparity_v, bool use_smaller_matching_window, int use_21)
 {
     Clean();
     m_w=im_width;
@@ -3294,23 +3294,23 @@ unsigned long db_Matcher_u::Init(int im_width,int im_height,double max_disparity
     {
         m_rect_window = 1;
 
-        m_bw=db_maxi(1,(int)(max_disparity*((double)im_width)));
-        m_bh=db_maxi(1,(int)(max_disparity_v*((double)im_height)));
+        m_bw=db_maxi(1,(int)(max_disparity*((float)im_width)));
+        m_bh=db_maxi(1,(int)(max_disparity_v*((float)im_height)));
 
-        m_bd=db_maxi(1,(int)(((double)target_nr_corners)*max_disparity*max_disparity_v));
+        m_bd=db_maxi(1,(int)(((float)target_nr_corners)*max_disparity*max_disparity_v));
 
         m_kA=(int)(max_disparity*m_w);
         m_kB=(int)(max_disparity_v*m_h);
 
     } else
     {
-        m_bw=(int)db_maxi(1,(int)(max_disparity*((double)im_width)));
-        m_bh=(int)db_maxi(1,(int)(max_disparity*((double)im_height)));
+        m_bw=(int)db_maxi(1,(int)(max_disparity*((float)im_width)));
+        m_bh=(int)db_maxi(1,(int)(max_disparity*((float)im_height)));
 
-        m_bd=db_maxi(1,(int)(((double)target_nr_corners)*max_disparity*max_disparity));
+        m_bd=db_maxi(1,(int)(((float)target_nr_corners)*max_disparity*max_disparity));
 
-        m_kA=(long)(256.0*((double)(m_w*m_w))/((double)(m_h*m_h)));
-        m_kB=(long)(256.0*max_disparity*max_disparity*((double)(m_w*m_w)));
+        m_kA=(long)(256.0*((float)(m_w*m_w))/((float)(m_h*m_h)));
+        m_kB=(long)(256.0*max_disparity*max_disparity*((float)(m_w*m_w)));
     }
 
     m_nr_h=1+(im_width-1)/m_bw;
@@ -3351,8 +3351,8 @@ unsigned long db_Matcher_u::Init(int im_width,int im_height,double max_disparity
 }
 
 void db_Matcher_u::Match(const unsigned char * const *l_img,const unsigned char * const *r_img,
-        const double *x_l,const double *y_l,int nr_l,const double *x_r,const double *y_r,int nr_r,
-        int *id_l,int *id_r,int *nr_matches,const double H[9],int affine)
+        const float *x_l,const float *y_l,int nr_l,const float *x_r,const float *y_r,int nr_r,
+        int *id_l,int *id_r,int *nr_matches,const float H[9],int affine)
 {
     short *ps;
 
@@ -3364,7 +3364,7 @@ void db_Matcher_u::Match(const unsigned char * const *l_img,const unsigned char 
     {
         if (affine)
         {
-            double Hinv[9];
+            float Hinv[9];
             db_InvertAffineTransform(Hinv,H);
             float r_w, c_w;
             float stretch_x[2];

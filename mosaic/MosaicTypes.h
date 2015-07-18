@@ -56,7 +56,7 @@ class MosaicRect
 class BlendRect
 {
     public:
-    double lft, rgt, top, bot;
+    float lft, rgt, top, bot;
 };
 
 /**
@@ -68,7 +68,7 @@ class BlendRect
 class MosaicFrame {
 public:
   ImageType image;
-  double trs[3][3];
+  float trs[3][3];
   int width, height;
   BlendRect brect;  // This frame warped to the Mosaic coordinate system
   BlendRect vcrect; // brect clipped using the voronoi neighbors
@@ -133,13 +133,13 @@ public:
  */
 typedef struct {
   int horizontal;
-  double theta;
-  double x;
-  double y;
-  double width;
-  double radius;
-  double direction;
-  double correction;
+  float theta;
+  float x;
+  float y;
+  float width;
+  float radius;
+  float direction;
+  float correction;
   int blendRange;
   int blendRangeUV;
   int nlevs;
@@ -147,7 +147,7 @@ typedef struct {
   int blendingType;
   int stripType;
   // Add an overlap to prevent a gap between pictures due to roundoffs
-  double roundoffOverlap;// 1.5
+  float roundoffOverlap;// 1.5
 
 } BlendParams;
 

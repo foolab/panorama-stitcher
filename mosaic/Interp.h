@@ -24,7 +24,7 @@
 #include "Pyramid.h"
 
 #define CTAPS 40
-static double ciTable[81] = {
+static float ciTable[81] = {
         1, 0.998461, 0.993938, 0.98657, 0.9765,
         0.963867, 0.948813, 0.931477, 0.912, 0.890523,
         0.867188, 0.842133, 0.8155, 0.78743, 0.758062,
@@ -43,9 +43,9 @@ static double ciTable[81] = {
         -0.00683594, -0.0045, -0.00260156, -0.0011875, -0.000304687, 0.0
 };
 
-inline double ciCalc(PyramidShort *img, int xi, int yi, double xfrac, double yfrac)
+inline float ciCalc(PyramidShort *img, int xi, int yi, float xfrac, float yfrac)
 {
-  double tmpf[4];
+  float tmpf[4];
 
   // Interpolate using 16 points
   ImageTypeShortBase *in = img->ptr[yi-1] + xi - 1;
