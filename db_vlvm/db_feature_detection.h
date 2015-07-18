@@ -30,64 +30,6 @@
 #include <stdlib.h> //for NULL
 
 /*!
- * \class db_CornerDetector_f
- * \ingroup FeatureDetection
- * \brief Harris corner detector for float images.
- *
- *  This class performs Harris corner extraction on *float* images managed
- * with functions in \ref LMImageBasicUtilities.
- */
-class DB_API db_CornerDetector_f
-{
-public:
-    db_CornerDetector_f();
-    ~db_CornerDetector_f();
-
-    /*!
-     * Set parameters and pre-allocate memory. Return an upper bound
-     * on the number of corners detected in one frame.
-     * \param im_width      width
-     * \param im_height     height
-     * \param target_nr_corners
-     * \param nr_horizontal_blocks
-     * \param nr_vertical_blocks
-     * \param absolute_threshold
-     * \param relative_threshold
-     */
-    unsigned long Init(int im_width,int im_height,
-                            int target_nr_corners=DB_DEFAULT_TARGET_NR_CORNERS,
-                            int nr_horizontal_blocks=DB_DEFAULT_NR_FEATURE_BLOCKS,
-                            int nr_vertical_blocks=DB_DEFAULT_NR_FEATURE_BLOCKS,
-                            double absolute_threshold=DB_DEFAULT_ABS_CORNER_THRESHOLD,
-                            double relative_threshold=DB_DEFAULT_REL_CORNER_THRESHOLD);
-
-    /*!
-     * Detect the corners.
-     * x_coord and y_coord should be pre-allocated arrays of length returned by Init().
-     * \param img   row array pointer
-     * \param x_coord   corner locations
-     * \param y_coord   corner locations
-     * \param nr_corners    actual number of corners computed
-     */
-    void DetectCorners(const float * const *img,double *x_coord,double *y_coord,int *nr_corners) const;
-    void SetAbsoluteThreshold(double a_thresh) { m_a_thresh = a_thresh; };
-    void SetRelativeThreshold(double r_thresh) { m_r_thresh = r_thresh; };
-protected:
-    void Clean();
-    unsigned long Start(int im_width,int im_height,
-            int block_width,int block_height,unsigned long area_factor,
-            double absolute_threshold,double relative_threshold,int chunkwidth);
-
-    int m_w,m_h,m_cw,m_bw,m_bh;
-    /*Area factor holds the maximum number of corners to detect
-    per 10000 pixels*/
-    unsigned long m_area_factor,m_max_nr;
-    double m_a_thresh,m_r_thresh;
-    float *m_temp_f;
-    double *m_temp_d;
-    float **m_strength,*m_strength_mem;
-};
-/*!
  * \class db_CornerDetector_u
  * \ingroup FeatureDetection
  * \brief Harris corner detector for byte images.

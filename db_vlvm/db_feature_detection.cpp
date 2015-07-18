@@ -66,19 +66,6 @@ void db_FreeStrengthImage_f(float *im,float **img,int h)
     delete [] img;
 }
 
-/*Compute derivatives Ix,Iy for a subrow of img with upper left (i,j) and width chunk_width
-Memory references occur one pixel outside the subrow*/
-inline void db_IxIyRow_f(float *Ix,float *Iy,const float * const *img,int i,int j,int chunk_width)
-{
-    int c;
-
-    for(c=0;c<chunk_width;c++)
-    {
-        Ix[c]=img[i][j+c-1]-img[i][j+c+1];
-        Iy[c]=img[i-1][j+c]-img[i+1][j+c];
-    }
-}
-
 /*Compute derivatives Ix,Iy for a subrow of img with upper left (i,j) and width 128
 Memory references occur one pixel outside the subrow*/
 inline void db_IxIyRow_u(int *dxx,const unsigned char * const *img,int i,int j,int nc)
@@ -212,54 +199,6 @@ loopstart:
 #endif /*DB_USE_MMX*/
 }
 
-/*Filter vertically five rows of derivatives of length chunk_width into gxx,gxy,gyy*/
-inline void db_gxx_gxy_gyy_row_f(float *gxx,float *gxy,float *gyy,int chunk_width,
-                                 float *Ix0,float *Ix1,float *Ix2,float *Ix3,float *Ix4,
-                                 float *Iy0,float *Iy1,float *Iy2,float *Iy3,float *Iy4)
-{
-    int c;
-    float dx,dy;
-    float Ixx0,Ixy0,Iyy0,Ixx1,Ixy1,Iyy1,Ixx2,Ixy2,Iyy2,Ixx3,Ixy3,Iyy3,Ixx4,Ixy4,Iyy4;
-
-    for(c=0;c<chunk_width;c++)
-    {
-        dx=Ix0[c];
-        dy=Iy0[c];
-        Ixx0=dx*dx;
-        Ixy0=dx*dy;
-        Iyy0=dy*dy;
-
-        dx=Ix1[c];
-        dy=Iy1[c];
-        Ixx1=dx*dx;
-        Ixy1=dx*dy;
-        Iyy1=dy*dy;
-
-        dx=Ix2[c];
-        dy=Iy2[c];
-        Ixx2=dx*dx;
-        Ixy2=dx*dy;
-        Iyy2=dy*dy;
-
-        dx=Ix3[c];
-        dy=Iy3[c];
-        Ixx3=dx*dx;
-        Ixy3=dx*dy;
-        Iyy3=dy*dy;
-
-        dx=Ix4[c];
-        dy=Iy4[c];
-        Ixx4=dx*dx;
-        Ixy4=dx*dy;
-        Iyy4=dy*dy;
-
-        /*Filter vertically*/
-        gxx[c]=Ixx0+Ixx1*4.0f+Ixx2*6.0f+Ixx3*4.0f+Ixx4;
-        gxy[c]=Ixy0+Ixy1*4.0f+Ixy2*6.0f+Ixy3*4.0f+Ixy4;
-        gyy[c]=Iyy0+Iyy1*4.0f+Iyy2*6.0f+Iyy3*4.0f+Iyy4;
-    }
-}
-
 /*Filter vertically five rows of derivatives of length 128 into gxx,gxy,gyy*/
 inline void db_gxx_gxy_gyy_row_s(int *g,int *d0,int *d1,int *d2,int *d3,int *d4,int nc)
 {
@@ -357,26 +296,6 @@ loopstart:
         g[c+256]=d0[c+256]+(d1[c+256]<<2)+(dd<<2)+(dd<<1)+(d3[c+256]<<2)+d4[c+256];
     }
 #endif /*DB_USE_MMX*/
-}
-
-/*Filter horizontally the three rows gxx,gxy,gyy into the strength subrow starting at i,j
-and with width chunk_width. gxx,gxy and gyy are assumed to be four pixels wider than chunk_width
-and starting at (i,j-2)*/
-inline void db_HarrisStrength_row_f(float **s,float *gxx,float *gxy,float *gyy,int i,int j,int chunk_width)
-{
-    float Gxx,Gxy,Gyy,det,trc;
-    int c;
-
-    for(c=0;c<chunk_width;c++)
-    {
-        Gxx=gxx[c]+gxx[c+1]*4.0f+gxx[c+2]*6.0f+gxx[c+3]*4.0f+gxx[c+4];
-        Gxy=gxy[c]+gxy[c+1]*4.0f+gxy[c+2]*6.0f+gxy[c+3]*4.0f+gxy[c+4];
-        Gyy=gyy[c]+gyy[c+1]*4.0f+gyy[c+2]*6.0f+gyy[c+3]*4.0f+gyy[c+4];
-
-        det=Gxx*Gyy-Gxy*Gxy;
-        trc=Gxx+Gyy;
-        s[i][j+c]=det-0.06f*trc*trc;
-    }
 }
 
 /*Filter g of length 128 in place with 14641. Output is shifted two steps
@@ -610,48 +529,6 @@ loopstart:
 #endif /*DB_USE_SIMD*/
 }
 
-/*Compute the Harris corner strength of the chunk [left,top,right,bottom] of img and
-store it into the corresponding region of s. left and top have to be at least 3 and
-right and bottom have to be at most width-4,height-4*/
-inline void db_HarrisStrengthChunk_f(float **s,const float * const *img,int left,int top,int right,int bottom,
-                                      /*temp should point to at least
-                                      13*(right-left+5) of allocated memory*/
-                                      float *temp)
-{
-    float *Ix[5],*Iy[5];
-    float *gxx,*gxy,*gyy;
-    int i,chunk_width,chunk_width_p4;
-
-    chunk_width=right-left+1;
-    chunk_width_p4=chunk_width+4;
-    gxx=temp;
-    gxy=gxx+chunk_width_p4;
-    gyy=gxy+chunk_width_p4;
-    for(i=0;i<5;i++)
-    {
-        Ix[i]=gyy+chunk_width_p4+(2*i*chunk_width_p4);
-        Iy[i]=Ix[i]+chunk_width_p4;
-    }
-
-    /*Fill four rows of the wrap-around derivative buffers*/
-    for(i=top-2;i<top+2;i++) db_IxIyRow_f(Ix[i%5],Iy[i%5],img,i,left-2,chunk_width_p4);
-
-    /*For each output row*/
-    for(i=top;i<=bottom;i++)
-    {
-        /*Step the derivative buffers*/
-        db_IxIyRow_f(Ix[(i+2)%5],Iy[(i+2)%5],img,(i+2),left-2,chunk_width_p4);
-
-        /*Filter Ix2,IxIy,Iy2 vertically into gxx,gxy,gyy*/
-        db_gxx_gxy_gyy_row_f(gxx,gxy,gyy,chunk_width_p4,
-                                 Ix[(i-2)%5],Ix[(i-1)%5],Ix[i%5],Ix[(i+1)%5],Ix[(i+2)%5],
-                                 Iy[(i-2)%5],Iy[(i-1)%5],Iy[i%5],Iy[(i+1)%5],Iy[(i+2)%5]);
-
-        /*Filter gxx,gxy,gyy horizontally and compute corner response s*/
-        db_HarrisStrength_row_f(s,gxx,gxy,gyy,i,left,chunk_width);
-    }
-}
-
 /*Compute the Harris corner strength of the chunk [left,top,left+123,bottom] of img and
 store it into the corresponding region of s. left and top have to be at least 3 and
 right and bottom have to be at most width-4,height-4. The left of the region in s should
@@ -691,29 +568,6 @@ inline void db_HarrisStrengthChunk_u(float **s,const unsigned char * const *img,
         db_HarrisStrength_row_s(s[i]+left,gxx,gxy,gyy,nc);
     }
 
-}
-
-/*Compute Harris corner strength of img. Strength is returned for the region
-with (3,3) as upper left and (w-4,h-4) as lower right, positioned in the
-same place in s. In other words,image should be at least 7 pixels wide and 7 pixels high
-for a meaningful result*/
-void db_HarrisStrength_f(float **s,const float * const *img,int w,int h,
-                                    /*temp should point to at least
-                                    13*(chunk_width+4) of allocated memory*/
-                                    float *temp,
-                                    int chunk_width)
-{
-    int x,next_x,last,right;
-
-    last=w-4;
-    for(x=3;x<=last;x=next_x)
-    {
-        next_x=x+chunk_width;
-        right=next_x-1;
-        if(right>last) right=last;
-        /*Compute the Harris strength of a chunk*/
-        db_HarrisStrengthChunk_f(s,img,x,3,right,h-4,temp);
-    }
 }
 
 /*Compute Harris corner strength of img. Strength is returned for the region
@@ -1559,88 +1413,6 @@ void db_ExtractCornersSaturated(float **strength,int left,int top,int right,int 
         }
     }
     *nr_corners=nr_points;
-}
-
-db_CornerDetector_f::db_CornerDetector_f()
-{
-    m_w=0; m_h=0;
-}
-
-db_CornerDetector_f::~db_CornerDetector_f()
-{
-    Clean();
-}
-
-void db_CornerDetector_f::Clean()
-{
-    if(m_w!=0)
-    {
-        delete [] m_temp_f;
-        delete [] m_temp_d;
-        db_FreeStrengthImage_f(m_strength_mem,m_strength,m_h);
-    }
-    m_w=0; m_h=0;
-}
-
-unsigned long db_CornerDetector_f::Init(int im_width,int im_height,int target_nr_corners,
-                            int nr_horizontal_blocks,int nr_vertical_blocks,
-                            double absolute_threshold,double relative_threshold)
-{
-    int chunkwidth=208;
-    int block_width,block_height;
-    unsigned long area_factor;
-    int active_width,active_height;
-
-    active_width=db_maxi(1,im_width-10);
-    active_height=db_maxi(1,im_height-10);
-    block_width=db_maxi(1,active_width/nr_horizontal_blocks);
-    block_height=db_maxi(1,active_height/nr_vertical_blocks);
-
-    area_factor=db_minl(1000,db_maxl(1,(long)(10000.0*((double)target_nr_corners)/
-        (((double)active_width)*((double)active_height)))));
-
-    return(Start(im_width,im_height,block_width,block_height,area_factor,
-        absolute_threshold,relative_threshold,chunkwidth));
-}
-
-unsigned long db_CornerDetector_f::Start(int im_width,int im_height,
-                             int block_width,int block_height,unsigned long area_factor,
-                             double absolute_threshold,double relative_threshold,int chunkwidth)
-{
-    Clean();
-
-    m_w=im_width;
-    m_h=im_height;
-    m_cw=chunkwidth;
-    m_bw=block_width;
-    m_bh=block_height;
-    m_area_factor=area_factor;
-    m_r_thresh=relative_threshold;
-    m_a_thresh=absolute_threshold;
-    m_max_nr=db_maxl(1,1+(m_w*m_h*m_area_factor)/10000);
-
-    m_temp_f=new float[13*(m_cw+4)];
-    m_temp_d=new double[5*m_bw*m_bh];
-    m_strength=db_AllocStrengthImage_f(&m_strength_mem,m_w,m_h);
-
-    return(m_max_nr);
-}
-
-void db_CornerDetector_f::DetectCorners(const float * const *img,double *x_coord,double *y_coord,int *nr_corners) const
-{
-    float max_val,threshold;
-
-    db_HarrisStrength_f(m_strength,img,m_w,m_h,m_temp_f,m_cw);
-
-    if(m_r_thresh)
-    {
-        max_val=db_MaxImage_Aligned16_f(m_strength,3,3,m_w-6,m_h-6);
-        threshold= (float) db_maxd(m_a_thresh,max_val*m_r_thresh);
-    }
-    else threshold= (float) m_a_thresh;
-
-    db_ExtractCornersSaturated(m_strength,BORDER,BORDER,m_w-BORDER-1,m_h-BORDER-1,m_bw,m_bh,m_area_factor,threshold,
-        m_temp_d,x_coord,y_coord,nr_corners);
 }
 
 db_CornerDetector_u::db_CornerDetector_u()
