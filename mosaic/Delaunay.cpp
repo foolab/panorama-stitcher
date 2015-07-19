@@ -69,7 +69,7 @@ void CDelaunay::buildTriangulation(int size)
   int i, rows;
   EdgePointer lefte, righte;
 
-  rows = (int)( 0.5 + sqrt( (float) size / log( (float) size )));
+  rows = (int)( 0.5 + sqrtf( (float) size / log( (float) size )));
 
   // Sort the pointers by  x-coordinate of site
   for ( i=0 ; i < size ; i++ ) {
@@ -621,8 +621,8 @@ int CDelaunay::constructList(EdgePointer last, int width, int height)
   // Throw out any edges that are too far apart
   currv = prevv = ev;
   for (i = c; i--; currv++) {
-      if ((int) fabs(sa[currv->first].getVCenter().x - sa[currv->second].getVCenter().x) <= width &&
-          (int) fabs(sa[currv->first].getVCenter().y - sa[currv->second].getVCenter().y) <= height) {
+      if ((int) fabsf(sa[currv->first].getVCenter().x - sa[currv->second].getVCenter().x) <= width &&
+          (int) fabsf(sa[currv->first].getVCenter().y - sa[currv->second].getVCenter().y) <= height) {
           *(prevv++) = *currv;
       } else {
         c--;

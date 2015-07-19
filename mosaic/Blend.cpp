@@ -209,8 +209,8 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
     // each input frame into the mosaic coordinate system.
     MosaicRect fullRect;
 
-    fullRect.left = (int) floor(global_rect.lft); // min-x
-    fullRect.top = (int) floor(global_rect.bot);  // min-y
+    fullRect.left = (int) floorf(global_rect.lft); // min-x
+    fullRect.top = (int) floorf(global_rect.bot);  // min-y
     fullRect.right = (int) ceil(global_rect.rgt); // max-x
     fullRect.bottom = (int) ceil(global_rect.top);// max-y
     Mwidth = (unsigned short) (fullRect.right - fullRect.left + 1);
@@ -998,8 +998,8 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                 yy /= (1 << dscale);
 
 
-                int x1 = (xx >= 0.0) ? (int) xx : (int) floor(xx);
-                int y1 = (yy >= 0.0) ? (int) yy : (int) floor(yy);
+                int x1 = (xx >= 0.0) ? (int) xx : (int) floorf(xx);
+                int y1 = (yy >= 0.0) ? (int) yy : (int) floorf(yy);
 
                 // Final destination in extended pyramid
 #ifndef LINEAR_INTERP
@@ -1082,8 +1082,8 @@ void Blend::MosaicToFrame(float trs[3][3], float x, float y, float &wx, float &w
         float alpha = x * m_wb.direction / m_wb.width;
         float length = (y - alpha * m_wb.correction) * m_wb.direction + m_wb.radius;
         float deltaTheta = m_wb.theta * alpha;
-        float sinTheta = sin(deltaTheta);
-        float cosTheta = sqrt(1.0 - sinTheta * sinTheta) * m_wb.direction;
+        float sinTheta = sinf(deltaTheta);
+        float cosTheta = sqrtf(1.0 - sinTheta * sinTheta) * m_wb.direction;
         X = length * sinTheta + m_wb.x;
         Y = length * cosTheta + m_wb.y;
     }
@@ -1092,8 +1092,8 @@ void Blend::MosaicToFrame(float trs[3][3], float x, float y, float &wx, float &w
         float alpha = y * m_wb.direction / m_wb.width;
         float length = (x - alpha * m_wb.correction) * m_wb.direction + m_wb.radius;
         float deltaTheta = m_wb.theta * alpha;
-        float sinTheta = sin(deltaTheta);
-        float cosTheta = sqrt(1.0 - sinTheta * sinTheta) * m_wb.direction;
+        float sinTheta = sinf(deltaTheta);
+        float cosTheta = sqrtf(1.0 - sinTheta * sinTheta) * m_wb.direction;
         Y = length * sinTheta + m_wb.y;
         X = length * cosTheta + m_wb.x;
     }
@@ -1119,8 +1119,8 @@ void Blend::FrameToMosaic(float trs[3][3], float x, float y, float &wx, float &w
     {
         float deltaX = X - m_wb.x;
         float deltaY = Y - m_wb.y;
-        float length = sqrt(deltaX * deltaX + deltaY * deltaY);
-        float deltaTheta = asin(deltaX / length);
+        float length = sqrtf(deltaX * deltaX + deltaY * deltaY);
+        float deltaTheta = asinf(deltaX / length);
         float alpha = deltaTheta / m_wb.theta;
         wx = alpha * m_wb.width * m_wb.direction;
         wy = (length - m_wb.radius) * m_wb.direction + alpha * m_wb.correction;
@@ -1129,8 +1129,8 @@ void Blend::FrameToMosaic(float trs[3][3], float x, float y, float &wx, float &w
     {
         float deltaX = X - m_wb.x;
         float deltaY = Y - m_wb.y;
-        float length = sqrt(deltaX * deltaX + deltaY * deltaY);
-        float deltaTheta = asin(deltaY / length);
+        float length = sqrtf(deltaX * deltaX + deltaY * deltaY);
+        float deltaTheta = asinf(deltaY / length);
         float alpha = deltaTheta / m_wb.theta;
         wy = alpha * m_wb.width * m_wb.direction;
         wx = (length - m_wb.radius) * m_wb.direction + alpha * m_wb.correction;
@@ -1237,10 +1237,10 @@ void Blend::SelectRelevantFrames(MosaicFrame **frames, int frames_size,
         currY = ProjY(mb->trs, midX, midY, z, 1.0);
         float deltaX = currX - prevX;
         float deltaY = currY - prevY;
-        float center2centerDist = sqrt(deltaY * deltaY + deltaX * deltaX);
+        float center2centerDist = sqrtf(deltaY * deltaY + deltaX * deltaX);
 
-        if (fabs(deltaX) > STRIP_SEPARATION_THRESHOLD_PXLS ||
-                fabs(deltaY) > STRIP_SEPARATION_THRESHOLD_PXLS)
+        if (fabsf(deltaX) > STRIP_SEPARATION_THRESHOLD_PXLS ||
+                fabsf(deltaY) > STRIP_SEPARATION_THRESHOLD_PXLS)
         {
             relevant_frames[relevant_frames_size] = mb;
             relevant_frames_size++;
@@ -1298,11 +1298,11 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
 
         // The arcLength is computed by summing the lengths of the chords
         // connecting the pairwise projected image centers of the input image frames.
-        arcLength += sqrt(deltaY * deltaY + deltaX * deltaX);
+        arcLength += sqrtf(deltaY * deltaY + deltaX * deltaX);
 
         if (!is360)
         {
-            float thisTheta = asin(mb->trs[1][0]);
+            float thisTheta = asinf(mb->trs[1][0]);
             m_wb.theta += thisTheta - lastTheta;
             lastTheta = thisTheta;
         }
@@ -1315,7 +1315,7 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
     // rectangle is determined by the arcLength computed above and the cone
     // sector angle is determined using the rotation of the last frame.
     m_wb.width = arcLength;
-    if (is360) m_wb.theta = asin(last->trs[1][0]);
+    if (is360) m_wb.theta = asinf(last->trs[1][0]);
 
     // If there is no rotation, we're done.
     if (m_wb.theta != 0.0)
@@ -1328,16 +1328,16 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
         {
             m_wb.horizontal = 1;
             // Calculate radius position to make ends exactly the same Y offset
-            float radiusTheta = dx / cos(3.14159 / 2.0 - m_wb.theta);
-            m_wb.radius = dy + radiusTheta * cos(m_wb.theta);
+            float radiusTheta = dx / cosf(3.14159 / 2.0 - m_wb.theta);
+            m_wb.radius = dy + radiusTheta * cosf(m_wb.theta);
             if (m_wb.radius < 0.0) m_wb.radius = -m_wb.radius;
         }
         else
         {
             m_wb.horizontal = 0;
             // Calculate radius position to make ends exactly the same Y offset
-            float radiusTheta = dy / cos(3.14159 / 2.0 - m_wb.theta);
-            m_wb.radius = dx + radiusTheta * cos(m_wb.theta);
+            float radiusTheta = dy / cosf(3.14159 / 2.0 - m_wb.theta);
+            m_wb.radius = dx + radiusTheta * cosf(m_wb.theta);
             if (m_wb.radius < 0.0) m_wb.radius = -m_wb.radius;
         }
 
@@ -1401,9 +1401,9 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
         // Calculate the correct correction factor
         float deltaX = prevX - m_wb.x;
         float deltaY = prevY - m_wb.y;
-        float length = sqrt(deltaX * deltaX + deltaY * deltaY);
+        float length = sqrtf(deltaX * deltaX + deltaY * deltaY);
         float deltaTheta = (m_wb.horizontal) ? deltaX : deltaY;
-        deltaTheta = asin(deltaTheta / length);
+        deltaTheta = asinf(deltaTheta / length);
         m_wb.correction = ((m_wb.radius - length) * m_wb.direction) /
             (deltaTheta / m_wb.theta);
     }

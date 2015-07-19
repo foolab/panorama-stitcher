@@ -44,8 +44,8 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
 
     /*The robustifier takes the input (x,y) and makes a new
     vector (xp,yp) where
-    xp=sqrt(log(1+(x^2+y^2)*one_over_scale2))*x/sqrt(x^2+y^2)
-    yp=sqrt(log(1+(x^2+y^2)*one_over_scale2))*y/sqrt(x^2+y^2)
+    xp=sqrtf(log(1+(x^2+y^2)*one_over_scale2))*x/sqrtf(x^2+y^2)
+    yp=sqrtf(log(1+(x^2+y^2)*one_over_scale2))*y/sqrtf(x^2+y^2)
     The new vector has the property
     xp^2+yp^2=log(1+(x^2+y^2)*one_over_scale2)
     i.e. when it is square-summed it gives the robust
@@ -55,8 +55,8 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
     r2s=r2*one_over_scale2
     fu=log(1+r2s)/r2
     then
-    xp=sqrt(fu)*x
-    yp=sqrt(fu)*y
+    xp=sqrtf(fu)*x
+    yp=sqrtf(fu)*y
     and
     d(r2)/dx=2x
     d(r2)/dy=2y
@@ -64,16 +64,16 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
     dfu/dx=d(r2)/dx*(r2s/(1+r2s)-log(1+r2s))/(r2*r2)
     dfu/dy=d(r2)/dy*(r2s/(1+r2s)-log(1+r2s))/(r2*r2)
     and
-    d(xp)/dx=1/(2sqrt(fu))*(dfu/dx)*x+sqrt(fu)
-    d(xp)/dy=1/(2sqrt(fu))*(dfu/dy)*x
-    d(yp)/dx=1/(2sqrt(fu))*(dfu/dx)*y
-    d(yp)/dy=1/(2sqrt(fu))*(dfu/dy)*y+sqrt(fu)
+    d(xp)/dx=1/(2sqrtf(fu))*(dfu/dx)*x+sqrtf(fu)
+    d(xp)/dy=1/(2sqrtf(fu))*(dfu/dy)*x
+    d(yp)/dx=1/(2sqrtf(fu))*(dfu/dx)*y
+    d(yp)/dy=1/(2sqrtf(fu))*(dfu/dy)*y+sqrtf(fu)
     */
 
     x2=db_sqr(f[0]);
     y2=db_sqr(f[1]);
     r2=x2+y2;
-    r=sqrt(r2);
+    r=sqrtf(r2);
 
     if(r2<=0.0) at_zero=1;
     else
@@ -82,7 +82,7 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
         r2s=r2*one_over_scale2;
         one_plus_r2s=1.0+r2s;
         fu=log(one_plus_r2s)*one_over_r2;
-        r_fu=sqrt(fu);
+        r_fu=sqrtf(fu);
         if(r_fu<=0.0) at_zero=1;
         else
         {
@@ -106,10 +106,10 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
     if(at_zero)
     {
         /*Close to zero the robustifying mapping
-        becomes identity*sqrt(one_over_scale2)*/
+        becomes identity*sqrtf(one_over_scale2)*/
         fp[0]=0.0;
         fp[1]=0.0;
-        J[0]=sqrt(one_over_scale2);
+        J[0]=sqrtf(one_over_scale2);
         J[1]=0.0;
         J[2]=0.0;
         J[3]=J[0];
@@ -261,7 +261,7 @@ inline void db_DerivativeInhomRotationReprojection(float Jf_dx[6],float f[2],con
     [1/zh  0  -xh/(zh*zh)]
     [ 0  1/zh -yh/(zh*zh)]
     The Jacobian at zero of the homogenous coordinates with respect to
-    [sin(phi) sin(ohm) sin(kap)] is
+    [sinf(phi) sinf(ohm) sinf(kap)] is
     [-rx2   0   rx1 ]
     [  0   rx2 -rx0 ]
     [ rx0 -rx1   0  ]

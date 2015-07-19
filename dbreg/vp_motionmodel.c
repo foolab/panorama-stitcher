@@ -332,7 +332,7 @@ float vp_motion_cornerdiff(const VP_MOTION *mot_a, const VP_MOTION *mot_b,
   err += (VP_SQR(ax3 - bx3) + VP_SQR(ay3 - by3));
   err += (VP_SQR(ax4 - bx4) + VP_SQR(ay4 - by4));
 
-  return(sqrt(err));
+  return(sqrtf(err));
 }
 
 int vp_zoom_motion2d(VP_MOTION* in, VP_MOTION* out,

@@ -181,27 +181,27 @@
 /*!
  * \def DB_SQRTPI
  * \ingroup LMBasicUtilities
- * \brief sqrt(Pi)
+ * \brief sqrtf(Pi)
 */
 /*!
  * \def DB_SQRT_2PI
  * \ingroup LMBasicUtilities
- * \brief sqrt(2*Pi)
+ * \brief sqrtf(2*Pi)
 */
 /*!
  * \def DB_SQRT2
  * \ingroup LMBasicUtilities
- * \brief sqrt(2)
+ * \brief sqrtf(2)
 */
 /*!
  * \def DB_SQRT3
  * \ingroup LMBasicUtilities
- * \brief sqrt(3)
+ * \brief sqrtf(3)
 */
 /*!
  * \def DB_SQRT1_2
  * \ingroup LMBasicUtilities
- * \brief sqrt(1/2)
+ * \brief sqrtf(1/2)
 */
 #endif /* DB_UTILITIES_CONSTANTS */
 

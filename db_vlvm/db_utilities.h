@@ -68,7 +68,7 @@ inline int db_roundi (float x) {
     }
     return n;
 #else
-    return static_cast<int>(floor(x+0.5));
+    return static_cast<int>(floorf(x+0.5));
 #endif
 }
 
@@ -204,28 +204,28 @@ inline float db_SafeDivision(float a,float b)
 
 /*!
  * Square root. Prevents imaginary output.
- * \return sqrt(a) if a > 0.0. 0.0 otherewise.
+ * \return sqrtf(a) if a > 0.0. 0.0 otherewise.
  */
 inline float db_SafeSqrt(float a)
 {
-    return((a>=0.0)?(sqrt(a)):0.0);
+    return((a>=0.0)?(sqrtf(a)):0.0);
 }
 
 /*!
  * Square root of a reciprocal. Prevents divide by 0 and imaginary output.
- * \return sqrt(1/a) if a > 0.0. 1.0 otherewise.
+ * \return sqrtf(1/a) if a > 0.0. 1.0 otherewise.
  */
 inline float db_SafeSqrtReciprocal(float a)
 {
-    return((a>0.0)?(sqrt(1.0/a)):1.0);
+    return((a>0.0)?(sqrtf(1.0/a)):1.0);
 }
 /*!
  * Cube root.
  */
 inline float db_CubRoot(float x)
 {
-    if(x>=0.0) return(pow(x,1.0/3.0));
-    else return(-pow(-x,1.0/3.0));
+    if(x>=0.0) return(powf(x,1.0/3.0));
+    else return(-powf(-x,1.0/3.0));
 }
 /*!
  * Sum of squares of elements of x.
@@ -477,7 +477,7 @@ DB_API inline unsigned char db_BilinearInterpolation(float y, float x, const uns
 /*\}*/
 /*!
  * \ingroup LMRotation
- * Compute an incremental rotation matrix using the update dx=[sin(phi) sin(ohm) sin(kap)]
+ * Compute an incremental rotation matrix using the update dx=[sinf(phi) sinf(ohm) sinf(kap)]
  */
 inline void db_IncrementalRotationMatrix(float R[9],const float dx[3])
 {
@@ -489,9 +489,9 @@ inline void db_IncrementalRotationMatrix(float R[9],const float dx[3])
     om_so2=1.0-so*so;
     om_sk2=1.0-sk*sk;
     /*Compute cosines*/
-    cp=(om_sp2>=0.0)?sqrt(om_sp2):1.0;
-    co=(om_so2>=0.0)?sqrt(om_so2):1.0;
-    ck=(om_sk2>=0.0)?sqrt(om_sk2):1.0;
+    cp=(om_sp2>=0.0)?sqrtf(om_sp2):1.0;
+    co=(om_so2>=0.0)?sqrtf(om_so2):1.0;
+    ck=(om_sk2>=0.0)?sqrtf(om_sk2):1.0;
     /*Compute matrix*/
     sp_so=sp*so;
     cp_so=cp*so;

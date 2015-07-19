@@ -311,8 +311,8 @@ inline void db_RobImageHomographyMultiplyJacobian(float **JtJ_ref,float *min_Jtf
 inline void db_RobImageHomographyJH_Js(float **JE_dx_ref,int j,float H[9])
 {
     /*Update of upper 2x2 is multiplication by
-    [s 0][ cos(theta) sin(theta)]
-    [0 s][-sin(theta) cos(theta)]*/
+    [s 0][ cosf(theta) sinf(theta)]
+    [0 s][-sinf(theta) cosf(theta)]*/
     JE_dx_ref[0][j]=H[0];
     JE_dx_ref[1][j]=H[1];
     JE_dx_ref[2][j]=0;
@@ -327,8 +327,8 @@ inline void db_RobImageHomographyJH_Js(float **JE_dx_ref,int j,float H[9])
 inline void db_RobImageHomographyJH_JR(float **JE_dx_ref,int j,float H[9])
 {
     /*Update of upper 2x2 is multiplication by
-    [s 0][ cos(theta) sin(theta)]
-    [0 s][-sin(theta) cos(theta)]*/
+    [s 0][ cosf(theta) sinf(theta)]
+    [0 s][-sinf(theta) cosf(theta)]*/
     JE_dx_ref[0][j]=  H[3];
     JE_dx_ref[1][j]=  H[4];
     JE_dx_ref[2][j]=0;

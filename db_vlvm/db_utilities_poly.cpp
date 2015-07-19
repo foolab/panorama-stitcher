@@ -52,16 +52,16 @@ void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d)
         {
             *nr_roots=3;
             /*q has to be > 0*/
-            srq=sqrt(q);
-            theta=acos(db_maxd(-1.0,db_mind(1.0,r/(q*srq))));
+            srq=sqrtf(q);
+            theta=acosf(db_maxd(-1.0,db_mind(1.0,r/(q*srq))));
             bp_through3=bp/3.0;
             theta_through3=theta/3.0;
-            cos_theta_through3=cos(theta_through3);
-            sin_theta_through3=sqrt(db_maxd(0.0,1.0-cos_theta_through3*cos_theta_through3));
+            cos_theta_through3=cosf(theta_through3);
+            sin_theta_through3=sqrtf(db_maxd(0.0,1.0-cos_theta_through3*cos_theta_through3));
 
-            /*cos(theta_through3+2*pi/3)=cos_theta_through3*cos(2*pi/3)-sin_theta_through3*sin(2*pi/3)
-            = -0.5*cos_theta_through3-sqrt(3)/2.0*sin_theta_through3
-            = -0.5*(cos_theta_through3+sqrt(3)*sin_theta_through3)*/
+            /*cosf(theta_through3+2*pi/3)=cos_theta_through3*cosf(2*pi/3)-sin_theta_through3*sinf(2*pi/3)
+            = -0.5*cos_theta_through3-sqrtf(3)/2.0*sin_theta_through3
+            = -0.5*(cos_theta_through3+sqrtf(3)*sin_theta_through3)*/
             min2_cos_theta_plu=cos_theta_through3+DB_SQRT3*sin_theta_through3;
             min2_cos_theta_min=cos_theta_through3-DB_SQRT3*sin_theta_through3;
 
@@ -72,7 +72,7 @@ void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d)
         else if(r2_min_q3>0.0)
         {
             *nr_roots=1;
-            A= -db_sign(r)*db_CubRoot(db_absd(r)+sqrt(r2_min_q3));
+            A= -db_sign(r)*db_CubRoot(db_absd(r)+sqrtf(r2_min_q3));
             bp_through3=bp/3.0;
             if(A!=0.0) roots[0]=A+q/A-bp_through3;
             else roots[0]= -bp_through3;
@@ -82,7 +82,7 @@ void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d)
             *nr_roots=2;
             bp_through3=bp/3.0;
             /*q has to be >= 0*/
-            si_r_srq=db_sign(r)*sqrt(q);
+            si_r_srq=db_sign(r)*sqrtf(q);
             /*Single root*/
             roots[0]= -2.0*si_r_srq-bp_through3;
             /*Double root*/
@@ -146,8 +146,8 @@ void db_SolveQuartic(float *roots,int *nr_roots,float a,float b,float c,float d,
 
             if((ms>=0.0)&&(ns>=0.0))
             {
-                m=sqrt(ms);
-                n=sqrt(ns)*db_sign(mn);
+                m=sqrtf(ms);
+                n=sqrtf(ns)*db_sign(mn);
 
                 db_SolveQuadratic(roots,nr_roots,
                     1.0,c3through2+m,lz_through2+n);
@@ -219,8 +219,8 @@ void db_SolveQuarticForced(float *roots,int *nr_roots,float a,float b,float c,fl
             if(ms<0.0) ms=0.0;
             if(ns<0.0) ns=0.0;
 
-            m=sqrt(ms);
-            n=sqrt(ns)*db_sign(mn);
+            m=sqrtf(ms);
+            n=sqrtf(ns)*db_sign(mn);
 
             db_SolveQuadratic(roots,nr_roots,
                 1.0,c3through2+m,lz_through2+n);

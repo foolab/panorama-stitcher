@@ -126,14 +126,14 @@ inline void db_OrthonormalizeRotation(float R[9])
     float s,mult;
     /*Normalize first vector*/
     s=db_sqr(R[0])+db_sqr(R[1])+db_sqr(R[2]);
-    mult=sqrt(1.0/(s?s:1));
+    mult=sqrtf(1.0/(s?s:1));
     R[0]*=mult; R[1]*=mult; R[2]*=mult;
     /*Subtract scalar product from second vector*/
     s=R[0]*R[3]+R[1]*R[4]+R[2]*R[5];
     R[3]-=s*R[0]; R[4]-=s*R[1]; R[5]-=s*R[2];
     /*Normalize second vector*/
     s=db_sqr(R[3])+db_sqr(R[4])+db_sqr(R[5]);
-    mult=sqrt(1.0/(s?s:1));
+    mult=sqrtf(1.0/(s?s:1));
     R[3]*=mult; R[4]*=mult; R[5]*=mult;
     /*Get third vector by vector product*/
     R[6]=R[1]*R[5]-R[4]*R[2];
@@ -141,7 +141,7 @@ inline void db_OrthonormalizeRotation(float R[9])
     R[8]=R[0]*R[4]-R[3]*R[1];
 }
 /*!
-Update a rotation with the update dx=[sin(phi) sin(ohm) sin(kap)]
+Update a rotation with the update dx=[sinf(phi) sinf(ohm) sinf(kap)]
 */
 inline void db_UpdateRotation(float R_p_dx[9],float R[9],const float dx[3])
 {
@@ -198,10 +198,10 @@ inline float db_FocalAndRotFromCamRotFocalHomography(float R[9],const float H[9]
 }
 /*!
 Compute Jacobian at zero of three coordinates dR*x with
-respect to the update dR([sin(phi) sin(ohm) sin(kap)]) given x.
+respect to the update dR([sinf(phi) sinf(ohm) sinf(kap)]) given x.
 
 The Jacobian at zero of the homogenous coordinates with respect to
-    [sin(phi) sin(ohm) sin(kap)] is
+    [sinf(phi) sinf(ohm) sinf(kap)] is
 \code
     [-rx2   0   rx1 ]
     [  0   rx2 -rx0 ]
@@ -212,7 +212,7 @@ The Jacobian at zero of the homogenous coordinates with respect to
 inline void db_JacobianOfRotatedPointStride(float J[9],const float x[3],int stride)
 {
     /*The Jacobian at zero of the homogenous coordinates with respect to
-    [sin(phi) sin(ohm) sin(kap)] is
+    [sinf(phi) sinf(ohm) sinf(kap)] is
     [-rx2   0   rx1 ]
     [  0   rx2 -rx0 ]
     [ rx0 -rx1   0  ]*/
@@ -256,8 +256,8 @@ inline bool db_InvertAffineTransform(float Hinv[9],const float H[9])
 /*!
 Update of upper 2x2 is multiplication by
 \code
-[s 0][ cos(theta) sin(theta)]
-[0 s][-sin(theta) cos(theta)]
+[s 0][ cosf(theta) sinf(theta)]
+[0 s][-sinf(theta) cosf(theta)]
 \endcode
 */
 inline void db_MultiplyScaleOntoImageHomography(float H[9],float s)
@@ -271,8 +271,8 @@ inline void db_MultiplyScaleOntoImageHomography(float H[9],float s)
 /*!
 Update of upper 2x2 is multiplication by
 \code
-[s 0][ cos(theta) sin(theta)]
-[0 s][-sin(theta) cos(theta)]
+[s 0][ cosf(theta) sinf(theta)]
+[0 s][-sinf(theta) cosf(theta)]
 \endcode
 */
 inline void db_MultiplyRotationOntoImageHomography(float H[9],float theta)
@@ -280,7 +280,7 @@ inline void db_MultiplyRotationOntoImageHomography(float H[9],float theta)
     float c,s,H0,H1;
 
 
-    c=cos(theta);
+    c=cosf(theta);
     s=db_SafeSqrt(1.0-db_sqr(c));
     H0=  c*H[0]+s*H[3];
     H[3]= -s*H[0]+c*H[3];

@@ -143,7 +143,7 @@ int Align::addFrame(ImageType imageGray)
         Hcurr[8] = 1.0;
     }
 
-    if(fabs(Hcurr[2])<thresh_still && fabs(Hcurr[5])<thresh_still)  // Still camera
+    if(fabsf(Hcurr[2])<thresh_still && fabsf(Hcurr[5])<thresh_still)  // Still camera
     {
         delete[] m_rows;
         return ALIGN_RET_ERROR;
