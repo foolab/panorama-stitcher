@@ -343,7 +343,7 @@ int Blend::FillFramePyramid(MosaicFrame *mb)
 
         for(w=0; w<width; w++)
         {
-            yptr[w] = (short) ((*(mbY++)) << 3);
+            yptr[w] = (short) (mbY[width * h + w] << 3);
             uptr[w] = (short) (mbU[(h / 2) * (width / 2) + (w / 2)] << 3);
             vptr[w] = (short) (mbV[(h / 2) * (width / 2) + (w / 2)] << 3);
         }
