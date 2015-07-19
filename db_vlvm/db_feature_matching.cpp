@@ -22,6 +22,8 @@
 
 #include "db_utilities.h"
 #include "db_feature_matching.h"
+#include <stdlib.h>
+#include <sys/param.h>
 #ifdef _VERBOSE_
 #include <iostream>
 #endif
@@ -2970,7 +2972,7 @@ inline void db_MatchPointPair_u(db_PointInfo_u *pir_l,db_PointInfo_u *pir_r,
 
 
     if( rect_window )
-        compute_score = ((unsigned)db_absi(pir_l->x - pir_r->x)<kA && (unsigned)db_absi(pir_l->y - pir_r->y)<kB);
+        compute_score = ((unsigned)abs(pir_l->x - pir_r->x)<kA && (unsigned)abs(pir_l->y - pir_r->y)<kB);
     else
     {   /*Check if disparity is within the maximum disparity
         with the formula xm^2*256+ym^2*kA<kB
@@ -3201,11 +3203,11 @@ unsigned long db_Matcher_f::Init(int im_width,int im_height,float max_disparity,
     Clean();
     m_w=im_width;
     m_h=im_height;
-    m_bw=db_maxi(1,(int) (max_disparity*((float)im_width)));
-    m_bh=db_maxi(1,(int) (max_disparity*((float)im_height)));
+    m_bw=MAX(1,(int) (max_disparity*((float)im_width)));
+    m_bh=MAX(1,(int) (max_disparity*((float)im_height)));
     m_nr_h=1+(im_width-1)/m_bw;
     m_nr_v=1+(im_height-1)/m_bh;
-    m_bd=db_maxi(1,(int)(((float)target_nr_corners)*
+    m_bd=MAX(1,(int)(((float)target_nr_corners)*
         max_disparity*max_disparity));
     m_target=target_nr_corners;
     m_kA=(long)(256.0*((float)(m_w*m_w))/((float)(m_h*m_h)));
@@ -3294,20 +3296,20 @@ unsigned long db_Matcher_u::Init(int im_width,int im_height,float max_disparity,
     {
         m_rect_window = 1;
 
-        m_bw=db_maxi(1,(int)(max_disparity*((float)im_width)));
-        m_bh=db_maxi(1,(int)(max_disparity_v*((float)im_height)));
+        m_bw=MAX(1,(int)(max_disparity*((float)im_width)));
+        m_bh=MAX(1,(int)(max_disparity_v*((float)im_height)));
 
-        m_bd=db_maxi(1,(int)(((float)target_nr_corners)*max_disparity*max_disparity_v));
+        m_bd=MAX(1,(int)(((float)target_nr_corners)*max_disparity*max_disparity_v));
 
         m_kA=(int)(max_disparity*m_w);
         m_kB=(int)(max_disparity_v*m_h);
 
     } else
     {
-        m_bw=(int)db_maxi(1,(int)(max_disparity*((float)im_width)));
-        m_bh=(int)db_maxi(1,(int)(max_disparity*((float)im_height)));
+        m_bw=(int)MAX(1,(int)(max_disparity*((float)im_width)));
+        m_bh=(int)MAX(1,(int)(max_disparity*((float)im_height)));
 
-        m_bd=db_maxi(1,(int)(((float)target_nr_corners)*max_disparity*max_disparity));
+        m_bd=MAX(1,(int)(((float)target_nr_corners)*max_disparity*max_disparity));
 
         m_kA=(long)(256.0*((float)(m_w*m_w))/((float)(m_h*m_h)));
         m_kB=(long)(256.0*max_disparity*max_disparity*((float)(m_w*m_w)));
@@ -3370,11 +3372,11 @@ void db_Matcher_u::Match(const unsigned char * const *l_img,const unsigned char 
             float stretch_x[2];
             float stretch_y[2];
             AffineWarpPointOffset(r_w,c_w,Hinv, 5,5);
-            stretch_x[0]=db_absf(c_w);stretch_y[0]=db_absf(r_w);
+            stretch_x[0]=fabsf(c_w);stretch_y[0]=fabsf(r_w);
             AffineWarpPointOffset(r_w,c_w,Hinv, 5,-5);
-            stretch_x[1]=db_absf(c_w);stretch_y[1]=db_absf(r_w);
-            int max_stretxh_x=(int) (db_maxd(stretch_x[0],stretch_x[1]));
-            int max_stretxh_y=(int) (db_maxd(stretch_y[0],stretch_y[1]));
+            stretch_x[1]=fabsf(c_w);stretch_y[1]=fabsf(r_w);
+            int max_stretxh_x=(int) (MAX(stretch_x[0],stretch_x[1]));
+            int max_stretxh_y=(int) (MAX(stretch_y[0],stretch_y[1]));
             int warpbounds[4]={max_stretxh_x,m_w-1-max_stretxh_x,max_stretxh_y,m_h-1-max_stretxh_y};
 
             for (int r=-5;r<=5;r++){

@@ -19,7 +19,7 @@
 #include "db_utilities.h"
 #include "db_rob_image_homography.h"
 #include "db_bundle.h"
-
+#include <sys/param.h>
 
 
 /*****************************************************************
@@ -81,7 +81,7 @@ inline float db_RobImageHomography_Statistics(float H[9],int point_count,float *
     {
         i+=(db_SquaredInhomogenousHomographyError(xp_i+(c<<1),H,x_i+(c<<1))*one_over_scale2<=t2)?1:0;
     }
-    frac=((float)i)/((float)(db_maxi(point_count,1)));
+    frac=((float)i)/((float)(MAX(point_count,1)));
 
 #ifdef _VERBOSE_
     std::cout << "Inlier Percentage RobImageHomography: " << frac*100.0 << "% out of " << point_count << " constraints" << std::endl;
@@ -99,7 +99,7 @@ inline float db_RobImageHomography_Statistics(float H[9],int point_count,float *
         /*stat->nr_parameters=;*/
 
         stat->lambda1=log(4.0);
-        stat->lambda2=log(4.0*((float)db_maxi(1,stat->nr_points)));
+        stat->lambda2=log(4.0*((float)MAX(1,stat->nr_points)));
         stat->lambda3=10.0;
         stat->gric=stat->cost+stat->lambda1*stat->model_dimension*((float)stat->nr_points)+stat->lambda2*((float)stat->nr_parameters);
         stat->inlier_evidence=((float)stat->nr_inliers)-stat->lambda3*((float)stat->nr_parameters);
@@ -744,7 +744,7 @@ void db_RobImageHomography(
     /*Prepare a randomly permuted subset of size
     point_count from the input points*/
 
-    point_count=db_mini(nr_points,(int)(chunk_size*log((float)nr_samples)/DB_LN2));
+    point_count=MIN(nr_points,(int)(chunk_size*log((float)nr_samples)/DB_LN2));
 
     point_count_new = point_count;
 
@@ -939,7 +939,7 @@ void db_RobImageHomography(
         for(i=0,last_hyp=hyp_count-1;(last_hyp>0) && (i<point_count);i+=chunk_size)
         {
             /*Update cost with the next chunk*/
-            last_corr=db_mini(i+chunk_size-1,point_count-1);
+            last_corr=MIN(i+chunk_size-1,point_count-1);
             for(j=0;j<=last_hyp;j++)
             {
                 hyp_point=hyp_H_array+9*hyp_perm[j];
@@ -1028,10 +1028,10 @@ void db_RobImageHomography(
             case DB_HOMOGRAPHY_TYPE_PROJECTIVE:
             case DB_HOMOGRAPHY_TYPE_CAMROTATION_F:
             case DB_HOMOGRAPHY_TYPE_CAMROTATION_F_UD:
-                db_RobCamRotation_Polish_Generic(H_temp,db_mini(point_count,max_points),homography_type,x_i,xp_i,one_over_scale2,max_iterations);
+                db_RobCamRotation_Polish_Generic(H_temp,MIN(point_count,max_points),homography_type,x_i,xp_i,one_over_scale2,max_iterations);
                 break;
             case DB_HOMOGRAPHY_TYPE_CAMROTATION:
-                db_RobCamRotation_Polish(H_temp,db_mini(point_count,max_points),x_i,xp_i,one_over_scale2,max_iterations);
+                db_RobCamRotation_Polish(H_temp,MIN(point_count,max_points),x_i,xp_i,one_over_scale2,max_iterations);
                 break;
             }
 
@@ -1070,7 +1070,7 @@ void db_RobImageHomography(
         break;
     }
 
-    db_RobImageHomography_Statistics(H_temp,db_mini(point_count,max_points),x_i,xp_i,one_over_scale2,stat);
+    db_RobImageHomography_Statistics(H_temp,MIN(point_count,max_points),x_i,xp_i,one_over_scale2,stat);
 
     /*Put on the calibration matrices*/
     db_Multiply3x3_3x3(H_temp2,H_temp,K_inv);

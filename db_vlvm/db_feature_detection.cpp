@@ -26,6 +26,7 @@
 #include <iostream>
 #endif
 #include <float.h>
+#include <sys/param.h>
 
 #define DB_SUB_PIXEL
 
@@ -38,7 +39,7 @@ float** db_AllocStrengthImage_f(float **im,int w,int h)
     float **img,*aim,*p;
 
     /*Determine number of 124 element chunks needed*/
-    n=(db_maxi(1,w-6)+123)/124;
+    n=(MAX(1,w-6)+123)/124;
     /*Determine the total allocation width aw*/
     aw=n*124+8;
     /*Allocate*/
@@ -589,7 +590,7 @@ void db_HarrisStrength_u(float **s, const unsigned char * const *img,int w,int h
         next_x=x+124;
 
         // mayban: to revert to the original full chunks state, change the line below to: nc = 128;
-        //nc = db_mini(128,last-x+1);
+        //nc = MIN(128,last-x+1);
         nc = 128;
 
         /*Compute the Harris strength of a chunk*/
@@ -597,7 +598,7 @@ void db_HarrisStrength_u(float **s, const unsigned char * const *img,int w,int h
     }
 }
 
-inline float db_Max_128Aligned16_f(float *v)
+inline float MAX_128Aligned16_f(float *v)
 {
 #ifdef DB_USE_SIMD
     float back;
@@ -675,7 +676,7 @@ inline float db_Max_128Aligned16_f(float *v)
 #endif /*DB_USE_SIMD*/
 }
 
-inline float db_Max_64Aligned16_f(float *v)
+inline float MAX_64Aligned16_f(float *v)
 {
 #ifdef DB_USE_SIMD
     float back;
@@ -733,7 +734,7 @@ inline float db_Max_64Aligned16_f(float *v)
 #endif /*DB_USE_SIMD*/
 }
 
-inline float db_Max_32Aligned16_f(float *v)
+inline float MAX_32Aligned16_f(float *v)
 {
 #ifdef DB_USE_SIMD
     float back;
@@ -781,7 +782,7 @@ inline float db_Max_32Aligned16_f(float *v)
 #endif /*DB_USE_SIMD*/
 }
 
-inline float db_Max_16Aligned16_f(float *v)
+inline float MAX_16Aligned16_f(float *v)
 {
 #ifdef DB_USE_SIMD
     float back;
@@ -821,7 +822,7 @@ inline float db_Max_16Aligned16_f(float *v)
 #endif /*DB_USE_SIMD*/
 }
 
-inline float db_Max_8Aligned16_f(float *v)
+inline float MAX_8Aligned16_f(float *v)
 {
 #ifdef DB_USE_SIMD
     float back;
@@ -857,7 +858,7 @@ inline float db_Max_8Aligned16_f(float *v)
 #endif /*DB_USE_SIMD*/
 }
 
-inline float db_Max_Aligned16_f(float *v,int size)
+inline float MAX_Aligned16_f(float *v,int size)
 {
     float val,max_val;
     float *stop_v;
@@ -865,31 +866,31 @@ inline float db_Max_Aligned16_f(float *v,int size)
     max_val=v[0];
     for(;size>=128;size-=128)
     {
-        val=db_Max_128Aligned16_f(v);
+        val=MAX_128Aligned16_f(v);
         v+=128;
         if(val>max_val) max_val=val;
     }
     if(size&64)
     {
-        val=db_Max_64Aligned16_f(v);
+        val=MAX_64Aligned16_f(v);
         v+=64;
         if(val>max_val) max_val=val;
     }
     if(size&32)
     {
-        val=db_Max_32Aligned16_f(v);
+        val=MAX_32Aligned16_f(v);
         v+=32;
         if(val>max_val) max_val=val;
     }
     if(size&16)
     {
-        val=db_Max_16Aligned16_f(v);
+        val=MAX_16Aligned16_f(v);
         v+=16;
         if(val>max_val) max_val=val;
     }
     if(size&8)
     {
-        val=db_Max_8Aligned16_f(v);
+        val=MAX_8Aligned16_f(v);
         v+=8;
         if(val>max_val) max_val=val;
     }
@@ -907,7 +908,7 @@ inline float db_Max_Aligned16_f(float *v,int size)
 
 /*Find maximum value of img in the region starting at (left,top)
 and with width w and height h. img[left] should be 16 byte aligned*/
-float db_MaxImage_Aligned16_f(float **img,int left,int top,int w,int h)
+float MAXImage_Aligned16_f(float **img,int left,int top,int w,int h)
 {
     float val,max_val;
     int i,stop_i;
@@ -919,7 +920,7 @@ float db_MaxImage_Aligned16_f(float **img,int left,int top,int w,int h)
 
         for(i=top;i<stop_i;i++)
         {
-            val=db_Max_Aligned16_f(img[i]+left,w);
+            val=MAX_Aligned16_f(img[i]+left,w);
             if(val>max_val) max_val=val;
         }
         return(max_val);
@@ -927,7 +928,7 @@ float db_MaxImage_Aligned16_f(float **img,int left,int top,int w,int h)
     return(0.0);
 }
 
-inline void db_MaxVector_128_Aligned16_f(float *m,float *v1,float *v2)
+inline void MAXVector_128_Aligned16_f(float *m,float *v1,float *v2)
 {
 #ifdef DB_USE_SIMD
     _asm
@@ -1053,7 +1054,7 @@ inline void db_MaxVector_128_Aligned16_f(float *m,float *v1,float *v2)
 #endif /*DB_USE_SIMD*/
 }
 
-inline void db_MaxVector_128_SecondSourceDestAligned16_f(float *m,float *v1,float *v2)
+inline void MAXVector_128_SecondSourceDestAligned16_f(float *m,float *v1,float *v2)
 {
 #ifdef DB_USE_SIMD
     _asm
@@ -1183,7 +1184,7 @@ inline void db_MaxVector_128_SecondSourceDestAligned16_f(float *m,float *v1,floa
 stopping at bottom. The output is shifted two steps left and overwrites 128 elements for each row.
 The input s should be of width at least 128, and exist for 2 pixels outside the specified region.
 s[i][left-2] and sf[i][left-2] should be 16 byte aligned. Top must be at least 3*/
-inline void db_MaxSuppressFilterChunk_5x5_Aligned16_f(float **sf,float **s,int left,int top,int bottom,
+inline void MAXSuppressFilterChunk_5x5_Aligned16_f(float **sf,float **s,int left,int top,int bottom,
                                       /*temp should point to at least
                                       6*132 floats of 16-byte-aligned allocated memory*/
                                       float *temp)
@@ -1212,23 +1213,23 @@ inline void db_MaxSuppressFilterChunk_5x5_Aligned16_f(float **sf,float **s,int l
     }
 
     /*Fill three rows of the wrap-around max buffers*/
-    for(i=top-3;i<top;i++) db_MaxVector_128_Aligned16_f(two[i&3],s[i+1]+lm2,s[i+2]+lm2);
+    for(i=top-3;i<top;i++) MAXVector_128_Aligned16_f(two[i&3],s[i+1]+lm2,s[i+2]+lm2);
 
     /*For each output row*/
     for(;i<=bottom;i++)
     {
         /*Compute max of the lowest pair of rows in the five row window*/
-        db_MaxVector_128_Aligned16_f(two[i&3],s[i+1]+lm2,s[i+2]+lm2);
+        MAXVector_128_Aligned16_f(two[i&3],s[i+1]+lm2,s[i+2]+lm2);
         /*Compute max of the lowest and highest pair of rows in the five row window*/
-        db_MaxVector_128_Aligned16_f(four,two[i&3],two[(i-3)&3]);
+        MAXVector_128_Aligned16_f(four,two[i&3],two[(i-3)&3]);
         /*Compute max of all rows*/
-        db_MaxVector_128_Aligned16_f(five,four,two[(i-1)&3]);
+        MAXVector_128_Aligned16_f(five,four,two[(i-1)&3]);
         /*Compute max of 2x5 chunks*/
-        db_MaxVector_128_SecondSourceDestAligned16_f(five,five+1,five);
+        MAXVector_128_SecondSourceDestAligned16_f(five,five+1,five);
         /*Compute max of pairs of 2x5 chunks*/
-        db_MaxVector_128_SecondSourceDestAligned16_f(five,five+3,five);
+        MAXVector_128_SecondSourceDestAligned16_f(five,five+3,five);
         /*Compute max of pairs of 5x5 except middle*/
-        db_MaxVector_128_SecondSourceDestAligned16_f(sf[i]+lm2,four+2,five);
+        MAXVector_128_SecondSourceDestAligned16_f(sf[i]+lm2,four+2,five);
     }
 
 #else
@@ -1259,7 +1260,7 @@ outside the specified region. s[i][left-2] and sf[i][left-2] should be 16 byte a
 Top must be at least 3. Reading and writing from and to the input and output images is done
 as if the region had a width equal to a multiple of 124. If this is not the case, the images
 should be over-allocated and the input cleared for a sufficient region*/
-void db_MaxSuppressFilter_5x5_Aligned16_f(float **sf,float **s,int left,int top,int right,int bottom,
+void MAXSuppressFilter_5x5_Aligned16_f(float **sf,float **s,int left,int top,int right,int bottom,
                                           /*temp should point to at least
                                           6*132 floats of 16-byte-aligned allocated memory*/
                                           float *temp)
@@ -1269,7 +1270,7 @@ void db_MaxSuppressFilter_5x5_Aligned16_f(float **sf,float **s,int left,int top,
     for(x=left;x<=right;x=next_x)
     {
         next_x=x+124;
-        db_MaxSuppressFilterChunk_5x5_Aligned16_f(sf,s,x,top,bottom,temp);
+        MAXSuppressFilterChunk_5x5_Aligned16_f(sf,s,x,top,bottom,temp);
     }
 }
 
@@ -1317,7 +1318,7 @@ inline void db_SubPixel(float **strength, const float xd, const float yd, float 
     xs = xd;
     ys = yd;
 
-    if ( db_absf(denom) <= FLT_EPSILON )
+    if ( fabsf(denom) <= FLT_EPSILON )
     {
         return;
     }
@@ -1329,7 +1330,7 @@ inline void db_SubPixel(float **strength, const float xd, const float yd, float 
         float dx = (fyy * fx - fxy * fy) / denom;
         float dy = (fxx * fy - fxy * fx) / denom;
 
-        if ( db_absf(dx) > 1.0 || db_absf(dy) > 1.0 )
+        if ( fabsf(dx) > 1.0 || fabsf(dy) > 1.0 )
         {
             return;
         }
@@ -1462,12 +1463,12 @@ unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr
     unsigned long area_factor;
     int active_width,active_height;
 
-    active_width=db_maxi(1,im_width-10);
-    active_height=db_maxi(1,im_height-10);
-    block_width=db_maxi(1,active_width/nr_horizontal_blocks);
-    block_height=db_maxi(1,active_height/nr_vertical_blocks);
+    active_width=MAX(1,im_width-10);
+    active_height=MAX(1,im_height-10);
+    block_width=MAX(1,active_width/nr_horizontal_blocks);
+    block_height=MAX(1,active_height/nr_vertical_blocks);
 
-    area_factor=db_minl(1000,db_maxl(1,(long)(10000.0*((float)target_nr_corners)/
+    area_factor=MIN(1000,MAX(1,(long)(10000.0*((float)target_nr_corners)/
         (((float)active_width)*((float)active_height)))));
 
     return(Start(im_width,im_height,block_width,block_height,area_factor,
@@ -1487,7 +1488,7 @@ unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
     m_area_factor=area_factor;
     m_r_thresh=relative_threshold;
     m_a_thresh=absolute_threshold;
-    m_max_nr=db_maxl(1,1+(m_w*m_h*m_area_factor)/10000);
+    m_max_nr=MAX(1,1+(m_w*m_h*m_area_factor)/10000);
 
     m_temp_i=new int[18*128];
     m_temp_d=new float[5*m_bw*m_bh];
@@ -1506,8 +1507,8 @@ void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,float *
 
     if(m_r_thresh)
     {
-        max_val=db_MaxImage_Aligned16_f(m_strength,3,3,m_w-6,m_h-6);
-        threshold= (float) db_maxd(m_a_thresh,max_val*m_r_thresh);
+        max_val=MAXImage_Aligned16_f(m_strength,3,3,m_w-6,m_h-6);
+        threshold= (float) MAX(m_a_thresh,max_val*m_r_thresh);
     }
     else threshold= (float) m_a_thresh;
 

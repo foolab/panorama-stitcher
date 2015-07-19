@@ -18,7 +18,7 @@
 #include "dbreg.h"
 #include <string.h>
 #include <stdio.h>
-
+#include <sys/param.h>
 
 #if PROFILE
 #endif
@@ -227,7 +227,7 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
   m_match_index_ins = new int [m_max_nr_matches];
 
   m_temp_float = new float [12*DB_DEFAULT_NR_SAMPLES+10*m_max_nr_matches];
-  m_temp_int = new int [db_maxi(DB_DEFAULT_NR_SAMPLES,m_max_nr_matches)];
+  m_temp_int = new int [MAX(DB_DEFAULT_NR_SAMPLES,m_max_nr_matches)];
 
   // allocate space for homogenous image points:
   m_corners_ref = new float [3*m_max_nr_corners];
@@ -555,7 +555,7 @@ void db_FrameToReferenceRegistration::Polish(int *inlier_indices, int &num_inlie
       m_polish_D[5]+=m_corners_ins[j+1];
     }
 
-  float a=db_maxd(m_polish_C[0],m_polish_C[7]);
+  float a=MAX(m_polish_C[0],m_polish_C[7]);
   m_polish_C[0]/=a; m_polish_C[1]/=a;   m_polish_C[2]/=a;
   m_polish_C[7]/=a; m_polish_C[8]/=a; m_polish_C[14]/=a;
 

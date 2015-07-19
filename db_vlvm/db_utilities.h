@@ -47,7 +47,7 @@
 #endif
 
 #include <math.h>
-
+#include <string.h>
 #include <assert.h>
 #include "db_utilities_constants.h"
 /*!
@@ -73,80 +73,10 @@ inline int db_roundi (float x) {
 }
 
 /*!
- * Square a float.
+ * Square number template.
  */
-inline float db_sqr(float a)
-{
-    return(a*a);
-}
-
-/*!
- * Square a long.
- */
-inline long db_sqr(long a)
-{
-    return(a*a);
-}
-
-/*!
- * Square an int.
- */
-inline long db_sqr(int a)
-{
-    return(a*a);
-}
-
-/*!
- * Maximum of two floats.
- */
-inline float db_maxd(float a,float b)
-{
-    if(b>a) return(b);
-    else return(a);
-}
-/*!
- * Minumum of two floats.
- */
-inline float db_mind(float a,float b)
-{
-    if(b<a) return(b);
-    else return(a);
-}
-
-
-/*!
- * Maximum of two ints.
- */
-inline int db_maxi(int a,int b)
-{
-    if(b>a) return(b);
-    else return(a);
-}
-
-/*!
- * Minimum of two numbers.
- */
-inline int db_mini(int a,int b)
-{
-    if(b<a) return(b);
-    else return(a);
-}
-/*!
- * Maximum of two numbers.
- */
-inline long db_maxl(long a,long b)
-{
-    if(b>a) return(b);
-    else return(a);
-}
-
-/*!
- * Minimum of two numbers.
- */
-inline long db_minl(long a,long b)
-{
-    if(b<a) return(b);
-    else return(a);
+template <typename T> inline T db_sqr(T t) {
+  return t*t;
 }
 
 /*!
@@ -157,31 +87,6 @@ inline float db_sign(float x)
 {
     if(x>=0.0) return(1.0);
     else return(-1.0);
-}
-/*!
- * Absolute value.
- */
-inline int db_absi(int a)
-{
-    if(a<0) return(-a);
-    else return(a);
-}
-/*!
- * Absolute value.
- */
-inline float db_absf(float a)
-{
-    if(a<0) return(-a);
-    else return(a);
-}
-
-/*!
- * Absolute value.
- */
-inline float db_absd(float a)
-{
-    if(a<0) return(-a);
-    else return(a);
 }
 
 /*!
@@ -259,8 +164,9 @@ inline float db_SquareSum9(float x[9])
  */
 void inline db_Copy3(float xd[3],const float xs[3])
 {
-    xd[0]=xs[0];xd[1]=xs[1];xd[2]=xs[2];
+  memcpy(xd, xs, 3*sizeof(float));
 }
+
 /*!
  * Copy a vector.
  * \param xd destination
@@ -268,9 +174,9 @@ void inline db_Copy3(float xd[3],const float xs[3])
  */
 void inline db_Copy6(float xd[6],const float xs[6])
 {
-    xd[0]=xs[0];xd[1]=xs[1];xd[2]=xs[2];
-    xd[3]=xs[3];xd[4]=xs[4];xd[5]=xs[5];
+  memcpy(xd, xs, 6*sizeof(float));
 }
+
 /*!
  * Copy a vector.
  * \param xd destination
@@ -278,9 +184,7 @@ void inline db_Copy6(float xd[6],const float xs[6])
  */
 void inline db_Copy9(float xd[9],const float xs[9])
 {
-    xd[0]=xs[0];xd[1]=xs[1];xd[2]=xs[2];
-    xd[3]=xs[3];xd[4]=xs[4];xd[5]=xs[5];
-    xd[6]=xs[6];xd[7]=xs[7];xd[8]=xs[8];
+  memcpy(xd, xs, 9*sizeof(float));
 }
 
 /*!

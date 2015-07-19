@@ -18,7 +18,7 @@
 
 #include "db_utilities_poly.h"
 #include "db_utilities.h"
-
+#include <sys/param.h>
 
 
 /*****************************************************************
@@ -53,11 +53,11 @@ void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d)
             *nr_roots=3;
             /*q has to be > 0*/
             srq=sqrtf(q);
-            theta=acosf(db_maxd(-1.0,db_mind(1.0,r/(q*srq))));
+            theta=acosf(MAX(-1.0,MIN(1.0,r/(q*srq))));
             bp_through3=bp/3.0;
             theta_through3=theta/3.0;
             cos_theta_through3=cosf(theta_through3);
-            sin_theta_through3=sqrtf(db_maxd(0.0,1.0-cos_theta_through3*cos_theta_through3));
+            sin_theta_through3=sqrtf(MAX(0.0,1.0-cos_theta_through3*cos_theta_through3));
 
             /*cosf(theta_through3+2*pi/3)=cos_theta_through3*cosf(2*pi/3)-sin_theta_through3*sinf(2*pi/3)
             = -0.5*cos_theta_through3-sqrtf(3)/2.0*sin_theta_through3
@@ -72,7 +72,7 @@ void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d)
         else if(r2_min_q3>0.0)
         {
             *nr_roots=1;
-            A= -db_sign(r)*db_CubRoot(db_absd(r)+sqrtf(r2_min_q3));
+            A= -db_sign(r)*db_CubRoot(fabsf(r)+sqrtf(r2_min_q3));
             bp_through3=bp/3.0;
             if(A!=0.0) roots[0]=A+q/A-bp_through3;
             else roots[0]= -bp_through3;
