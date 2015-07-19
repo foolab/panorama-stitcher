@@ -25,7 +25,7 @@
 
 #include "Geometry.h"
 #include "trsMatrix.h"
-
+#include <sys/param.h>
 #include "Log.h"
 #define LOG_TAG "BLEND"
 
@@ -73,9 +73,6 @@ int Blend::initialize(int blendingType, int stripType, int frame_width, int fram
 
     return BLEND_RET_OK;
 }
-
-inline float max(float a, float b) { return a > b ? a : b; }
-inline float min(float a, float b) { return a < b ? a : b; }
 
 void Blend::AlignToMiddleFrame(MosaicFrame **frames, int frames_size)
 {
@@ -155,7 +152,7 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
 
 
     // Determine the extents of the final mosaic
-    CSite *csite = m_AllSites ;
+    CSite *csite = m_AllSites;
     for(int mfit = 0; mfit < frames_size; mfit++)
     {
         mb = frames[mfit];
@@ -220,11 +217,11 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
     int yTopMost, yBottomMost;
 
     // Rounding up, so that we don't include the gray border.
-    xLeftMost = max(0, max(xLeftCorners[0], xLeftCorners[1]) - fullRect.left + 1);
-    xRightMost = min(Mwidth - 1, min(xRightCorners[0], xRightCorners[1]) - fullRect.left - 1);
+    xLeftMost = MAX(0, MAX(xLeftCorners[0], xLeftCorners[1]) - fullRect.left + 1);
+    xRightMost = MIN(Mwidth - 1, MIN(xRightCorners[0], xRightCorners[1]) - fullRect.left - 1);
 
-    yTopMost = max(0, max(yTopCorners[0], yTopCorners[1]) - fullRect.top + 1);
-    yBottomMost = min(Mheight - 1, min(yBottomCorners[0], yBottomCorners[1]) - fullRect.top - 1);
+    yTopMost = MAX(0, MAX(yTopCorners[0], yTopCorners[1]) - fullRect.top + 1);
+    yBottomMost = MIN(Mheight - 1, MIN(yBottomCorners[0], yBottomCorners[1]) - fullRect.top - 1);
 
     if (xRightMost <= xLeftMost || yBottomMost <= yTopMost)
     {
@@ -320,7 +317,7 @@ int Blend::MosaicSizeCheck(float sizeMultiplier, float heightMultiplier) {
    // in the secondary direction. We use a short side to determine the
    // secondary direction because users may hold the device in landsape
    // or portrait.
-   int shortSide = min(Mwidth, Mheight);
+   int shortSide = MIN(Mwidth, Mheight);
    if (shortSide > height * heightMultiplier) {
        return BLEND_RET_ERROR;
    }
@@ -821,7 +818,6 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
 {
     PyramidShort *dptr = m_pMosaicYPyr;
 
-    int nC = m_wb.nlevsC;
     int l = (int) ((vcrect.lft - rect.left));
     int b = (int) ((vcrect.bot - rect.top));
     int r = (int) ((vcrect.rgt - rect.left));
@@ -847,27 +843,21 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
     else if (t >= dptr->height + BORDER)
         t = dptr->height + BORDER - 1;
 
+    t = t < imgMos.Y.height ? t : imgMos.Y.height;
+    r = r < imgMos.Y.width ? r : imgMos.Y.width;
+
     // Walk the Region of interest and populate the pyramid
-    for (int j = b; j <= t; j++)
+    for (int j = b < 0 ? 0 : b; j < t; j++)
     {
-        int jj = j;
-        float sj = jj + rect.top;
+        float sj = j + rect.top;
 
-        for (int i = l; i <= r; i++)
+        for (int i = l < 0 ? 0 : l; i < r; i++)
         {
-            int ii = i;
             // project point and then triangulate to neighbors
-            float si = ii + rect.left;
-
+            float si = i + rect.left;
             float dself = hypotSq(csite->getVCenter().x - si, csite->getVCenter().y - sj);
-            int inMask = ((unsigned) ii < imgMos.Y.width &&
-                    (unsigned) jj < imgMos.Y.height) ? 1 : 0;
-
-            if(!inMask)
-                continue;
 
             // scan the neighbors to see if this is a valid position
-            unsigned char mask = (unsigned char) 255;
             SEdgeVector *ce;
             int ecnt;
             for (ce = csite->getNeighbor(), ecnt = csite->getNumNeighbors(); ecnt--; ce++)
@@ -882,7 +872,7 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
 
             if (ecnt >= 0) continue;
 
-            imgMos.Y.ptr[jj][ii] = (unsigned char)site_idx;
+            imgMos.Y.ptr[j][i] = (unsigned char)site_idx;
         }
     }
 }
@@ -936,6 +926,9 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
         {
             int jj = (j << dscale);
             float sj = jj + rect.top;
+	    ImageTypeShort rowy = dptr->ptr[j];
+	    ImageTypeShort rowu = duptr->ptr[j];
+	    ImageTypeShort rowv = dvptr->ptr[j];
 
             for (int i = l; i <= r; i++)
             {
@@ -1008,13 +1001,14 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                 {
                     float xfrac = xx - x1;
                     float yfrac = yy - y1;
-                    dptr->ptr[j][i] = (short) (wt0 * dptr->ptr[j][i] + .5 +
+                    rowy[i] = (short) (wt0 * rowy[i] + .5 +
                             wt1 * ciCalc(sptr, x1, y1, xfrac, yfrac));
+
                     if (dvptr >= m_pMosaicVPyr && nC > 0)
                     {
-                        duptr->ptr[j][i] = (short) (wt0 * duptr->ptr[j][i] + .5 +
+                        rowu[i] = (short) (wt0 * rowu[i] + .5 +
                                 wt1 * ciCalc(suptr, x1, y1, xfrac, yfrac));
-                        dvptr->ptr[j][i] = (short) (wt0 * dvptr->ptr[j][i] + .5 +
+                        rowv[i] = (short) (wt0 * rowv[i] + .5 +
                                 wt1 * ciCalc(svptr, x1, y1, xfrac, yfrac));
                     }
                 }
@@ -1029,7 +1023,7 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                         (sptr->ptr[y1][x2] - sptr->ptr[y1][x1]) * xfrac;
                     float y2val = sptr->ptr[y2][x1] +
                         (sptr->ptr[y2][x2] - sptr->ptr[y2][x1]) * xfrac;
-                    dptr->ptr[j][i] = (short) (y1val + yfrac * (y2val - y1val));
+                    rowy[i] = (short) (y1val + yfrac * (y2val - y1val));
 
                     if (dvptr >= m_pMosaicVPyr && nC > 0)
                     {
@@ -1038,14 +1032,14 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                         y2val = suptr->ptr[y2][x1] +
                             (suptr->ptr[y2][x2] - suptr->ptr[y2][x1]) * xfrac;
 
-                        duptr->ptr[j][i] = (short) (y1val + yfrac * (y2val - y1val));
+                        rowu[i] = (short) (y1val + yfrac * (y2val - y1val));
 
                         y1val = svptr->ptr[y1][x1] +
                             (svptr->ptr[y1][x2] - svptr->ptr[y1][x1]) * xfrac;
                         y2val = svptr->ptr[y2][x1] +
                             (svptr->ptr[y2][x2] - svptr->ptr[y2][x1]) * xfrac;
 
-                        dvptr->ptr[j][i] = (short) (y1val + yfrac * (y2val - y1val));
+                        rowv[i] = (short) (y1val + yfrac * (y2val - y1val));
                     }
                 }
 #endif
@@ -1054,13 +1048,13 @@ void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRec
                     clipToSegment(x1, sptr->width, BORDER);
                     clipToSegment(y1, sptr->height, BORDER);
 
-                    dptr->ptr[j][i] = (short) (wt0 * dptr->ptr[j][i] + 0.5 +
+                    rowy[i] = (short) (wt0 * rowy[i] + 0.5 +
                             wt1 * sptr->ptr[y1][x1] );
                     if (dvptr >= m_pMosaicVPyr && nC > 0)
                     {
-                        dvptr->ptr[j][i] = (short) (wt0 * dvptr->ptr[j][i] +
+                        rowv[i] = (short) (wt0 * rowv[i] +
                                 0.5 + wt1 * svptr->ptr[y1][x1] );
-                        duptr->ptr[j][i] = (short) (wt0 * duptr->ptr[j][i] +
+                        rowu[i] = (short) (wt0 * rowu[i] +
                                 0.5 + wt1 * suptr->ptr[y1][x1] );
                     }
                 }
