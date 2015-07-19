@@ -26,7 +26,6 @@ static bool write_png(const char *out, const unsigned char *rgb, int width, int 
   FILE *fp = NULL;
   png_structp png_ptr;
   png_infop info_ptr;
-  png_bytep row;
 
   fp = fopen(out, "w");
   if (!fp) {
@@ -136,7 +135,7 @@ int main(int argc, char *argv[]) {
     {0,        0,                 0, 0}
   };
 
-  char c;
+  int c;
 
   if (argc == 1) {
     usage();
@@ -145,8 +144,7 @@ int main(int argc, char *argv[]) {
 
   while (1) {
     c = getopt_long(argc, argv, "w:h:i:o:s:m:t", long_options, NULL);
-    // TODO: investigate why Harmattan returns 255
-    if (c == -1 || c == 255) {
+    if (c == -1) {
       break;
     }
 
@@ -300,7 +298,7 @@ int main(int argc, char *argv[]) {
 
   // Now that we are done, let's try to stitch
   Stitcher stitcher(src_width, src_height, full_frames.size(), (Stitcher::StripType)stripType);
-  for (int x = 0; x < full_frames.size(); x++) {
+  for (unsigned int x = 0; x < full_frames.size(); x++) {
     uint64_t t = timeNow();
     Stitcher::Return ret = stitcher.addFrame(full_frames[x]);
     t = timeNow() - t;

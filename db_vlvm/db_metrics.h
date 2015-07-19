@@ -321,7 +321,7 @@ inline void db_DerivativeCauchyInhomRotationReprojection(float Jf_dx[6],float f[
 /*!
 // remove the outliers whose projection error is larger than pre-defined
 */
-inline int db_RemoveOutliers_Homography(const float H[9], float *x_i,float *xp_i, float *wp,float *im, float *im_p, float *im_r, float *im_raw,float *im_raw_p,int point_count,float scale, float thresh=DB_OUTLIER_THRESHOLD)
+inline int db_RemoveOutliers_Homography(const float H[9], float *x_i,float *xp_i, float *wp,float *im, float *im_p, float *im_r, float *im_raw,float *im_raw_p,int point_count, float thresh=DB_OUTLIER_THRESHOLD)
 {
     float temp_valueE, t2;
     int c;

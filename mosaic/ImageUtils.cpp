@@ -27,8 +27,7 @@
 
 ImageType ImageUtils::rgb2gray(ImageType in, int width, int height)
 {
-  int r,g,b, nr, ng, nb, val;
-  ImageType gray = NULL;
+  int r,g,b;
   ImageType image = in;
   ImageType out = ImageUtils::allocateImage(width, height, 1);
   ImageType outCopy = out;
@@ -57,8 +56,7 @@ ImageType ImageUtils::rgb2gray(ImageType in, int width, int height)
 
 ImageType ImageUtils::rgb2gray(ImageType out, ImageType in, int width, int height)
 {
-  int r,g,b, nr, ng, nb, val;
-  ImageType gray = out;
+  int r,g,b;
   ImageType image = in;
   ImageType outCopy = out;
 

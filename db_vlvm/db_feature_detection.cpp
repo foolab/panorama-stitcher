@@ -61,7 +61,7 @@ float** db_AllocStrengthImage_f(float **im,int w,int h)
     return(img);
 }
 
-void db_FreeStrengthImage_f(float *im,float **img,int h)
+void db_FreeStrengthImage_f(float *im,float **img)
 {
     delete [] im;
     delete [] img;
@@ -1180,100 +1180,6 @@ inline void MAXVector_128_SecondSourceDestAligned16_f(float *m,float *v1,float *
 #endif /*DB_USE_SIMD*/
 }
 
-/*Compute Max-suppression-filtered image for a chunk of sf starting at (left,top), of width 124 and
-stopping at bottom. The output is shifted two steps left and overwrites 128 elements for each row.
-The input s should be of width at least 128, and exist for 2 pixels outside the specified region.
-s[i][left-2] and sf[i][left-2] should be 16 byte aligned. Top must be at least 3*/
-inline void MAXSuppressFilterChunk_5x5_Aligned16_f(float **sf,float **s,int left,int top,int bottom,
-                                      /*temp should point to at least
-                                      6*132 floats of 16-byte-aligned allocated memory*/
-                                      float *temp)
-{
-#ifdef DB_USE_SIMD
-    int i,lm2;
-    float *two[4];
-    float *four,*five;
-
-    lm2=left-2;
-
-    /*Set pointers to pre-allocated memory*/
-    four=temp;
-    five=four+132;
-    for(i=0;i<4;i++)
-    {
-        two[i]=five+(i+1)*132;
-    }
-
-    /*Set rests of four and five to zero to avoid
-    floating point exceptions*/
-    for(i=129;i<132;i++)
-    {
-        four[i]=0.0;
-        five[i]=0.0;
-    }
-
-    /*Fill three rows of the wrap-around max buffers*/
-    for(i=top-3;i<top;i++) MAXVector_128_Aligned16_f(two[i&3],s[i+1]+lm2,s[i+2]+lm2);
-
-    /*For each output row*/
-    for(;i<=bottom;i++)
-    {
-        /*Compute max of the lowest pair of rows in the five row window*/
-        MAXVector_128_Aligned16_f(two[i&3],s[i+1]+lm2,s[i+2]+lm2);
-        /*Compute max of the lowest and highest pair of rows in the five row window*/
-        MAXVector_128_Aligned16_f(four,two[i&3],two[(i-3)&3]);
-        /*Compute max of all rows*/
-        MAXVector_128_Aligned16_f(five,four,two[(i-1)&3]);
-        /*Compute max of 2x5 chunks*/
-        MAXVector_128_SecondSourceDestAligned16_f(five,five+1,five);
-        /*Compute max of pairs of 2x5 chunks*/
-        MAXVector_128_SecondSourceDestAligned16_f(five,five+3,five);
-        /*Compute max of pairs of 5x5 except middle*/
-        MAXVector_128_SecondSourceDestAligned16_f(sf[i]+lm2,four+2,five);
-    }
-
-#else
-    int i,j,right;
-    float sv;
-
-    right=left+128;
-    for(i=top;i<=bottom;i++) for(j=left;j<right;j++)
-    {
-        sv=s[i][j];
-
-        if( sv>s[i-2][j-2] && sv>s[i-2][j-1] && sv>s[i-2][j] && sv>s[i-2][j+1] && sv>s[i-2][j+2] &&
-            sv>s[i-1][j-2] && sv>s[i-1][j-1] && sv>s[i-1][j] && sv>s[i-1][j+1] && sv>s[i-1][j+2] &&
-            sv>s[  i][j-2] && sv>s[  i][j-1] &&                 sv>s[  i][j+1] && sv>s[  i][j+2] &&
-            sv>s[i+1][j-2] && sv>s[i+1][j-1] && sv>s[i+1][j] && sv>s[i+1][j+1] && sv>s[i+1][j+2] &&
-            sv>s[i+2][j-2] && sv>s[i+2][j-1] && sv>s[i+2][j] && sv>s[i+2][j+1] && sv>s[i+2][j+2])
-        {
-            sf[i][j-2]=0.0;
-        }
-        else sf[i][j-2]=sv;
-    }
-#endif /*DB_USE_SIMD*/
-}
-
-/*Compute Max-suppression-filtered image for a chunk of sf starting at (left,top) and
-stopping at bottom. The output is shifted two steps left. The input s should exist for 2 pixels
-outside the specified region. s[i][left-2] and sf[i][left-2] should be 16 byte aligned.
-Top must be at least 3. Reading and writing from and to the input and output images is done
-as if the region had a width equal to a multiple of 124. If this is not the case, the images
-should be over-allocated and the input cleared for a sufficient region*/
-void MAXSuppressFilter_5x5_Aligned16_f(float **sf,float **s,int left,int top,int right,int bottom,
-                                          /*temp should point to at least
-                                          6*132 floats of 16-byte-aligned allocated memory*/
-                                          float *temp)
-{
-    int x,next_x;
-
-    for(x=left;x<=right;x=next_x)
-    {
-        next_x=x+124;
-        MAXSuppressFilterChunk_5x5_Aligned16_f(sf,s,x,top,bottom,temp);
-    }
-}
-
 /*Extract corners from the chunk (left,top) to (right,bottom). Store in x_temp,y_temp and s_temp
 which should point to space of at least as many positions as there are pixels in the chunk*/
 inline int db_CornersFromChunk(float **strength,int left,int top,int right,int bottom,float threshold,float *x_temp,float *y_temp,float *s_temp)
@@ -1450,7 +1356,7 @@ void db_CornerDetector_u::Clean()
     {
         delete [] m_temp_i;
         delete [] m_temp_d;
-        db_FreeStrengthImage_f(m_strength_mem,m_strength,m_h);
+        db_FreeStrengthImage_f(m_strength_mem,m_strength);
     }
     m_w=0; m_h=0;
 }

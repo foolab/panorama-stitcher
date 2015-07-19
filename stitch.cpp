@@ -25,7 +25,6 @@ static bool write_png(const char *out, ImageType rgb, int width, int height) {
   FILE *fp = NULL;
   png_structp png_ptr;
   png_infop info_ptr;
-  png_bytep row;
 
   fp = fopen(out, "w");
   if (!fp) {
@@ -132,7 +131,7 @@ int main(int argc, char *argv[]) {
     {0,        0,                 0, 0}
   };
 
-  char c;
+  int c;
 
   if (argc == 1) {
     usage();
@@ -141,8 +140,7 @@ int main(int argc, char *argv[]) {
 
   while (1) {
     c = getopt_long(argc, argv, "w:h:i:o:s:m:t", long_options, NULL);
-    // TODO: investigate why Harmattan returns 255
-    if (c == -1 || c == 255) {
+    if (c == -1) {
       break;
     }
 
@@ -292,7 +290,7 @@ int main(int argc, char *argv[]) {
   ImageType rgb = ImageUtils::allocateImage(width, height, 3);
   ImageUtils::yvu2rgb(rgb, yuv, width, height);
 
-  for (int x = 0; x < mosaic_frames.size(); x++) {
+  for (unsigned int x = 0; x < mosaic_frames.size(); x++) {
     delete[] mosaic_frames[x];
   }
 

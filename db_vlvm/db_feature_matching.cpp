@@ -629,7 +629,6 @@ inline void db_SignedSquareNormCorr21x21_PreAlign_u(short *patch,const unsigned 
 {
     float den;
     int f2sum,fsum;
-    int xm_f=x_f-10;
     short f;
 
     int xwi;
@@ -1139,7 +1138,7 @@ bilinear method is used.
  */
 inline void db_SignedSquareNormCorr11x11_PreAlign_AffinePatchWarp_u(short *patch,const unsigned char * const *f_img,
                                                                     int xi,int yi,float *sum,float *recip,
-                                                                    const float Hinv[9],int affine)
+                                                                    int affine)
 {
     float den;
     short f;
@@ -2874,7 +2873,7 @@ short* db_FillBucketsPrewarped_u(short *patch_space,const unsigned char * const 
 
 short* db_FillBucketsPrewarpedAffine_u(short *patch_space,const unsigned char * const *f_img,db_Bucket_u **bp,
                                  int bw,int bh,int nr_h,int nr_v,int bd,const float *x,const float *y,
-                                 int nr_corners,const float H[9],const float Hinv[9],const int warpboundsp[4],
+                                 int nr_corners,const float H[9],const int warpboundsp[4],
                                  int affine)
 {
     int i,xi,yi,xpos,ypos,nr,wxi,wyi;
@@ -2914,7 +2913,7 @@ short* db_FillBucketsPrewarpedAffine_u(short *patch_space,const unsigned char * 
                     pir->patch=patch_space;
                     br->nr=nr+1;
 
-                    db_SignedSquareNormCorr11x11_PreAlign_AffinePatchWarp_u(patch_space,f_img,xi,yi,&(pir->sum),&(pir->recip),Hinv,affine);
+                    db_SignedSquareNormCorr11x11_PreAlign_AffinePatchWarp_u(patch_space,f_img,xi,yi,&(pir->sum),&(pir->recip),affine);
                     patch_space+=128;
                 }
             }
@@ -3392,7 +3391,7 @@ void db_Matcher_u::Match(const unsigned char * const *l_img,const unsigned char 
             }
 
             db_FillBucketsPrewarpedAffine_u(ps,r_img,m_bp_r,m_bw,m_bh,m_nr_h,m_nr_v,m_bd,
-                x_r,y_r,nr_r,H,Hinv,warpbounds,affine);
+                x_r,y_r,nr_r,H,warpbounds,affine);
         }
         else
             db_FillBucketsPrewarped_u(ps,r_img,m_bp_r,m_bw,m_bh,m_nr_h,m_nr_v,m_bd,x_r,y_r,nr_r,H);

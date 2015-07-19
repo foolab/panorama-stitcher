@@ -177,8 +177,8 @@ inline void db_CommonFocalLengthFromRotation_2Point(float fsol[3],int *nr_sols,f
 int db_StitchRotationCommonFocalLength_3Points(float H[9],float x1[3],float x2[3],float x3[3],float xp1[3],float xp2[3],float xp3[3],float *f,int signed_disambiguation)
 {
     float fsol[3];
-    int nr_sols,i,best_sol,done;
-    float cost,best_cost;
+    int nr_sols = 0,i,best_sol = 0,done;
+    float cost,best_cost = 0;
     float m,hyp[27],x1_temp[3],x2_temp[3],xp1_temp[3],xp2_temp[3];
     float *hyp_point,ft;
     float y[2];

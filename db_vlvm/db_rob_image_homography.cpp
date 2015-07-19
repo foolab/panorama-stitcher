@@ -227,7 +227,7 @@ void db_RobCamRotation_Polish(float H[9],int point_count,float *x_i,float *xp_i,
                                int max_iterations,float improvement_requirement)
 {
     int i,update,stop;
-    float lambda,cost,current_cost;
+    float lambda,cost,current_cost = 0;
     float JtJ[9],min_Jtf[3],dx[3],H_p_dx[9];
 
     lambda=0.001;
@@ -302,7 +302,7 @@ inline void db_RobImageHomographyMultiplyJacobian(float **JtJ_ref,float *min_Jtf
 
     db_SetupMatrixRefs(JtJ_JE_ref,9,8,JtJ_JE);
 
-    db_SymmetricExtendUpperToLower(JtJ_temp_ref,9,9);
+    db_SymmetricExtendUpperToLower(JtJ_temp_ref,9);
     db_MultiplyMatricesAB(JtJ_JE_ref,JtJ_temp_ref,JE_dx_ref,9,9,n);
     db_UpperMultiplyMatricesAtB(JtJ_ref,JE_dx_ref,JtJ_JE_ref,n,9,n);
     db_MultiplyMatrixVectorAtb(min_Jtf,JE_dx_ref,min_Jtf_temp,n,9);
@@ -340,7 +340,7 @@ inline void db_RobImageHomographyJH_JR(float **JE_dx_ref,int j,float H[9])
     JE_dx_ref[8][j]=0;
 }
 
-inline void db_RobImageHomographyJH_Jt(float **JE_dx_ref,int j,int k,float H[9])
+inline void db_RobImageHomographyJH_Jt(float **JE_dx_ref,int j,int k)
 {
     JE_dx_ref[0][j]=0;
     JE_dx_ref[1][j]=0;
@@ -417,7 +417,7 @@ inline void db_RobImageHomographyJH_dRotFocal(float **JE_dx_ref,int j,int k,int 
 inline float db_RobImageHomography_Jacobians_Generic(float *JtJ_ref[8],float min_Jtf[8],int *num_param,int *frozen_coord,float H[9],int point_count,float *x_i,float *xp_i,int homography_type,float one_over_scale2)
 {
     float back;
-    int i,j,fetch_vector[8],n;
+    int i,j,fetch_vector[8],n = 0;
     float JtJ_temp[81],min_Jtf_temp[9],JE_dx[72];
     float *JE_dx_ref[9],*JtJ_temp_ref[9];
 
@@ -439,7 +439,7 @@ inline float db_RobImageHomography_Jacobians_Generic(float *JtJ_ref[8],float min
             n=4;
             db_RobImageHomographyJH_Js(JE_dx_ref,0,H);
             db_RobImageHomographyJH_JR(JE_dx_ref,1,H);
-            db_RobImageHomographyJH_Jt(JE_dx_ref,2,3,H);
+            db_RobImageHomographyJH_Jt(JE_dx_ref,2,3);
             db_RobImageHomographyMultiplyJacobian(JtJ_ref,min_Jtf,JtJ_temp_ref,min_Jtf_temp,JE_dx_ref,n);
             break;
         case DB_HOMOGRAPHY_TYPE_ROTATION:
@@ -456,13 +456,13 @@ inline float db_RobImageHomography_Jacobians_Generic(float *JtJ_ref[8],float min
         case DB_HOMOGRAPHY_TYPE_S_T:
             n=3;
             db_RobImageHomographyJH_Js(JE_dx_ref,0,H);
-            db_RobImageHomographyJH_Jt(JE_dx_ref,1,2,H);
+            db_RobImageHomographyJH_Jt(JE_dx_ref,1,2);
             db_RobImageHomographyMultiplyJacobian(JtJ_ref,min_Jtf,JtJ_temp_ref,min_Jtf_temp,JE_dx_ref,n);
             break;
         case DB_HOMOGRAPHY_TYPE_R_T:
             n=3;
             db_RobImageHomographyJH_JR(JE_dx_ref,0,H);
-            db_RobImageHomographyJH_Jt(JE_dx_ref,1,2,H);
+            db_RobImageHomographyJH_Jt(JE_dx_ref,1,2);
             db_RobImageHomographyMultiplyJacobian(JtJ_ref,min_Jtf,JtJ_temp_ref,min_Jtf_temp,JE_dx_ref,n);
             break;
         case DB_HOMOGRAPHY_TYPE_R_S:
@@ -569,7 +569,7 @@ void db_RobCamRotation_Polish_Generic(float H[9],int point_count,int homography_
 {
     int i,update,stop,n;
     int frozen_coord = 0;
-    float lambda,cost,current_cost;
+    float lambda,cost,current_cost = 0;
     float JtJ[72],min_Jtf[9],dx[8],H_p_dx[9];
     float *JtJ_ref[9],d[8];
 

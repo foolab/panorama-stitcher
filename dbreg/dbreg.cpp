@@ -79,19 +79,19 @@ db_FrameToReferenceRegistration::~db_FrameToReferenceRegistration()
 void db_FrameToReferenceRegistration::Clean()
 {
   if ( m_reference_image )
-    db_FreeImage_u(m_reference_image,m_im_height);
+    db_FreeImage_u(m_reference_image);
 
   if ( m_aligned_ins_image )
-    db_FreeImage_u(m_aligned_ins_image,m_im_height);
+    db_FreeImage_u(m_aligned_ins_image);
 
   if ( m_quarter_res_image )
   {
-    db_FreeImage_u(m_quarter_res_image, m_im_height);
+    db_FreeImage_u(m_quarter_res_image);
   }
 
   if ( m_horz_smooth_subsample_image )
   {
-    db_FreeImage_u(m_horz_smooth_subsample_image, m_im_height*2);
+    db_FreeImage_u(m_horz_smooth_subsample_image);
   }
 
   delete [] m_x_corners_ref;
@@ -149,7 +149,6 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
                        int    max_iterations,
                        bool   linear_polish,
                        bool   quarter_resolution,
-                       float scale,
                        unsigned int reference_update_period,
                        bool   do_motion_smoothing,
                        float motion_smoothing_gain,
@@ -449,7 +448,7 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
   SetOutlierThreshold();
 
   // Compute the inliers for the db compute m_H_ref_to_ins
-  ComputeInliers(m_H_ref_to_ins);
+  ComputeInliers();
 
   // Update the max inlier count
   m_max_inlier_count = (m_max_inlier_count > m_num_inlier_indices)?m_max_inlier_count:m_num_inlier_indices;
@@ -512,7 +511,7 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
 }
 
 //void db_FrameToReferenceRegistration::ComputeInliers(float H[9],std::vector<int> &inlier_indices)
-void db_FrameToReferenceRegistration::ComputeInliers(float H[9])
+void db_FrameToReferenceRegistration::ComputeInliers()
 {
   float totnummatches = m_nr_matches;
   int inliercount=0;
@@ -530,7 +529,6 @@ void db_FrameToReferenceRegistration::ComputeInliers(float H[9])
     }
 
   m_num_inlier_indices = inliercount;
-  float frac=inliercount/totnummatches;
 }
 
 //void db_FrameToReferenceRegistration::Polish(std::vector<int> &inlier_indices)

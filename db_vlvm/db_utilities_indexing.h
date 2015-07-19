@@ -38,7 +38,7 @@ inline void db_SetupMatrixRefs(float **ar,long rows,long cols,float *a)
     for(i=0;i<rows;i++) ar[i]=&a[i*cols];
 }
 
-inline void db_SymmetricExtendUpperToLower(float **A,int rows,int cols)
+inline void db_SymmetricExtendUpperToLower(float **A,int rows)
 {
     int i,j;
     for(i=1;i<rows;i++) for(j=0;j<i;j++) A[i][j]=A[j][i];

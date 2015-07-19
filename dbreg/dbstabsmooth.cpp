@@ -21,9 +21,6 @@
 #define vp_copy_motion_no_id vp_copy_motion
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-static bool vpmotion_add(VP_MOTION *in1, VP_MOTION *in2, VP_MOTION *out);
-static bool vpmotion_multiply(VP_MOTION *in1, float factor, VP_MOTION *out);
-
 db_StabilizationSmoother::db_StabilizationSmoother()
 {
     Init();
@@ -301,30 +298,3 @@ bool db_StabilizationSmoother::is_point_in_rect(float px, float py, float rx, fl
 
     return(true);
 }
-
-
-
-static bool vpmotion_add(VP_MOTION *in1, VP_MOTION *in2, VP_MOTION *out)
-{
-    int i;
-    if(in1 == NULL || in2 == NULL || out == NULL)
-        return false;
-
-    for(i = 0; i < VP_MAX_MOTION_PAR; i++)
-        out->par[i] = in1->par[i] + in2->par[i];
-
-    return true;
-}
-
-static bool vpmotion_multiply(VP_MOTION *in1, float factor, VP_MOTION *out)
-{
-    int i;
-    if(in1 == NULL || out == NULL)
-        return false;
-
-    for(i = 0; i < VP_MAX_MOTION_PAR; i++)
-        out->par[i] = in1->par[i] * factor;
-
-    return true;
-}
-

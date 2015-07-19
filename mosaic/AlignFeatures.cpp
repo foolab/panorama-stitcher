@@ -55,7 +55,6 @@ int Align::initialize(int width, int height, bool _quarter_res, float _thresh_st
   float max_disparity = DEFAULT_MAX_DISPARITY;
   int    motion_model_type = DEFAULT_MOTION_MODEL;
   int nrsamples = DB_DEFAULT_NR_SAMPLES;
-  float scale = DB_POINT_STANDARDDEV;
   int chunk_size = DB_DEFAULT_CHUNK_SIZE;
   int nrhorz = width/48;  // Empirically determined number of horizontal
   int nrvert = height/60; // and vertical buckets for harris corner detection.
@@ -77,7 +76,7 @@ int Align::initialize(int width, int height, bool _quarter_res, float _thresh_st
   if (!reg.Initialized())
   {
     reg.Init(width, height, motion_model_type, 20, linear_polish, quarter_res,
-            scale, reference_update_period, false, 0, nrsamples, chunk_size,
+            reference_update_period, false, 0, nrsamples, chunk_size,
             nr_corners, max_disparity, use_smaller_matching_window,
             nrhorz, nrvert);
   }

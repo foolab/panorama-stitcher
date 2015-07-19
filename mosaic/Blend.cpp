@@ -135,10 +135,8 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
     global_rect.lft = global_rect.bot = 2e30; // min values
     global_rect.rgt = global_rect.top = -2e30; // max values
     MosaicFrame *mb = NULL;
-    float halfwidth = width / 2.0;
-    float halfheight = height / 2.0;
 
-    float z, x0, y0, x1, y1, x2, y2, x3, y3;
+    float x0, y0, x1, y1, x2, y2, x3, y3;
 
     // Corners of the left-most and right-most frames respectively in the
     // mosaic coordinate system.
@@ -278,7 +276,7 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
     }
 
     // Do merging and blending :
-    ret = DoMergeAndBlend(frames, numCenters, width, height, *imgMos, fullRect,
+    ret = DoMergeAndBlend(numCenters, *imgMos, fullRect,
             cropping_rect, progress, cancelComputation);
 
     if (m_wb.blendingType == BLEND_TYPE_HORZ)
@@ -368,8 +366,7 @@ int Blend::FillFramePyramid(MosaicFrame *mb)
     }
 }
 
-int Blend::DoMergeAndBlend(MosaicFrame **frames, int nsite,
-             int width, int height, YUVinfo &imgMos, MosaicRect &rect,
+int Blend::DoMergeAndBlend(int nsite, YUVinfo &imgMos, MosaicRect &rect,
              MosaicRect &cropping_rect, float &progress, bool &cancelComputation)
 {
     m_pMosaicYPyr = NULL;
@@ -565,7 +562,7 @@ int Blend::DoMergeAndBlend(MosaicFrame **frames, int nsite,
         if(FillFramePyramid(mb)!=BLEND_RET_OK)
             return BLEND_RET_ERROR;
 
-        ProcessPyramidForThisFrame(csite, mb->vcrect, mb->brect, rect, imgMos, mb->trs, site_idx);
+        ProcessPyramidForThisFrame(mb->vcrect, mb->brect, rect, imgMos, mb->trs, site_idx);
 
         progress += TIME_PERCENT_BLEND/nsite;
 
@@ -646,9 +643,6 @@ int Blend::PerformFinalBlending(YUVinfo &imgMos, MosaicRect &cropping_rect)
     ImageType yimg;
     ImageType uimg;
     ImageType vimg;
-
-    int cx = (int)imgMos.Y.width/2;
-    int cy = (int)imgMos.Y.height/2;
 
     // 2D boolean array that contains true wherever the mosaic image data is
     // invalid (i.e. in the gray border).
@@ -877,7 +871,7 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
     }
 }
 
-void Blend::ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, float trs[3][3], int site_idx)
+void Blend::ProcessPyramidForThisFrame(BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, float trs[3][3], int site_idx)
 {
     // Put the Region of interest (for all levels) into m_pMosaicYPyr
     float inv_trs[3][3];
@@ -1210,8 +1204,6 @@ void Blend::SelectRelevantFrames(MosaicFrame **frames, int frames_size,
     MosaicFrame *last = frames[frames_size-1];
     MosaicFrame *mb;
 
-    float fxpos = first->trs[0][2], fypos = first->trs[1][2];
-
     float midX = last->width / 2.0;
     float midY = last->height / 2.0;
     float z = ProjZ(first->trs, midX, midY, 1.0);
@@ -1231,7 +1223,6 @@ void Blend::SelectRelevantFrames(MosaicFrame **frames, int frames_size,
         currY = ProjY(mb->trs, midX, midY, z, 1.0);
         float deltaX = currX - prevX;
         float deltaY = currY - prevY;
-        float center2centerDist = sqrtf(deltaY * deltaY + deltaX * deltaX);
 
         if (fabsf(deltaX) > STRIP_SEPARATION_THRESHOLD_PXLS ||
                 fabsf(deltaY) > STRIP_SEPARATION_THRESHOLD_PXLS)

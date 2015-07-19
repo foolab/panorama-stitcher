@@ -347,7 +347,7 @@ DB_API unsigned char** db_AllocImage_u(int w,int h,int over_allocation=256);
  * \param img   row array pointer
  * \param h     image height (number of rows)
  */
-DB_API void db_FreeImage_u(unsigned char **img,int h);
+DB_API void db_FreeImage_u(unsigned char **img);
 
 /*!
  Copy an image from s to d. Both s and d must be pre-allocated at of the same size.

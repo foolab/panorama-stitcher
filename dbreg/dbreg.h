@@ -156,7 +156,6 @@ public:
           int       max_iterations = DB_DEFAULT_MAX_ITERATIONS,
           bool      linear_polish = false,
           bool   quarter_resolution = true,
-          float  scale = DB_POINT_STANDARDDEV,
           unsigned int reference_update_period = 3,
           bool   do_motion_smoothing = false,
           float motion_smoothing_gain = 0.75,
@@ -368,7 +367,7 @@ protected:
     int m_num_inlier_indices;
 
     //void ComputeInliers(float H[9], std::vector<int> &inlier_indices);
-    void ComputeInliers(float H[9]);
+    void ComputeInliers();
 
     // cost arrays:
     void ComputeCostArray();
