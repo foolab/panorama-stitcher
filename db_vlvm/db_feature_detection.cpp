@@ -28,6 +28,10 @@
 #include <float.h>
 #include <sys/param.h>
 
+#ifdef __arm__
+#include <arm_neon.h>
+#endif
+
 #define DB_SUB_PIXEL
 
 #define BORDER 10 // 5
@@ -512,6 +516,25 @@ loopstart:
         movaps   [edx],xmm0   /*Store*/
     }
 
+#elif defined(__arm__)
+    // This is my first real neon stuff. Please don't laugh ;-)
+    int c;
+    int size = nc - 4;
+    assert(nc == 128);
+    float *dest = s;
+
+    for(c = 0; c < size; c += 4) {
+      // load and convert to floats
+      float32x4_t gxxv = vcvtq_f32_s32(vld1q_s32(&gxx[c]));
+      float32x4_t gxyv = vcvtq_f32_s32(vld1q_s32(&gxy[c]));
+      float32x4_t gyyv = vcvtq_f32_s32(vld1q_s32(&gyy[c]));
+
+      float32x4_t detv = vsubq_f32(vmulq_f32(gxxv, gyyv), vmulq_f32(gxyv, gxyv));
+      float32x4_t trc = vmulq_f32(vaddq_f32(gxxv, gyyv), vaddq_f32(gxxv, gyyv));
+      float32x4_t res = vsubq_f32(detv, vmulq_n_f32(trc, 0.06f));
+      vst1q_f32(dest, res);
+      dest += 4;
+    }
 #else
     float Gxx,Gxy,Gyy,det,trc;
     int c;
