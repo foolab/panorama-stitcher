@@ -28,6 +28,9 @@
 #include <sys/param.h>
 #include "Log.h"
 #define LOG_TAG "BLEND"
+#ifdef __arm__
+#include <arm_neon.h>
+#endif
 
 Blend::Blend()
 {
@@ -331,17 +334,44 @@ int Blend::FillFramePyramid(MosaicFrame *mb)
     mbU = mb->getU();
     mbV = mb->getV();
 
-    int h, w;
-
-    for(h=0; h<height; h++)
+    for(int h=0; h<height; h++)
     {
         ImageTypeShort yptr = m_pFrameYPyr->ptr[h];
         ImageTypeShort uptr = m_pFrameUPyr->ptr[h];
         ImageTypeShort vptr = m_pFrameVPyr->ptr[h];
 
-        for(w=0; w<width; w++)
-        {
+	// Seems optimizing the Y plane was enough to produce significant drop
+	// in loop time
+#ifdef __arm__
+	// Y
+	int limit = (width / 8) * 8;
+	uint8_t *srcY = (uint8_t *)&mbY[width * h];
+	unsigned short *dstY = (unsigned short *)yptr;
+
+	for (int w = 0; w < limit; w += 8) {
+	  // load 8 Y
+	  uint8x8_t y = vld1_u8(srcY);
+
+	  // shift
+	  uint16x8_t ys = vshll_n_u8(y, 3);
+
+	  // store
+	  vst1q_u16 (dstY, ys);
+
+	  srcY += 8;
+	  dstY += 8;
+	}
+
+	// Now the leftovers
+	for (int w = limit; w < width; w++) {
+	  yptr[w] = (short) (mbY[width * h + w] << 3);
+	}
+#endif
+
+        for(int w=0; w<width; w++) {
+#ifndef __arm__
             yptr[w] = (short) (mbY[width * h + w] << 3);
+#endif
             uptr[w] = (short) (mbU[(h / 2) * (width / 2) + (w / 2)] << 3);
             vptr[w] = (short) (mbV[(h / 2) * (width / 2) + (w / 2)] << 3);
         }
