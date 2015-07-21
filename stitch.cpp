@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
     {0,        0,                 0, 0}
   };
 
-  char c;
+  int c;
 
   if (argc == 1) {
     usage();
@@ -141,8 +141,7 @@ int main(int argc, char *argv[]) {
 
   while (1) {
     c = getopt_long(argc, argv, "w:h:i:o:s:m:t", long_options, NULL);
-    // TODO: investigate why Harmattan returns 255
-    if (c == -1 || c == 255) {
+    if (c == -1) {
       break;
     }
 
