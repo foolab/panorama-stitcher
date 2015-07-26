@@ -75,27 +75,27 @@ inline void FindTriangleCentroid(float x0, float y0, float x1, float y1,
     {
         if (x0 == x1)
         {
-            mass = fabs((y1 - y0) * (x2 - x0)); // Special case 1a
+            mass = fabsf((y1 - y0) * (x2 - x0)); // Special case 1a
         }
         else
         {
-            mass = fabs((y1 - y0) * (x1 - x0)); // Special case 1b
+            mass = fabsf((y1 - y0) * (x1 - x0)); // Special case 1b
         }
     }
     else if (x0 == x2)
     {
         if (x0 == x1)
         {
-            mass = fabs((x2 - x0) * (y2 - y0)); // Special case 2a
+            mass = fabsf((x2 - x0) * (y2 - y0)); // Special case 2a
         }
         else
         {
-            mass = fabs((x1 - x0) * (y2 - y0)); // Special case 2a
+            mass = fabsf((x1 - x0) * (y2 - y0)); // Special case 2a
         }
     }
     else if (x1 == x2)
     {
-        mass = fabs((x1 - x0) * (y2 - y0)); // Special case 3
+        mass = fabsf((x1 - x0) * (y2 - y0)); // Special case 3
     }
     else
     {
@@ -103,7 +103,7 @@ inline void FindTriangleCentroid(float x0, float y0, float x1, float y1,
         float dx = x2 - x0;
         float dy = y2 - y0;
         // Calculate the length of the side
-        float len1 = sqrt(dx * dx + dy * dy);
+        float len1 = sqrtf(dx * dx + dy * dy);
         float m1 = dy / dx;
         float b1 = y0 - m1 * x0;
         // Calculate the line that goes through x1,y1 and is perpendicular to
@@ -111,17 +111,17 @@ inline void FindTriangleCentroid(float x0, float y0, float x1, float y1,
         float m2 = 1.0 / m1;
         float b2 = y1 - m2 * x1;
         // Calculate the intersection of the two lines
-        if (fabs( m1 - m2 ) > 1.e-6)
+        if (fabsf( m1 - m2 ) > 1.e-6)
         {
             float x = (b2 - b1) / (m1 - m2);
             // the mass is the base * height
             dx = x1 - x;
             dy = y1 - m1 * x + b1;
-            mass = len1 * sqrt(dx * dx + dy * dy);
+            mass = len1 * sqrtf(dx * dx + dy * dy);
         }
         else
         {
-            mass = fabs( (y1 - y0) * (x2 - x0) );
+            mass = fabsf( (y1 - y0) * (x2 - x0) );
         }
     }
 }

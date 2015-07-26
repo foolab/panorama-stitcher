@@ -125,7 +125,7 @@ void db_StitchSimilarity3DRaw(float *scale,float R[9],float t[3],
     }
 
     /*Compute scale*/
-    if(allow_scaling) sc=sqrt(db_SafeDivision(sp,s));
+    if(allow_scaling) sc=sqrtf(db_SafeDivision(sp,s));
     else sc=1.0;
     *scale=sc;
 

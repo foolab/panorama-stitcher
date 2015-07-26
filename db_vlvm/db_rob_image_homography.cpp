@@ -66,7 +66,7 @@ inline float db_RobImageHomography_Cost(float H[9],int point_count,float *x_i,fl
                 acc*=db_ExpCauchyInhomogenousHomographyError(xp_i+(c<<1),H,x_i+(c<<1),one_over_scale2);
             }
         }
-        back+=log(acc);
+        back+=logf(acc);
     }
     return(back);
 }
@@ -98,8 +98,8 @@ inline float db_RobImageHomography_Statistics(float H[9],int point_count,float *
         stat->model_dimension=0;
         /*stat->nr_parameters=;*/
 
-        stat->lambda1=log(4.0);
-        stat->lambda2=log(4.0*((float)db_maxi(1,stat->nr_points)));
+        stat->lambda1=logf(4.0);
+        stat->lambda2=logf(4.0*((float)db_maxi(1,stat->nr_points)));
         stat->lambda3=10.0;
         stat->gric=stat->cost+stat->lambda1*stat->model_dimension*((float)stat->nr_points)+stat->lambda2*((float)stat->nr_parameters);
         stat->inlier_evidence=((float)stat->nr_inliers)-stat->lambda3*((float)stat->nr_parameters);
@@ -744,7 +744,7 @@ void db_RobImageHomography(
     /*Prepare a randomly permuted subset of size
     point_count from the input points*/
 
-    point_count=db_mini(nr_points,(int)(chunk_size*log((float)nr_samples)/DB_LN2));
+    point_count=db_mini(nr_points,(int)(chunk_size*logf((float)nr_samples)/DB_LN2));
 
     point_count_new = point_count;
 
@@ -971,7 +971,7 @@ void db_RobImageHomography(
                             acc*=db_ExpCauchyInhomogenousHomographyError(xp_i+(c<<1),hyp_point,x_i+(c<<1),one_over_scale2);
                         }
                     }
-                    hyp_cost_array[j]+=log(acc);
+                    hyp_cost_array[j]+=logf(acc);
                 }
             }
             if (chunk_size<point_count){

@@ -126,14 +126,14 @@ inline void db_OrthonormalizeRotation(float R[9])
     float s,mult;
     /*Normalize first vector*/
     s=db_sqr(R[0])+db_sqr(R[1])+db_sqr(R[2]);
-    mult=sqrt(1.0/(s?s:1));
+    mult=sqrtf(1.0/(s?s:1));
     R[0]*=mult; R[1]*=mult; R[2]*=mult;
     /*Subtract scalar product from second vector*/
     s=R[0]*R[3]+R[1]*R[4]+R[2]*R[5];
     R[3]-=s*R[0]; R[4]-=s*R[1]; R[5]-=s*R[2];
     /*Normalize second vector*/
     s=db_sqr(R[3])+db_sqr(R[4])+db_sqr(R[5]);
-    mult=sqrt(1.0/(s?s:1));
+    mult=sqrtf(1.0/(s?s:1));
     R[3]*=mult; R[4]*=mult; R[5]*=mult;
     /*Get third vector by vector product*/
     R[6]=R[1]*R[5]-R[4]*R[2];
@@ -280,7 +280,7 @@ inline void db_MultiplyRotationOntoImageHomography(float H[9],float theta)
     float c,s,H0,H1;
 
 
-    c=cos(theta);
+    c=cosf(theta);
     s=db_SafeSqrt(1.0-db_sqr(c));
     H0=  c*H[0]+s*H[3];
     H[3]= -s*H[0]+c*H[3];

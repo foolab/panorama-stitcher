@@ -223,7 +223,7 @@ int Mosaic::balanceRotations()
     for (int i = 0; i < frames_size; i++) sineAngle += frames[i]->trs[0][1];
     sineAngle /= frames_size;
     // Calculate the cosineAngle (1 - sineAngle*sineAngle) = cosineAngle*cosineAngle
-    float cosineAngle = sqrt(1.0 - sineAngle*sineAngle);
+    float cosineAngle = sqrtf(1.0 - sineAngle*sineAngle);
     float m[3][3] = {
         { cosineAngle, -sineAngle, 0 },
         { sineAngle, cosineAngle, 0},

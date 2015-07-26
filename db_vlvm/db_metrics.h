@@ -73,7 +73,7 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
     x2=db_sqr(f[0]);
     y2=db_sqr(f[1]);
     r2=x2+y2;
-    r=sqrt(r2);
+    r=sqrtf(r2);
 
     if(r2<=0.0) at_zero=1;
     else
@@ -81,8 +81,8 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
         one_over_r2=1.0/r2;
         r2s=r2*one_over_scale2;
         one_plus_r2s=1.0+r2s;
-        fu=log(one_plus_r2s)*one_over_r2;
-        r_fu=sqrt(fu);
+        fu=logf(one_plus_r2s)*one_over_r2;
+        r_fu=sqrtf(fu);
         if(r_fu<=0.0) at_zero=1;
         else
         {
@@ -109,7 +109,7 @@ inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float on
         becomes identity*sqrt(one_over_scale2)*/
         fp[0]=0.0;
         fp[1]=0.0;
-        J[0]=sqrt(one_over_scale2);
+        J[0]=sqrtf(one_over_scale2);
         J[1]=0.0;
         J[2]=0.0;
         J[3]=J[0];

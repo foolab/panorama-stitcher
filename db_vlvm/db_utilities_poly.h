@@ -57,7 +57,7 @@ inline void db_SolveQuadratic(float *roots,int *nr_roots,float a,float b,float c
         if(rs>=0.0)
         {
             *nr_roots=2;
-            srs=sqrt(rs);
+            srs=sqrtf(rs);
             q= -0.5*(b+db_sign(b)*srs);
             roots[0]=q/a;
             /*If b is zero db_sign(b) returns 1,
@@ -357,22 +357,22 @@ inline void db_EigenVector4x4(float v[4],float lambda,const float A[16])
     [4mult 1 sqrt=4flops 1sqrt]*/
     if(n0>=n1 && n0>=n2 && n0>=n3)
     {
-        m=db_SafeReciprocal(sqrt(n0));
+        m=db_SafeReciprocal(sqrtf(n0));
         db_MultiplyScalarCopy4(v,C,m);
     }
     else if(n1>=n2 && n1>=n3)
     {
-        m=db_SafeReciprocal(sqrt(n1));
+        m=db_SafeReciprocal(sqrtf(n1));
         db_MultiplyScalarCopy4(v,&(C[4]),m);
     }
     else if(n2>=n3)
     {
-        m=db_SafeReciprocal(sqrt(n2));
+        m=db_SafeReciprocal(sqrtf(n2));
         db_MultiplyScalarCopy4(v,&(C[8]),m);
     }
     else
     {
-        m=db_SafeReciprocal(sqrt(n3));
+        m=db_SafeReciprocal(sqrtf(n3));
         db_MultiplyScalarCopy4(v,&(C[12]),m);
     }
 }

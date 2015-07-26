@@ -274,7 +274,7 @@ void db_StitchSimilarity2DRaw(float *scale,float R[4],float t[2],
     }
 
     /*Compute scale*/
-    if(allow_scaling) sc=sqrt(db_SafeDivision(sp,s));
+    if(allow_scaling) sc=sqrtf(db_SafeDivision(sp,s));
     else sc=1.0;
     *scale=sc;
 
@@ -289,7 +289,7 @@ void db_StitchSimilarity2DRaw(float *scale,float R[4],float t[2],
         Bacc2=M[2]+M[1];
         if(Aacc!=0.0 || Bacc!=0.0)
         {
-            divisor=sqrt(Aacc*Aacc+Bacc*Bacc);
+            divisor=sqrtf(Aacc*Aacc+Bacc*Bacc);
             m=db_SafeReciprocal(divisor);
             Am=Aacc*m;
             Bm=Bacc*m;
@@ -305,7 +305,7 @@ void db_StitchSimilarity2DRaw(float *scale,float R[4],float t[2],
         }
         if(!orientation_preserving && (Aacc2!=0.0 || Bacc2!=0.0))
         {
-            divisor2=sqrt(Aacc2*Aacc2+Bacc2*Bacc2);
+            divisor2=sqrtf(Aacc2*Aacc2+Bacc2*Bacc2);
             if(divisor2>divisor)
             {
                 m=db_SafeReciprocal(divisor2);

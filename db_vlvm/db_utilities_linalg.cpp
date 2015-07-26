@@ -35,7 +35,7 @@ void db_CholeskyDecomp6x6(float A[36],float d[6])
     /*[50 mult 35 add 6sqrt=85flops 6func]*/
     /*i=0*/
     s=A[0];
-    d[0]=((s>0.0)?sqrt(s):1.0);
+    d[0]=((s>0.0)?sqrtf(s):1.0);
     temp=db_SafeReciprocal(d[0]);
     A[6]=A[1]*temp;
     A[12]=A[2]*temp;
@@ -44,7 +44,7 @@ void db_CholeskyDecomp6x6(float A[36],float d[6])
     A[30]=A[5]*temp;
     /*i=1*/
     s=A[7]-A[6]*A[6];
-    d[1]=((s>0.0)?sqrt(s):1.0);
+    d[1]=((s>0.0)?sqrtf(s):1.0);
     temp=db_SafeReciprocal(d[1]);
     A[13]=(A[8]-A[6]*A[12])*temp;
     A[19]=(A[9]-A[6]*A[18])*temp;
@@ -52,25 +52,25 @@ void db_CholeskyDecomp6x6(float A[36],float d[6])
     A[31]=(A[11]-A[6]*A[30])*temp;
     /*i=2*/
     s=A[14]-A[12]*A[12]-A[13]*A[13];
-    d[2]=((s>0.0)?sqrt(s):1.0);
+    d[2]=((s>0.0)?sqrtf(s):1.0);
     temp=db_SafeReciprocal(d[2]);
     A[20]=(A[15]-A[12]*A[18]-A[13]*A[19])*temp;
     A[26]=(A[16]-A[12]*A[24]-A[13]*A[25])*temp;
     A[32]=(A[17]-A[12]*A[30]-A[13]*A[31])*temp;
     /*i=3*/
     s=A[21]-A[18]*A[18]-A[19]*A[19]-A[20]*A[20];
-    d[3]=((s>0.0)?sqrt(s):1.0);
+    d[3]=((s>0.0)?sqrtf(s):1.0);
     temp=db_SafeReciprocal(d[3]);
     A[27]=(A[22]-A[18]*A[24]-A[19]*A[25]-A[20]*A[26])*temp;
     A[33]=(A[23]-A[18]*A[30]-A[19]*A[31]-A[20]*A[32])*temp;
     /*i=4*/
     s=A[28]-A[24]*A[24]-A[25]*A[25]-A[26]*A[26]-A[27]*A[27];
-    d[4]=((s>0.0)?sqrt(s):1.0);
+    d[4]=((s>0.0)?sqrtf(s):1.0);
     temp=db_SafeReciprocal(d[4]);
     A[34]=(A[29]-A[24]*A[30]-A[25]*A[31]-A[26]*A[32]-A[27]*A[33])*temp;
     /*i=5*/
     s=A[35]-A[30]*A[30]-A[31]*A[31]-A[32]*A[32]-A[33]*A[33]-A[34]*A[34];
-    d[5]=((s>0.0)?sqrt(s):1.0);
+    d[5]=((s>0.0)?sqrtf(s):1.0);
 }
 
 /*Cholesky-factorize symmetric positive definite n x n matrix A.Part
@@ -90,7 +90,7 @@ void db_CholeskyDecompSeparateDiagonal(float **A,float *d,int n)
         for(k=i-1;k>=0;k--) s-=A[i][k]*A[j][k];
         if(i==j)
         {
-            d[i]=((s>0.0)?sqrt(s):1.0);
+            d[i]=((s>0.0)?sqrtf(s):1.0);
             temp=db_SafeReciprocal(d[i]);
         }
         else A[j][i]=s*temp;
@@ -126,18 +126,18 @@ void db_CholeskyDecomp3x3SeparateDiagonal(float A[9],float d[3])
 
     /*i=0*/
     s=d[0];
-    d[0]=((s>0.0)?sqrt(s):1.0);
+    d[0]=((s>0.0)?sqrtf(s):1.0);
     temp=db_SafeReciprocal(d[0]);
     A[3]=A[1]*temp;
     A[6]=A[2]*temp;
     /*i=1*/
     s=d[1]-A[3]*A[3];
-    d[1]=((s>0.0)?sqrt(s):1.0);
+    d[1]=((s>0.0)?sqrtf(s):1.0);
     temp=db_SafeReciprocal(d[1]);
     A[7]=(A[5]-A[3]*A[6])*temp;
     /*i=2*/
     s=d[2]-A[6]*A[6]-A[7]*A[7];
-    d[2]=((s>0.0)?sqrt(s):1.0);
+    d[2]=((s>0.0)?sqrtf(s):1.0);
 }
 
 /*Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition

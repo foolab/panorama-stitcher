@@ -193,9 +193,9 @@ inline int db_MaxAbsIndex3(const float *s)
     float t,best;
     int pos;
 
-    best=fabs(s[0]);pos=0;
-    t=fabs(s[1]);if(t>best){best=t;pos=1;}
-    t=fabs(s[2]);if(t>best){pos=2;}
+    best=fabsf(s[0]);pos=0;
+    t=fabsf(s[1]);if(t>best){best=t;pos=1;}
+    t=fabsf(s[2]);if(t>best){pos=2;}
     return(pos);
 }
 
@@ -204,15 +204,15 @@ inline int db_MaxAbsIndex9(const float *s)
     float t,best;
     int pos;
 
-    best=fabs(s[0]);pos=0;
-    t=fabs(s[1]);if(t>best){best=t;pos=1;}
-    t=fabs(s[2]);if(t>best){best=t;pos=2;}
-    t=fabs(s[3]);if(t>best){best=t;pos=3;}
-    t=fabs(s[4]);if(t>best){best=t;pos=4;}
-    t=fabs(s[5]);if(t>best){best=t;pos=5;}
-    t=fabs(s[6]);if(t>best){best=t;pos=6;}
-    t=fabs(s[7]);if(t>best){best=t;pos=7;}
-    t=fabs(s[8]);if(t>best){best=t;pos=8;}
+    best=fabsf(s[0]);pos=0;
+    t=fabsf(s[1]);if(t>best){best=t;pos=1;}
+    t=fabsf(s[2]);if(t>best){best=t;pos=2;}
+    t=fabsf(s[3]);if(t>best){best=t;pos=3;}
+    t=fabsf(s[4]);if(t>best){best=t;pos=4;}
+    t=fabsf(s[5]);if(t>best){best=t;pos=5;}
+    t=fabsf(s[6]);if(t>best){best=t;pos=6;}
+    t=fabsf(s[7]);if(t>best){best=t;pos=7;}
+    t=fabsf(s[8]);if(t>best){best=t;pos=8;}
     return(pos);
 }
 
