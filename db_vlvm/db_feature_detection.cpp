@@ -26,6 +26,7 @@
 #include <iostream>
 #endif
 #include <float.h>
+#include "log/log.h"
 
 #define DB_SUB_PIXEL
 
@@ -1514,6 +1515,7 @@ void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,double 
     db_ExtractCornersSaturated(m_strength,BORDER,BORDER,m_w-BORDER-1,m_h-BORDER-1,m_bw,m_bh,m_area_factor,threshold,
         m_temp_d,x_coord,y_coord,nr_corners);
 
+    LOGV("Detected corners: %d", *nr_corners);
 
     if ( msk )
     {
