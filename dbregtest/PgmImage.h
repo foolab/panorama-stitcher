@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#pragma once
+#ifndef PGM_IMAGE_H
+#define PGM_IMAGE_H
 
 #include <vector>
 #include <iostream>
@@ -93,3 +94,5 @@ protected:
 };
 
 std::ostream& operator<< (std::ostream& o, const PgmImage& im);
+
+#endif /* PGM_IMAGE_H */

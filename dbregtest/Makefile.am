@@ -4,8 +4,7 @@ AM_CXXFLAGS = -I$(top_builddir)
 
 dbregtest_SOURCES = \
 	dbregtest.cpp \
-	PgmImage.cpp \
-	stdafx.cpp
+	PgmImage.cpp
 
 LDADD = \
 	$(top_builddir)/dbreg/libdbreg.la \
@@ -13,5 +12,4 @@ LDADD = \
 	$(top_builddir)/log/liblog.la
 
 noinst_HEADERS = \
-	PgmImage.h \
-	stdafx.h
+	PgmImage.h

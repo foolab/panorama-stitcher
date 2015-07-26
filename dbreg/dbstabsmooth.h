@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-#pragma once
+#ifndef DB_STAB_SMOOTH_H
+#define DB_STAB_SMOOTH_H
 
 extern "C" {
 #include "vp_motionmodel.h"
@@ -144,3 +145,4 @@ private:
 
 };
 
+#endif /* DB_STAB_SMOOTH_H */

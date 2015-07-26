@@ -18,7 +18,9 @@
 // Geometry.h
 // $Id: Geometry.h,v 1.2 2011/06/17 13:35:48 mbansal Exp $
 
-#pragma once
+#ifndef GEOMETRY_H
+#define GEOMETRY_H
+
 #include "MosaicTypes.h"
 
 ///////////////////////////////////////////////////////////////
@@ -154,3 +156,4 @@ inline void FindQuadCentroid(float x0, float y0, float x1, float y1, float x2, f
 ///////////////////////////////////////////////////////////////
 
 
+#endif /* GEOMETRY_H */

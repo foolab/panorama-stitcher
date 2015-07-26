@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-
-#pragma once
-
+#ifndef DBREG_H
+#define DBREG_H
 
 // @jke - the next few lines are for extracting timing data.  TODO: Remove after test
 #define PROFILE 0
@@ -570,3 +569,5 @@ now_ms(void)
 }
 
 #endif
+
+#endif /* DBREG_H */

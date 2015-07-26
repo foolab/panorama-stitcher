@@ -15,7 +15,7 @@
  */
 
 // $Id: dbregtest.cpp,v 1.24 2011/06/17 14:04:33 mbansal Exp $
-#include "stdafx.h"
+
 #include "PgmImage.h"
 #include "dbreg/dbreg.h"
 #include "dbreg/dbstabsmooth.h"
