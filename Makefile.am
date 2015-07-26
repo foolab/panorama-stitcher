@@ -5,7 +5,7 @@ endif
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = log db_vlvm dbreg mosaic stitcher
+SUBDIRS = log db_vlvm dbreg mosaic stitcher dbregtest
 
 lib_LTLIBRARIES = libpanorama-stitcher.la
 libpanorama_stitcher_la_LIBADD = \
@@ -24,7 +24,7 @@ stitch_CXXFLAGS = $(AM_CXXFLAGS) $(PNG_CFLAGS)
 stitch_LDADD = libpanorama-stitcher.la $(PNG_LIBS)
 
 if STITCH2
-bin_PROGRAMS +=  stitch2
+bin_PROGRAMS += stitch2
 stitch2_SOURCES = stitch2.cpp
 stitch2_CXXFLAGS = $(AM_CXXFLAGS) $(PNG_CFLAGS) $(SWSCALE_CFLAGS)
 stitch2_LDADD = libpanorama-stitcher.la $(PNG_LIBS)  $(SWSCALE_LIBS)
