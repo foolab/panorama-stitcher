@@ -744,7 +744,7 @@ void db_RobImageHomography(
     /*Prepare a randomly permuted subset of size
     point_count from the input points*/
 
-    point_count=db_mini(nr_points,(int)(chunk_size*logf((float)nr_samples)/DB_LN2));
+    point_count=db_mini(nr_points,(int)(chunk_size*logf((float)nr_samples)/M_LN2));
 
     point_count_new = point_count;
 

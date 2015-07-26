@@ -1328,7 +1328,7 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
         {
             m_wb.horizontal = 1;
             // Calculate radius position to make ends exactly the same Y offset
-            float radiusTheta = dx / cosf(3.14159 / 2.0 - m_wb.theta);
+            float radiusTheta = dx / cosf(M_PI_2 - m_wb.theta);
             m_wb.radius = dy + radiusTheta * cosf(m_wb.theta);
             if (m_wb.radius < 0.0) m_wb.radius = -m_wb.radius;
         }
@@ -1336,7 +1336,7 @@ void Blend::ComputeBlendParameters(MosaicFrame **frames, int frames_size, int is
         {
             m_wb.horizontal = 0;
             // Calculate radius position to make ends exactly the same Y offset
-            float radiusTheta = dy / cosf(3.14159 / 2.0 - m_wb.theta);
+            float radiusTheta = dy / cosf(M_PI_2 - m_wb.theta);
             m_wb.radius = dx + radiusTheta * cosf(m_wb.theta);
             if (m_wb.radius < 0.0) m_wb.radius = -m_wb.radius;
         }
