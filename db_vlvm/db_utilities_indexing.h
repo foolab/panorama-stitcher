@@ -83,7 +83,7 @@ inline void db_UpperMultiplyMatricesAtB(float **Cu,const float * const *At,const
     }
 }
 
-DB_API void db_Zero(float *d,long nr);
+void db_Zero(float *d,long nr);
 
 inline int db_MaxIndex2(float s[2])
 {
@@ -236,7 +236,7 @@ is thus around 100 microseconds
 
 Does the same operation as std::nth_element().
 */
-DB_API float db_LeanQuickSelect(const float *s,long nr_elements,long pos,float *temp);
+float db_LeanQuickSelect(const float *s,long nr_elements,long pos,float *temp);
 
 /*!
  Median of 3 floats
@@ -260,11 +260,11 @@ inline float db_TripleMedian(float a,float b,float c)
 /*!
 Align float pointer to nr_bytes by moving forward
 */
-DB_API float* db_AlignPointer_f(float *p,unsigned long nr_bytes);
+float* db_AlignPointer_f(float *p,unsigned long nr_bytes);
 
 /*!
 Align short pointer to nr_bytes by moving forward
 */
-DB_API short* db_AlignPointer_s(short *p,unsigned long nr_bytes);
+short* db_AlignPointer_s(short *p,unsigned long nr_bytes);
 
 #endif /* DB_UTILITIES_INDEXING */

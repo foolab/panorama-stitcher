@@ -28,8 +28,8 @@
 #include "db_utilities.h"
 #include "db_utilities_constants.h"
 
-DB_API void db_SignedSquareNormCorr21x21_PreAlign_u(short *patch,const unsigned char * const *f_img,int x_f,int y_f,float *sum,float *recip);
-DB_API void db_SignedSquareNormCorr11x11_PreAlign_u(short *patch,const unsigned char * const *f_img,int x_f,int y_f,float *sum,float *recip);
+void db_SignedSquareNormCorr21x21_PreAlign_u(short *patch,const unsigned char * const *f_img,int x_f,int y_f,float *sum,float *recip);
+void db_SignedSquareNormCorr11x11_PreAlign_u(short *patch,const unsigned char * const *f_img,int x_f,int y_f,float *sum,float *recip);
 float db_SignedSquareNormCorr21x21Aligned_Post_s(const short *f_patch,const short *g_patch,float fsum_gsum,float f_recip_g_recip);
 float db_SignedSquareNormCorr11x11Aligned_Post_s(const short *f_patch,const short *g_patch,float fsum_gsum,float f_recip_g_recip);
 
@@ -96,7 +96,7 @@ public:
  * See \ref FeatureDetection to detect Harris corners.
  * Images are managed with functions in \ref LMImageBasicUtilities.
  */
-class DB_API db_Matcher_f
+class db_Matcher_f
 {
 public:
     db_Matcher_f();
@@ -164,7 +164,7 @@ protected:
  * appropriate buckets. If H is an affine transform and the "affine" parameter is set to 1 or 2,
  * then the correlation patches themselves are warped before being placed in the patch space.
  */
-class DB_API db_Matcher_u
+class db_Matcher_u
 {
 public:
     db_Matcher_u();

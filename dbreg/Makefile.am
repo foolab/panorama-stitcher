@@ -15,5 +15,4 @@ libdbreg_la_SOURCES = \
 noinst_HEADERS = \
 	dbreg.h \
 	dbstabsmooth.h \
-	targetver.h \
 	vp_motionmodel.h

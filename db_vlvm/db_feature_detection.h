@@ -37,7 +37,7 @@
  *  This class performs Harris corner extraction on *byte* images managed
  * with functions in \ref LMImageBasicUtilities.
  */
-class DB_API db_CornerDetector_u
+class db_CornerDetector_u
 {
 public:
     db_CornerDetector_u();

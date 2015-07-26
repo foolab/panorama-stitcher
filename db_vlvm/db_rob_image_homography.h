@@ -84,7 +84,7 @@ Calibration matrices:
  \param nr_samples      number of times to compute a hypothesis
  \param chunk_size      size of cost chunks
 */
-DB_API void db_RobImageHomography(
+void db_RobImageHomography(
                               /*Best homography*/
                               float H[9],
                               /*2DPoint to 2DPoint constraints
@@ -129,17 +129,17 @@ DB_API void db_RobImageHomography(
                               // final matches
                               int *final_NumE=0);
 
-DB_API float db_RobImageHomography_Cost(float H[9],int point_count,float *x_i,
+float db_RobImageHomography_Cost(float H[9],int point_count,float *x_i,
                                                 float *xp_i,float one_over_scale2);
 
 
-DB_API void db_RobCamRotation_Polish(float H[9],int point_count,float *x_i,
+void db_RobCamRotation_Polish(float H[9],int point_count,float *x_i,
                                      float *xp_i, float one_over_scale2,
                                      int max_iterations=DB_DEFAULT_MAX_ITERATIONS,
                                      float improvement_requirement=DB_DEFAULT_IMP_REQ);
 
 
-DB_API void db_RobCamRotation_Polish_Generic(float H[9],int point_count,int homography_type,
+void db_RobCamRotation_Polish_Generic(float H[9],int point_count,int homography_type,
                                              float *x_i,float *xp_i,float one_over_scale2,
                                              int max_iterations=DB_DEFAULT_MAX_ITERATIONS,
                                              float improvement_requirement=DB_DEFAULT_IMP_REQ);

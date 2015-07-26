@@ -84,7 +84,7 @@ With orientation_preserving:
 \param allow_rotation           estimate rotation
 \param allow_translation        estimate translation
 */
-DB_API void db_StitchSimilarity3DRaw(float *scale,float R[9],float t[3],
+void db_StitchSimilarity3DRaw(float *scale,float R[9],float t[3],
                             float **Xp,float **X,int nr_points,int orientation_preserving=1,
                             int allow_scaling=1,int allow_rotation=1,int allow_translation=1);
 

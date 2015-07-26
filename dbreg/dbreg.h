@@ -17,15 +17,6 @@
 
 #pragma once
 
-#ifdef _WIN32
-#ifdef DBREG_EXPORTS
-#define DBREG_API __declspec(dllexport)
-#else
-#define DBREG_API __declspec(dllimport)
-#endif
-#else
-#define DBREG_API
-#endif
 
 // @jke - the next few lines are for extracting timing data.  TODO: Remove after test
 #define PROFILE 0
@@ -125,7 +116,7 @@
 /*!
  * Performs feature-based frame to reference image registration.
  */
-class DBREG_API db_FrameToReferenceRegistration
+class db_FrameToReferenceRegistration
 {
 public:
     db_FrameToReferenceRegistration(void);

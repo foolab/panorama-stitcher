@@ -43,7 +43,7 @@ although desirable for numerical conditioning
 \param xp3  image 2 point 3
 \param xp4  image 2 point 4
 */
-DB_API void db_StitchProjective2D_4Points(float H[9],
+void db_StitchProjective2D_4Points(float H[9],
                                       float x1[3],float x2[3],float x3[3],float x4[3],
                                       float xp1[3],float xp2[3],float xp3[3],float xp4[3]);
 
@@ -58,7 +58,7 @@ although desirable for numerical conditioning
 \param xp2  image 2 point 2
 \param xp3  image 2 point 3
 */
-DB_API void db_StitchAffine2D_3Points(float H[9],
+void db_StitchAffine2D_3Points(float H[9],
                                       float x1[3],float x2[3],float x3[3],
                                       float xp1[3],float xp2[3],float xp3[3]);
 
@@ -97,7 +97,7 @@ is required, although it could be desirable to keep x1,x2,xp1 and xp2 of reasona
 If a solution is obtained the function returns 1, otherwise 0. If the focal length is desired
 a valid pointer should be passed in f
 */
-DB_API int db_StitchRotationCommonFocalLength_3Points(float H[9],float x1[3],float x2[3],float x3[3],
+int db_StitchRotationCommonFocalLength_3Points(float H[9],float x1[3],float x2[3],float x3[3],
                                                       float xp1[3],float xp2[3],float xp3[3],float *f=0,int signed_disambiguation=1);
 
 /*!
@@ -152,7 +152,7 @@ With orientation_preserving:
 \param allow_rotation   compute rotation (if 0, R=[I])
 \param allow_translation compute translation (if 0 t = [0,0]')
 */
-DB_API void db_StitchSimilarity2DRaw(float *scale,float R[4],float t[2],
+void db_StitchSimilarity2DRaw(float *scale,float R[4],float t[2],
                             float **Xp,float **X,int nr_points,int orientation_preserving=1,
                             int allow_scaling=1,int allow_rotation=1,int allow_translation=1);
 /*!

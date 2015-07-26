@@ -80,14 +80,14 @@ inline float db_SquareSum8Stride9(const float *x)
 part of A is used from the input. The Cholesky factor is output as
 subdiagonal part in A and diagonal in d, which is 6-dimensional
 1.9 microseconds on 450MHz*/
-DB_API void db_CholeskyDecomp6x6(float A[36],float d[6]);
+void db_CholeskyDecomp6x6(float A[36],float d[6]);
 
 /*!
  \ingroup LMLinAlg
  Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of a 6 x 6 matrix and the right hand side b. The vector b is unchanged
 1.3 microseconds on 450MHz*/
-DB_API void db_CholeskyBacksub6x6(float x[6],const float A[36],const float d[6],const float b[6]);
+void db_CholeskyBacksub6x6(float x[6],const float A[36],const float d[6],const float b[6]);
 
 /*!
  \ingroup LMLinAlg
@@ -95,13 +95,13 @@ DB_API void db_CholeskyBacksub6x6(float x[6],const float A[36],const float d[6],
 above diagonal of A is used from the input, diagonal of A is assumed to
 be stored in d. The Cholesky factor is output as
 subdiagonal part in A and diagonal in d, which is n-dimensional*/
-DB_API void db_CholeskyDecompSeparateDiagonal(float **A,float *d,int n);
+void db_CholeskyDecompSeparateDiagonal(float **A,float *d,int n);
 
 /*!
  \ingroup LMLinAlg
  Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of an n x n matrix and the right hand side b. The vector b is unchanged*/
-DB_API void db_CholeskyBacksub(float *x,const float * const *A,const float *d,int n,const float *b);
+void db_CholeskyBacksub(float *x,const float * const *A,const float *d,int n,const float *b);
 
 /*!
  \ingroup LMLinAlg
@@ -109,13 +109,13 @@ DB_API void db_CholeskyBacksub(float *x,const float * const *A,const float *d,in
 above diagonal of A is used from the input, diagonal of A is assumed to
 be stored in d. The Cholesky factor is output as subdiagonal part in A
 and diagonal in d, which is 3-dimensional*/
-DB_API void db_CholeskyDecomp3x3SeparateDiagonal(float A[9],float d[3]);
+void db_CholeskyDecomp3x3SeparateDiagonal(float A[9],float d[3]);
 
 /*!
  \ingroup LMLinAlg
  Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of a 3 x 3 matrix and the right hand side b. The vector b is unchanged*/
-DB_API void db_CholeskyBacksub3x3(float x[3],const float A[9],const float d[3],const float b[3]);
+void db_CholeskyBacksub3x3(float x[3],const float A[9],const float d[3],const float b[3]);
 
 /*!
  \ingroup LMLinAlg
@@ -171,12 +171,12 @@ inline void db_Swap9(float A[9],float B[9])
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_Orthogonalize6x7(float A[42],int orthonormalize=0);
+void db_Orthogonalize6x7(float A[42],int orthonormalize=0);
 
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_Orthogonalize8x9(float A[72],int orthonormalize=0);
+void db_Orthogonalize8x9(float A[72],int orthonormalize=0);
 
 /*!
  \ingroup LMLinAlg
@@ -230,11 +230,11 @@ inline void db_OrthogonalizationSwap9(float *A,int i,float *ss)
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_NullVectorOrthonormal6x7(float x[7],const float A[42]);
+void db_NullVectorOrthonormal6x7(float x[7],const float A[42]);
 /*!
  \ingroup LMLinAlg
  */
-DB_API void db_NullVectorOrthonormal8x9(float x[9],const float A[72]);
+void db_NullVectorOrthonormal8x9(float x[9],const float A[72]);
 
 /*!
  \ingroup LMLinAlg

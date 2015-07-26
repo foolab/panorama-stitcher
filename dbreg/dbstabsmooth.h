@@ -16,17 +16,6 @@
 
 #pragma once
 
-
-#ifdef _WIN32
-#ifdef DBREG_EXPORTS
-#define DBREG_API __declspec(dllexport)
-#else
-#define DBREG_API __declspec(dllimport)
-#endif
-#else
-#define DBREG_API
-#endif
-
 extern "C" {
 #include "vp_motionmodel.h"
 }
@@ -37,7 +26,7 @@ extern "C" {
 /*!
  * Performs smoothing on the motion estimate from feature_stab.
  */
-class DBREG_API db_StabilizationSmoother
+class db_StabilizationSmoother
 {
 public:
     db_StabilizationSmoother();

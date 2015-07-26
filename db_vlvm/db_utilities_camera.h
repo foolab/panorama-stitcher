@@ -49,7 +49,7 @@ focal length = (w+h)/2.0*f_correction.
 \param field        set to 1 if this is a field image (fy = fx/2)
 \return K(3x3) intrinsic calibration matrix
 */
-DB_API void db_Approx3DCalMat(float K[9],float Kinv[9],int im_width,int im_height,float f_correction=1.0,int field=0);
+void db_Approx3DCalMat(float K[9],float Kinv[9],int im_width,int im_height,float f_correction=1.0,int field=0);
 
 /*!
  Make a 2x2 identity matrix

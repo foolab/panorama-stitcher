@@ -76,17 +76,17 @@ Speed-optimized code in release mode solves a cubic in 1.5 microseconds on 450MH
 For a non-degenerate cubic with two roots, the first root is the single root and
 the second root is the float root
 */
-DB_API void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d);
+void db_SolveCubic(float *roots,int *nr_roots,float a,float b,float c,float d);
 /*!
 In debug mode closed form quartic solving takes on the order of 0.1 milliseconds
 while eig of the companion matrix takes about 1.5 milliseconds
 Speed-optimized code in release mode solves a quartic in 2.6 microseconds on 450MHz*/
-DB_API void db_SolveQuartic(float *roots,int *nr_roots,float a,float b,float c,float d,float e);
+void db_SolveQuartic(float *roots,int *nr_roots,float a,float b,float c,float d,float e);
 /*!
 Quartic solving where a solution is forced when splitting into quadratics, which
 can be good if the quartic is sometimes in fact a quadratic, such as in absolute orientation
 when the data is planar*/
-DB_API void db_SolveQuarticForced(float *roots,int *nr_roots,float a,float b,float c,float d,float e);
+void db_SolveQuarticForced(float *roots,int *nr_roots,float a,float b,float c,float d,float e);
 
 inline float db_PolyEval1(const float p[2],float x)
 {

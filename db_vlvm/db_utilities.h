@@ -19,29 +19,6 @@
 #ifndef DB_UTILITIES_H
 #define DB_UTILITIES_H
 
-
-#ifdef _WIN32
-#pragma warning(disable: 4275)
-#pragma warning(disable: 4251)
-#pragma warning(disable: 4786)
-#pragma warning(disable: 4800)
-#pragma warning(disable: 4018) /* signed-unsigned mismatch */
-#endif /* _WIN32 */
-
-#ifdef _WIN32
-    #ifdef DBDYNAMIC_EXPORTS
-        #define DB_API __declspec(dllexport)
-    #else
-        #ifdef DBDYNAMIC_IMPORTS
-            #define DB_API __declspec(dllimport)
-        #else
-            #define DB_API
-        #endif
-    #endif
-#else
-    #define DB_API
-#endif /* _WIN32 */
-
 #ifdef _VERBOSE_
 #include <iostream>
 #endif
@@ -59,17 +36,7 @@
  * Round float into int using fld and fistp instructions.
  */
 inline int db_roundi (float x) {
-#ifdef WIN32_ASM
-    int n;
-    __asm
-    {
-        fld x;
-        fistp n;
-    }
-    return n;
-#else
     return static_cast<int>(floorf(x+0.5));
-#endif
 }
 
 /*!
@@ -406,7 +373,7 @@ to wrap these images. It has not been tested well.
  * \param w     image width
  * \param h     image height
  */
-DB_API float** db_SetupImageReferences_f(float *im,int w,int h);
+float** db_SetupImageReferences_f(float *im,int w,int h);
 /*!
  * Allocate a float image.
  * Note: for feature detection images must be overallocated by 256 bytes.
@@ -415,20 +382,20 @@ DB_API float** db_SetupImageReferences_f(float *im,int w,int h);
  * \param over_allocation   allocate this many extra bytes at the end
  * \return row array pointer
  */
-DB_API float** db_AllocImage_f(int w,int h,int over_allocation=256);
+float** db_AllocImage_f(int w,int h,int over_allocation=256);
 /*!
  * Free a float image
  * \param img   row array pointer
  * \param h     image height (number of rows)
  */
-DB_API void db_FreeImage_f(float **img,int h);
+void db_FreeImage_f(float **img,int h);
 /*!
  * Given an unsigned char image array, allocates and returns the set of row poiners.
  * \param im    image pointer
  * \param w     image width
  * \param h     image height
  */
-DB_API unsigned char** db_SetupImageReferences_u(unsigned char *im,int w,int h);
+unsigned char** db_SetupImageReferences_u(unsigned char *im,int w,int h);
 /*!
  * Allocate an unsigned char image.
  * Note: for feature detection images must be overallocated by 256 bytes.
@@ -437,13 +404,13 @@ DB_API unsigned char** db_SetupImageReferences_u(unsigned char *im,int w,int h);
  * \param over_allocation   allocate this many extra bytes at the end
  * \return row array pointer
  */
-DB_API unsigned char** db_AllocImage_u(int w,int h,int over_allocation=256);
+unsigned char** db_AllocImage_u(int w,int h,int over_allocation=256);
 /*!
  * Free an unsigned char image
  * \param img   row array pointer
  * \param h     image height (number of rows)
  */
-DB_API void db_FreeImage_u(unsigned char **img,int h);
+void db_FreeImage_u(unsigned char **img,int h);
 
 /*!
  Copy an image from s to d. Both s and d must be pre-allocated at of the same size.
@@ -454,9 +421,9 @@ DB_API void db_FreeImage_u(unsigned char **img,int h);
  \param h   height
  \param over_allocation copy this many bytes after the end of the last line
  */
-DB_API void db_CopyImage_u(unsigned char **d,const unsigned char * const *s,int w,int h,int over_allocation=0);
+void db_CopyImage_u(unsigned char **d,const unsigned char * const *s,int w,int h,int over_allocation=0);
 
-DB_API inline unsigned char db_BilinearInterpolation(float y, float x, const unsigned char * const * v)
+inline unsigned char db_BilinearInterpolation(float y, float x, const unsigned char * const * v)
 {
     int floor_x=(int) x;
     int floor_y=(int) y;
@@ -549,11 +516,11 @@ void inline db_Zero9(float x[9])
  * \param lut_y LUT for y
  * \param type  warp type (DB_WARP_FAST or DB_WARP_BILINEAR)
  */
-DB_API void db_WarpImageLut_u(const unsigned char * const * src,unsigned char ** dst, int w, int h,
+void db_WarpImageLut_u(const unsigned char * const * src,unsigned char ** dst, int w, int h,
                                const float * const * lut_x, const float * const * lut_y, int type=DB_WARP_BILINEAR);
 
-DB_API void db_PrintDoubleVector(float *a,long size);
-DB_API void db_PrintDoubleMatrix(float *a,long rows,long cols);
+void db_PrintDoubleVector(float *a,long size);
+void db_PrintDoubleMatrix(float *a,long rows,long cols);
 
 #include "db_utilities_constants.h"
 #include "db_utilities_algebra.h"
