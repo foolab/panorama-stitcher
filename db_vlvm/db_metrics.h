@@ -36,10 +36,10 @@
 
 /*!
 Compute function value fp and Jacobian J of robustifier given input value f*/
-inline void db_CauchyDerivative(double J[4],double fp[2],const double f[2],double one_over_scale2)
+inline void db_CauchyDerivative(float J[4],float fp[2],const float f[2],float one_over_scale2)
 {
-    double x2,y2,r,r2,r2s,one_over_r2,fu,r_fu,one_over_r_fu;
-    double one_plus_r2s,half_dfu_dx,half_dfu_dy,coeff,coeff2,coeff3;
+    float x2,y2,r,r2,r2s,one_over_r2,fu,r_fu,one_over_r_fu;
+    float one_plus_r2s,half_dfu_dx,half_dfu_dy,coeff,coeff2,coeff3;
     int at_zero;
 
     /*The robustifier takes the input (x,y) and makes a new
@@ -116,10 +116,10 @@ inline void db_CauchyDerivative(double J[4],double fp[2],const double f[2],doubl
     }
 }
 
-inline double db_SquaredReprojectionErrorHomography(const double y[2],const double H[9],const double x[3])
+inline float db_SquaredReprojectionErrorHomography(const float y[2],const float H[9],const float x[3])
 {
-    double x0,x1,x2,mult;
-    double sd;
+    float x0,x1,x2,mult;
+    float sd;
 
     x0=H[0]*x[0]+H[1]*x[1]+H[2]*x[2];
     x1=H[3]*x[0]+H[4]*x[1]+H[5]*x[2];
@@ -130,10 +130,10 @@ inline double db_SquaredReprojectionErrorHomography(const double y[2],const doub
     return(sd);
 }
 
-inline double db_SquaredInhomogenousHomographyError(const double y[2],const double H[9],const double x[2])
+inline float db_SquaredInhomogenousHomographyError(const float y[2],const float H[9],const float x[2])
 {
-    double x0,x1,x2,mult;
-    double sd;
+    float x0,x1,x2,mult;
+    float sd;
 
     x0=H[0]*x[0]+H[1]*x[1]+H[2];
     x1=H[3]*x[0]+H[4]*x[1]+H[5];
@@ -150,10 +150,10 @@ reprojection error given the image point y, homography H, image point
 point x and the squared scale coefficient one_over_scale2=1.0/(scale*scale)
 where scale is the half width at half maximum (hWahM) of the
 Cauchy distribution*/
-inline double db_ExpCauchyInhomogenousHomographyError(const double y[2],const double H[9],const double x[2],
-                                                      double one_over_scale2)
+inline float db_ExpCauchyInhomogenousHomographyError(const float y[2],const float H[9],const float x[2],
+                                                      float one_over_scale2)
 {
-    double sd;
+    float sd;
     sd=db_SquaredInhomogenousHomographyError(y,H,x);
     return(1.0+sd*one_over_scale2);
 }
@@ -162,10 +162,10 @@ inline double db_ExpCauchyInhomogenousHomographyError(const double y[2],const do
 Compute residual vector f between image point y and homography Hx of
 image point x. Also compute Jacobian of f with respect
 to an update dx of H*/
-inline void db_DerivativeInhomHomographyError(double Jf_dx[18],double f[2],const double y[2],const double H[9],
-                                              const double x[2])
+inline void db_DerivativeInhomHomographyError(float Jf_dx[18],float f[2],const float y[2],const float H[9],
+                                              const float x[2])
 {
-    double xh,yh,zh,mult,mult2,xh_mult2,yh_mult2;
+    float xh,yh,zh,mult,mult2,xh_mult2,yh_mult2;
     /*The Jacobian of the inhomogenous coordinates with respect to
     the homogenous is
     [1/zh  0  -xh/(zh*zh)]
@@ -215,11 +215,11 @@ inline void db_DerivativeInhomHomographyError(double Jf_dx[18],double f[2],const
 Compute robust residual vector f between image point y and homography Hx of
 image point x. Also compute Jacobian of f with respect
 to an update dH of H*/
-inline void db_DerivativeCauchyInhomHomographyReprojection(double Jf_dx[18],double f[2],const double y[2],const double H[9],
-                                                           const double x[2],double one_over_scale2)
+inline void db_DerivativeCauchyInhomHomographyReprojection(float Jf_dx[18],float f[2],const float y[2],const float H[9],
+                                                           const float x[2],float one_over_scale2)
 {
-    double Jf_dx_loc[18],f_loc[2];
-    double J[4],J0,J1,J2,J3;
+    float Jf_dx_loc[18],f_loc[2];
+    float J[4],J0,J1,J2,J3;
 
     /*Compute reprojection Jacobian*/
     db_DerivativeInhomHomographyError(Jf_dx_loc,f_loc,y,H,x);
@@ -252,10 +252,10 @@ inline void db_DerivativeCauchyInhomHomographyReprojection(double Jf_dx[18],doub
 Compute residual vector f between image point y and rotation of
 image point x by R. Also compute Jacobian of f with respect
 to an update dx of R*/
-inline void db_DerivativeInhomRotationReprojection(double Jf_dx[6],double f[2],const double y[2],const double R[9],
-                                                   const double x[2])
+inline void db_DerivativeInhomRotationReprojection(float Jf_dx[6],float f[2],const float y[2],const float R[9],
+                                                   const float x[2])
 {
-    double xh,yh,zh,mult,mult2,xh_mult2,yh_mult2;
+    float xh,yh,zh,mult,mult2,xh_mult2,yh_mult2;
     /*The Jacobian of the inhomogenous coordinates with respect to
     the homogenous is
     [1/zh  0  -xh/(zh*zh)]
@@ -294,11 +294,11 @@ inline void db_DerivativeInhomRotationReprojection(double Jf_dx[6],double f[2],c
 Compute robust residual vector f between image point y and rotation of
 image point x by R. Also compute Jacobian of f with respect
 to an update dx of R*/
-inline void db_DerivativeCauchyInhomRotationReprojection(double Jf_dx[6],double f[2],const double y[2],const double R[9],
-                                                         const double x[2],double one_over_scale2)
+inline void db_DerivativeCauchyInhomRotationReprojection(float Jf_dx[6],float f[2],const float y[2],const float R[9],
+                                                         const float x[2],float one_over_scale2)
 {
-    double Jf_dx_loc[6],f_loc[2];
-    double J[4],J0,J1,J2,J3;
+    float Jf_dx_loc[6],f_loc[2];
+    float J[4],J0,J1,J2,J3;
 
     /*Compute reprojection Jacobian*/
     db_DerivativeInhomRotationReprojection(Jf_dx_loc,f_loc,y,R,x);
@@ -321,9 +321,9 @@ inline void db_DerivativeCauchyInhomRotationReprojection(double Jf_dx[6],double 
 /*!
 // remove the outliers whose projection error is larger than pre-defined
 */
-inline int db_RemoveOutliers_Homography(const double H[9], double *x_i,double *xp_i, double *wp,double *im, double *im_p, double *im_r, double *im_raw,double *im_raw_p,int point_count,double scale, double thresh=DB_OUTLIER_THRESHOLD)
+inline int db_RemoveOutliers_Homography(const float H[9], float *x_i,float *xp_i, float *wp,float *im, float *im_p, float *im_r, float *im_raw,float *im_raw_p,int point_count,float scale, float thresh=DB_OUTLIER_THRESHOLD)
 {
-    double temp_valueE, t2;
+    float temp_valueE, t2;
     int c;
     int k1=0;
     int k2=0;

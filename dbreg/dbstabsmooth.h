@@ -130,10 +130,10 @@ public:
 
 protected:
 
-    bool smoothMotion(VP_MOTION *inmot, VP_MOTION *outmot, double smooth_factor);
-    bool smoothMotion1(VP_MOTION *inmot, VP_MOTION *outmot, VP_MOTION *motLF, VP_MOTION *imotLF, double smooth_factor);
-    void iterativeSmooth(VP_MOTION *input, VP_MOTION *output, double border_factor);
-    bool is_point_in_rect(double px, double py, double rx, double ry, double w, double h);
+    bool smoothMotion(VP_MOTION *inmot, VP_MOTION *outmot, float smooth_factor);
+    bool smoothMotion1(VP_MOTION *inmot, VP_MOTION *outmot, VP_MOTION *motLF, VP_MOTION *imotLF, float smooth_factor);
+    void iterativeSmooth(VP_MOTION *input, VP_MOTION *output, float border_factor);
+    bool is_point_in_rect(float px, float py, float rx, float ry, float w, float h);
 
 
 private:

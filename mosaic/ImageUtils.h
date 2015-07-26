@@ -87,7 +87,7 @@ public:
   /**
    *  Get time.
    */
-  static double getTime();
+  static float getTime();
 
 protected:
 

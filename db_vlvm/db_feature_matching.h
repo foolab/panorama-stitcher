@@ -42,7 +42,7 @@ public:
     /*Id nr of point*/
     int id;
     /*Best match score*/
-    double s;
+    float s;
     /*Best match candidate*/
     db_PointInfo_f *pir;
     /*Precomputed coefficients
@@ -69,7 +69,7 @@ public:
     /*Id nr of point*/
     int id;
     /*Best match score*/
-    double s;
+    float s;
     /*Best match candidate*/
     db_PointInfo_u *pir;
     /*Precomputed coefficients
@@ -112,7 +112,7 @@ public:
      * \return maximum number of matches
      */
     unsigned long Init(int im_width,int im_height,
-        double max_disparity=DB_DEFAULT_MAX_DISPARITY,
+        float max_disparity=DB_DEFAULT_MAX_DISPARITY,
         int target_nr_corners=DB_DEFAULT_TARGET_NR_CORNERS);
 
     /*!
@@ -138,8 +138,8 @@ public:
      * \param H         image homography (prewarp) to be applied to right image features
      */
     void Match(const float * const *l_img,const float * const *r_img,
-        const double *x_l,const double *y_l,int nr_l,const double *x_r,const double *y_r,int nr_r,
-        int *id_l,int *id_r,int *nr_matches,const double H[9]=0);
+        const float *x_l,const float *y_l,int nr_l,const float *x_r,const float *y_r,int nr_r,
+        int *id_l,int *id_r,int *nr_matches,const float H[9]=0);
 
 protected:
     void Clean();
@@ -200,9 +200,9 @@ public:
      * \return maximum number of matches
      */
     virtual unsigned long Init(int im_width,int im_height,
-        double max_disparity=DB_DEFAULT_MAX_DISPARITY,
+        float max_disparity=DB_DEFAULT_MAX_DISPARITY,
         int target_nr_corners=DB_DEFAULT_TARGET_NR_CORNERS,
-        double max_disparity_v=DB_DEFAULT_NO_DISPARITY,
+        float max_disparity_v=DB_DEFAULT_NO_DISPARITY,
         bool use_smaller_matching_window=false, int use_21=0);
 
     /*!
@@ -230,8 +230,8 @@ public:
                         1 means nearest neighbor, 2 means bilinear warping.
      */
     virtual void Match(const unsigned char * const *l_img,const unsigned char * const *r_img,
-        const double *x_l,const double *y_l,int nr_l,const double *x_r,const double *y_r,int nr_r,
-        int *id_l,int *id_r,int *nr_matches,const double H[9]=0,int affine=0);
+        const float *x_l,const float *y_l,int nr_l,const float *x_r,const float *y_r,int nr_r,
+        int *id_l,int *id_r,int *nr_matches,const float H[9]=0,int affine=0);
 
     /*!
      * Checks if Init() was called.
@@ -249,7 +249,7 @@ protected:
     db_Bucket_u **m_bp_r;
     short *m_patch_space,*m_aligned_patch_space;
 
-    double m_max_disparity, m_max_disparity_v;
+    float m_max_disparity, m_max_disparity_v;
     int m_rect_window;
     bool m_use_smaller_matching_window;
     int m_use_21;

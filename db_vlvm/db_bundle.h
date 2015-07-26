@@ -33,12 +33,12 @@
 /*!
 Solve for update dx such that diagmult(1+lambda,transpose(J)%J)%dx= -Jtf
 using only upper half of JtJ, destroying lower half below diagonal in the process
-dimension is n and d should point to n allocated doubles of scratch memory
+dimension is n and d should point to n allocated floats of scratch memory
 */
-inline void db_Compute_dx(double *dx,double **JtJ,double *min_Jtf,double lambda,double *d,int n)
+inline void db_Compute_dx(float *dx,float **JtJ,float *min_Jtf,float lambda,float *d,int n)
 {
     int i;
-    double opl;
+    float opl;
 
     opl=1.0+lambda;
     for(i=0;i<n;i++) d[i]=JtJ[i][i]*opl;
@@ -51,9 +51,9 @@ inline void db_Compute_dx(double *dx,double **JtJ,double *min_Jtf,double lambda,
 Solve for update dx such that diagmult(1+lambda,transpose(J)%J)%dx= -Jtf
 using only upper half of JtJ, destroying lower half below diagonal in the process
 */
-inline void db_Compute_dx_3x3(double dx[3],double JtJ[9],const double min_Jtf[3],double lambda)
+inline void db_Compute_dx_3x3(float dx[3],float JtJ[9],const float min_Jtf[3],float lambda)
 {
-    double d[3],opl;
+    float d[3],opl;
 
     opl=1.0+lambda;
     d[0]=JtJ[0]*opl;

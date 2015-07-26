@@ -21,7 +21,7 @@
 #include <math.h>
 #include "trsMatrix.h"
 
-void mult33d(double a[3][3], double b[3][3], double c[3][3])
+void mult33d(float a[3][3], float b[3][3], float c[3][3])
 {
     a[0][0] = b[0][0]*c[0][0] + b[0][1]*c[1][0] + b[0][2]*c[2][0];
     a[0][1] = b[0][0]*c[0][1] + b[0][1]*c[1][1] + b[0][2]*c[2][1];
@@ -38,9 +38,9 @@ void mult33d(double a[3][3], double b[3][3], double c[3][3])
 // normProjMat33d
 // m = input matrix
 // return: result if successful
-int normProjMat33d(double m[3][3])
+int normProjMat33d(float m[3][3])
 {
-    double m22;
+    float m22;
 
     if(m[2][2] == 0.0)
         {
@@ -63,9 +63,9 @@ int normProjMat33d(double m[3][3])
 // det33d
 // m = input matrix
 // returns: determinant
-double det33d(const double m[3][3])
+float det33d(const float m[3][3])
 {
-    double result;
+    float result;
 
     result  = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]);
     result += m[0][1] * (m[1][2] * m[2][0] - m[1][0] * m[2][2]);
@@ -76,9 +76,9 @@ double det33d(const double m[3][3])
 
 // inv33d
 //
-void inv33d(const double m[3][3], double out[3][3])
+void inv33d(const float m[3][3], float out[3][3])
 {
-    double det = det33d(m);
+    float det = det33d(m);
 
     out[0][0] = (m[1][1]*m[2][2] - m[1][2]*m[2][1]) / det;
     out[1][0] = (m[1][2]*m[2][0] - m[1][0]*m[2][2]) / det;

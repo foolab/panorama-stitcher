@@ -47,7 +47,7 @@ db_FrameToReferenceRegistration::db_FrameToReferenceRegistration() :
 
   m_num_inlier_indices = 0;
 
-  m_temp_double = NULL;
+  m_temp_float = NULL;
   m_temp_int = NULL;
 
   m_corners_ref = NULL;
@@ -103,7 +103,7 @@ void db_FrameToReferenceRegistration::Clean()
   delete [] m_match_index_ref;
   delete [] m_match_index_ins;
 
-  delete [] m_temp_double;
+  delete [] m_temp_float;
   delete [] m_temp_int;
 
   delete [] m_corners_ref;
@@ -134,7 +134,7 @@ void db_FrameToReferenceRegistration::Clean()
 
   m_inlier_indices = NULL;
 
-  m_temp_double = NULL;
+  m_temp_float = NULL;
   m_temp_int = NULL;
 
   m_corners_ref = NULL;
@@ -149,14 +149,14 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
                        int    max_iterations,
                        bool   linear_polish,
                        bool   quarter_resolution,
-                       double scale,
+                       float scale,
                        unsigned int reference_update_period,
                        bool   do_motion_smoothing,
-                       double motion_smoothing_gain,
+                       float motion_smoothing_gain,
                        int    nr_samples,
                        int    chunk_size,
                        int    cd_target_nr_corners,
-                       double cm_max_disparity,
+                       float cm_max_disparity,
                            bool   cm_use_smaller_matching_window,
                        int    cd_nr_horz_blocks,
                        int    cd_nr_vert_blocks
@@ -188,7 +188,7 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
   m_im_width = width;
   m_im_height = height;
 
-  double temp[9];
+  float temp[9];
   db_Approx3DCalMat(m_K,temp,m_im_width,m_im_height);
 
   m_homography_type = homography_type;
@@ -197,7 +197,7 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
   m_nr_samples = nr_samples;
   m_chunk_size = chunk_size;
 
-  double outlier_t1 = 5.0;
+  float outlier_t1 = 5.0;
 
   m_outlier_t2 = outlier_t1*outlier_t1;//*m_scale*m_scale;
 
@@ -216,25 +216,25 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
   m_max_nr_matches = m_cm.Init(m_im_width,m_im_height,cm_max_disparity,m_max_nr_corners,DB_DEFAULT_NO_DISPARITY,cm_use_smaller_matching_window,use_21);
 
   // allocate space for corner feature locations for reference and inspection images:
-  m_x_corners_ref = new double [m_max_nr_corners];
-  m_y_corners_ref = new double [m_max_nr_corners];
+  m_x_corners_ref = new float [m_max_nr_corners];
+  m_y_corners_ref = new float [m_max_nr_corners];
 
-  m_x_corners_ins = new double [m_max_nr_corners];
-  m_y_corners_ins = new double [m_max_nr_corners];
+  m_x_corners_ins = new float [m_max_nr_corners];
+  m_y_corners_ins = new float [m_max_nr_corners];
 
   // allocate space for match indices:
   m_match_index_ref = new int [m_max_nr_matches];
   m_match_index_ins = new int [m_max_nr_matches];
 
-  m_temp_double = new double [12*DB_DEFAULT_NR_SAMPLES+10*m_max_nr_matches];
+  m_temp_float = new float [12*DB_DEFAULT_NR_SAMPLES+10*m_max_nr_matches];
   m_temp_int = new int [db_maxi(DB_DEFAULT_NR_SAMPLES,m_max_nr_matches)];
 
   // allocate space for homogenous image points:
-  m_corners_ref = new double [3*m_max_nr_corners];
-  m_corners_ins = new double [3*m_max_nr_corners];
+  m_corners_ref = new float [3*m_max_nr_corners];
+  m_corners_ins = new float [3*m_max_nr_corners];
 
   // allocate cost array and histogram:
-  m_sq_cost = new double [m_max_nr_matches];
+  m_sq_cost = new float [m_max_nr_matches];
   m_cost_histogram = new int [m_nr_bins];
 
   // reserve array:
@@ -251,7 +251,7 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
 // Save the reference image, detect features and update the dref-to-ref transformation
 int db_FrameToReferenceRegistration::UpdateReference(const unsigned char * const * im, bool subsample, bool detect_corners)
 {
-  double temp[9];
+  float temp[9];
   db_Multiply3x3_3x3(temp,m_H_dref_to_ref,m_H_ref_to_ins);
   db_Copy9(m_H_dref_to_ref,temp);
 
@@ -307,19 +307,19 @@ int db_FrameToReferenceRegistration::UpdateReference(const unsigned char * const
   return 1;
 }
 
-void db_FrameToReferenceRegistration::Get_H_dref_to_ref(double H[9])
+void db_FrameToReferenceRegistration::Get_H_dref_to_ref(float H[9])
 {
   db_Copy9(H,m_H_dref_to_ref);
 }
 
-void db_FrameToReferenceRegistration::Get_H_dref_to_ins(double H[9])
+void db_FrameToReferenceRegistration::Get_H_dref_to_ins(float H[9])
 {
   db_Multiply3x3_3x3(H,m_H_dref_to_ref,m_H_ref_to_ins);
 }
 
-void db_FrameToReferenceRegistration::Set_H_dref_to_ins(double H[9])
+void db_FrameToReferenceRegistration::Set_H_dref_to_ins(float H[9])
 {
-    double H_ins_to_ref[9];
+    float H_ins_to_ref[9];
 
     db_Identity3x3(H_ins_to_ref);   // Ensure it has proper values
     db_InvertAffineTransform(H_ins_to_ref,m_H_ref_to_ins);  // Invert to get ins to ref
@@ -341,7 +341,7 @@ bool db_FrameToReferenceRegistration::NeedReferenceUpdate()
     return false;
 }
 
-int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, double H[9],bool force_reference,bool prewarp)
+int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, float H[9],bool force_reference,bool prewarp)
 {
   m_current_is_reference = false;
   if(!m_reference_set || force_reference)
@@ -365,7 +365,7 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
     imptr = (const unsigned char * const* )m_quarter_res_image;
   }
 
-  double H_last[9];
+  float H_last[9];
   db_Copy9(H_last,m_H_ref_to_ins);
   db_Identity3x3(m_H_ref_to_ins);
 
@@ -375,7 +375,7 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
 
   // @jke - Adding code to time the functions.  TODO: Remove after test
 #if PROFILE
-  double iTimer1, iTimer2;
+  float iTimer1, iTimer2;
   char str[255];
   strcpy(profile_string,"\n");
   sprintf(str,"[%dx%d] %p\n",m_im_width,m_im_height,im);
@@ -390,7 +390,7 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
   // @jke - Adding code to time the functions.  TODO: Remove after test
 # if PROFILE
   iTimer2 = now_ms();
-  double elapsedTimeCorner = iTimer2 - iTimer1;
+  float elapsedTimeCorner = iTimer2 - iTimer1;
   sprintf(str,"Corner Detection [%d corners] = %g ms\n",m_nr_corners_ins, elapsedTimeCorner);
   strcat(profile_string, str);
 #endif
@@ -410,7 +410,7 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
   // @jke - Adding code to time the functions.  TODO: Remove after test
 # if PROFILE
   iTimer2 = now_ms();
-  double elapsedTimeMatch = iTimer2 - iTimer1;
+  float elapsedTimeMatch = iTimer2 - iTimer1;
   sprintf(str,"Matching [%d] = %g ms\n",m_nr_matches,elapsedTimeMatch);
   strcat(profile_string, str);
 #endif
@@ -434,13 +434,13 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
   iTimer1 = now_ms();
 #endif
   // perform the alignment:
-  db_RobImageHomography(m_H_ref_to_ins, m_corners_ref, m_corners_ins, m_nr_matches, m_K, m_K, m_temp_double, m_temp_int,
+  db_RobImageHomography(m_H_ref_to_ins, m_corners_ref, m_corners_ins, m_nr_matches, m_K, m_K, m_temp_float, m_temp_int,
             m_homography_type,NULL,m_max_iterations,m_max_nr_matches,m_scale,
             m_nr_samples, m_chunk_size);
   // @jke - Adding code to time the functions.  TODO: Remove after test
 # if PROFILE
   iTimer2 = now_ms();
-  double elapsedTimeHomography = iTimer2 - iTimer1;
+  float elapsedTimeHomography = iTimer2 - iTimer1;
   sprintf(str,"Homography = %g ms\n",elapsedTimeHomography);
   strcat(profile_string, str);
 #endif
@@ -511,10 +511,10 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
   return 1;
 }
 
-//void db_FrameToReferenceRegistration::ComputeInliers(double H[9],std::vector<int> &inlier_indices)
-void db_FrameToReferenceRegistration::ComputeInliers(double H[9])
+//void db_FrameToReferenceRegistration::ComputeInliers(float H[9],std::vector<int> &inlier_indices)
+void db_FrameToReferenceRegistration::ComputeInliers(float H[9])
 {
-  double totnummatches = m_nr_matches;
+  float totnummatches = m_nr_matches;
   int inliercount=0;
 
   m_num_inlier_indices = 0;
@@ -530,7 +530,7 @@ void db_FrameToReferenceRegistration::ComputeInliers(double H[9])
     }
 
   m_num_inlier_indices = inliercount;
-  double frac=inliercount/totnummatches;
+  float frac=inliercount/totnummatches;
 }
 
 //void db_FrameToReferenceRegistration::Polish(std::vector<int> &inlier_indices)
@@ -555,7 +555,7 @@ void db_FrameToReferenceRegistration::Polish(int *inlier_indices, int &num_inlie
       m_polish_D[5]+=m_corners_ins[j+1];
     }
 
-  double a=db_maxd(m_polish_C[0],m_polish_C[7]);
+  float a=db_maxd(m_polish_C[0],m_polish_C[7]);
   m_polish_C[0]/=a; m_polish_C[1]/=a;   m_polish_C[2]/=a;
   m_polish_C[7]/=a; m_polish_C[8]/=a; m_polish_C[14]/=a;
 
@@ -572,12 +572,12 @@ void db_FrameToReferenceRegistration::Polish(int *inlier_indices, int &num_inlie
   m_polish_C[35]=m_polish_C[14];
 
 
-  double d[6];
+  float d[6];
   db_CholeskyDecomp6x6(m_polish_C,d);
   db_CholeskyBacksub6x6(m_H_ref_to_ins,m_polish_C,d,m_polish_D);
 }
 
-void db_FrameToReferenceRegistration::EstimateSecondaryModel(double H[9])
+void db_FrameToReferenceRegistration::EstimateSecondaryModel(float H[9])
 {
   /*      if ( m_current_is_reference )
       {
@@ -590,7 +590,7 @@ void db_FrameToReferenceRegistration::EstimateSecondaryModel(double H[9])
   SelectOutliers();
 
   // perform the alignment:
-  db_RobImageHomography(m_H_ref_to_ins, m_corners_ref, m_corners_ins, m_nr_matches, m_K, m_K, m_temp_double, m_temp_int,
+  db_RobImageHomography(m_H_ref_to_ins, m_corners_ref, m_corners_ins, m_nr_matches, m_K, m_K, m_temp_float, m_temp_int,
             m_homography_type,NULL,m_max_iterations,m_max_nr_matches,m_scale,
             m_nr_samples, m_chunk_size);
 
@@ -637,7 +637,7 @@ void db_FrameToReferenceRegistration::ComputeCostHistogram()
 
   for(int c = 0; c < m_nr_matches; c++)
     {
-      double error = db_SafeSqrt(m_sq_cost[c]);
+      float error = db_SafeSqrt(m_sq_cost[c]);
       int bin = (int)(error/m_max_cost_pix*m_nr_bins);
       if ( bin < m_nr_bins )
     m_cost_histogram[bin]++;
@@ -686,7 +686,7 @@ void db_FrameToReferenceRegistration::SmoothMotion(void)
 {
   VP_MOTION inmot,outmot;
 
-  double H[9];
+  float H[9];
 
   Get_H_dref_to_ins(H);
 

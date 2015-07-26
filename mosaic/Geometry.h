@@ -26,12 +26,12 @@
 ///////////////////////////////////////////////////////////////
 
 
-inline double hypotSq(double a, double b)
+inline float hypotSq(float a, float b)
 {
     return ((a)*(a)+(b)*(b));
 }
 
-inline void ClipRect(double x, double y, BlendRect &brect)
+inline void ClipRect(float x, float y, BlendRect &brect)
 {
     if (y < brect.bot) brect.bot = y;
     if (y > brect.top) brect.top = y;
@@ -62,9 +62,9 @@ inline bool inSegment(int x, int width, int border)
     return (x >= -border && x < width + border - 1);
 }
 
-inline void FindTriangleCentroid(double x0, double y0, double x1, double y1,
-                                    double x2, double y2,
-                                    double &mass, double &centX, double &centY)
+inline void FindTriangleCentroid(float x0, float y0, float x1, float y1,
+                                    float x2, float y2,
+                                    float &mass, float &centX, float &centY)
 {
     // Calculate the centroid of the triangle
     centX = (x0 + x1 + x2) / 3.0;
@@ -100,20 +100,20 @@ inline void FindTriangleCentroid(double x0, double y0, double x1, double y1,
     else
     {
         // Calculate line equation from x0,y0 to x2,y2
-        double dx = x2 - x0;
-        double dy = y2 - y0;
+        float dx = x2 - x0;
+        float dy = y2 - y0;
         // Calculate the length of the side
-        double len1 = sqrt(dx * dx + dy * dy);
-        double m1 = dy / dx;
-        double b1 = y0 - m1 * x0;
+        float len1 = sqrt(dx * dx + dy * dy);
+        float m1 = dy / dx;
+        float b1 = y0 - m1 * x0;
         // Calculate the line that goes through x1,y1 and is perpendicular to
         // the other line
-        double m2 = 1.0 / m1;
-        double b2 = y1 - m2 * x1;
+        float m2 = 1.0 / m1;
+        float b2 = y1 - m2 * x1;
         // Calculate the intersection of the two lines
         if (fabs( m1 - m2 ) > 1.e-6)
         {
-            double x = (b2 - b1) / (m1 - m2);
+            float x = (b2 - b1) / (m1 - m2);
             // the mass is the base * height
             dx = x1 - x;
             dy = y1 - m1 * x + b1;
@@ -126,8 +126,8 @@ inline void FindTriangleCentroid(double x0, double y0, double x1, double y1,
     }
 }
 
-inline void FindQuadCentroid(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3,
-                                     double &centX, double &centY)
+inline void FindQuadCentroid(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3,
+                                     float &centX, float &centY)
 
 {
     // To find the centroid:
@@ -136,10 +136,10 @@ inline void FindQuadCentroid(double x0, double y0, double x1, double y1, double 
     // 3) Find the centroid of the quad by weighting each triangle centroids by their area.
 
     // Calculate the corner points
-    double z;
+    float z;
 
     // The quad is split from x0,y0 to x2,y2
-    double mass1, mass2, cent1x, cent2x, cent1y, cent2y;
+    float mass1, mass2, cent1x, cent2x, cent1y, cent2y;
     FindTriangleCentroid(x0, y0, x1, y1, x2, y2, mass1, cent1x, cent1y);
     FindTriangleCentroid(x0, y0, x3, y3, x2, y2, mass2, cent2x, cent2y);
 

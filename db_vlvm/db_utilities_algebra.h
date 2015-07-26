@@ -31,7 +31,7 @@
  */
 /*\{*/
 
-inline void db_HomogenousNormalize3(double *x)
+inline void db_HomogenousNormalize3(float *x)
 {
     db_MultiplyScalar3(x,db_SafeSqrtReciprocal(db_SquareSum3(x)));
 }

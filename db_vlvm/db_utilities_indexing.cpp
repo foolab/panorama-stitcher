@@ -25,7 +25,7 @@
 *    Lean and mean begins here                                   *
 *****************************************************************/
 
-void db_Zero(double *d,long nr)
+void db_Zero(float *d,long nr)
 {
     long i;
     for(i=0;i<nr;i++) d[i]=0.0;
@@ -33,13 +33,13 @@ void db_Zero(double *d,long nr)
 
 /*This routine breaks number in source into values smaller and larger than
 a pivot element. Values equal to the pivot are ignored*/
-void db_LeanPartitionOnPivot(double pivot,double *dest,const double *source,long first,long last,long *first_equal,long *last_equal)
+void db_LeanPartitionOnPivot(float pivot,float *dest,const float *source,long first,long last,long *first_equal,long *last_equal)
 {
-    double temp;
-    const double *s_point;
-    const double *s_top;
-    double *d_bottom;
-    double *d_top;
+    float temp;
+    const float *s_point;
+    const float *s_top;
+    float *d_bottom;
+    float *d_top;
 
     s_point=source+first;
     s_top=source+last;
@@ -56,17 +56,17 @@ void db_LeanPartitionOnPivot(double pivot,double *dest,const double *source,long
     *last_equal=d_top-dest;
 }
 
-double db_LeanQuickSelect(const double *s,long nr_elements,long pos,double *temp)
+float db_LeanQuickSelect(const float *s,long nr_elements,long pos,float *temp)
 {
   long first=0;
   long last=nr_elements-1;
-  double pivot;
+  float pivot;
   long first_equal,last_equal;
-  double *tempA;
-  double *tempB;
-  double *tempC;
-  const double *source;
-  double *dest;
+  float *tempA;
+  float *tempB;
+  float *tempC;
+  const float *source;
+  float *dest;
 
   tempA=temp;
   tempB=temp+nr_elements;

@@ -124,13 +124,13 @@ inline void db_WarpImageLutBilinear_u(const unsigned char * const * src, unsigne
                                       const float * const * lut_x,const float * const* lut_y)
 {
     assert(src && dst);
-    double xd=0.0, yd=0.0;
+    float xd=0.0, yd=0.0;
 
     for ( int i = 0; i < w; ++i )
         for ( int j = 0; j < h; ++j )
         {
-            xd = static_cast<double>(lut_x[j][i]);
-            yd = static_cast<double>(lut_y[j][i]);
+            xd = static_cast<float>(lut_x[j][i]);
+            yd = static_cast<float>(lut_y[j][i]);
             if ( xd > w   || yd > h ||
                  xd < 0.0 || yd < 0.0)
                 dst[j][i] = 0;
@@ -157,14 +157,14 @@ void db_WarpImageLut_u(const unsigned char * const * src, unsigned char ** dst, 
 }
 
 
-void db_PrintDoubleVector(double *a,long size)
+void db_PrintDoubleVector(float *a,long size)
 {
     printf("[ ");
     for(long i=0;i<size;i++) printf("%lf ",a[i]);
     printf("]");
 }
 
-void db_PrintDoubleMatrix(double *a,long rows,long cols)
+void db_PrintDoubleMatrix(float *a,long rows,long cols)
 {
     printf("[\n");
     for(long i=0;i<rows;i++)

@@ -40,7 +40,7 @@
 #define DB_SQRT2         1.41421356237309504880
 #define DB_SQRT3         1.7320508075688772935274463415059
 #define DB_SQRT1_2       0.70710678118654752440
-#define DB_EPS           2.220446049250313e-016 /* for 32 bit double */
+#define DB_EPS           2.220446049250313e-016 /* for 32 bit float */
 
 /****************Default Parameters********************/
 /*Preemptive ransac parameters*/

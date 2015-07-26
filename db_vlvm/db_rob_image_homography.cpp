@@ -33,10 +33,10 @@
 using namespace std;
 #endif /*VERBOSE*/
 
-inline double db_RobImageHomography_Cost(double H[9],int point_count,double *x_i,double *xp_i,double one_over_scale2)
+inline float db_RobImageHomography_Cost(float H[9],int point_count,float *x_i,float *xp_i,float one_over_scale2)
 {
     int c;
-    double back,acc,*x_i_temp,*xp_i_temp;
+    float back,acc,*x_i_temp,*xp_i_temp;
 
     for(back=0.0,c=0;c<point_count;)
     {
@@ -71,17 +71,17 @@ inline double db_RobImageHomography_Cost(double H[9],int point_count,double *x_i
     return(back);
 }
 
-inline double db_RobImageHomography_Statistics(double H[9],int point_count,double *x_i,double *xp_i,double one_over_scale2,db_Statistics *stat,double thresh=DB_OUTLIER_THRESHOLD)
+inline float db_RobImageHomography_Statistics(float H[9],int point_count,float *x_i,float *xp_i,float one_over_scale2,db_Statistics *stat,float thresh=DB_OUTLIER_THRESHOLD)
 {
     int c,i;
-    double t2,frac;
+    float t2,frac;
 
     t2=thresh*thresh;
     for(i=0,c=0;c<point_count;c++)
     {
         i+=(db_SquaredInhomogenousHomographyError(xp_i+(c<<1),H,x_i+(c<<1))*one_over_scale2<=t2)?1:0;
     }
-    frac=((double)i)/((double)(db_maxi(point_count,1)));
+    frac=((float)i)/((float)(db_maxi(point_count,1)));
 
 #ifdef _VERBOSE_
     std::cout << "Inlier Percentage RobImageHomography: " << frac*100.0 << "% out of " << point_count << " constraints" << std::endl;
@@ -99,19 +99,19 @@ inline double db_RobImageHomography_Statistics(double H[9],int point_count,doubl
         /*stat->nr_parameters=;*/
 
         stat->lambda1=log(4.0);
-        stat->lambda2=log(4.0*((double)db_maxi(1,stat->nr_points)));
+        stat->lambda2=log(4.0*((float)db_maxi(1,stat->nr_points)));
         stat->lambda3=10.0;
-        stat->gric=stat->cost+stat->lambda1*stat->model_dimension*((double)stat->nr_points)+stat->lambda2*((double)stat->nr_parameters);
-        stat->inlier_evidence=((double)stat->nr_inliers)-stat->lambda3*((double)stat->nr_parameters);
+        stat->gric=stat->cost+stat->lambda1*stat->model_dimension*((float)stat->nr_points)+stat->lambda2*((float)stat->nr_parameters);
+        stat->inlier_evidence=((float)stat->nr_inliers)-stat->lambda3*((float)stat->nr_parameters);
     }
 
     return(frac);
 }
 
 /*Compute min_Jtf and upper right of JtJ. Return cost.*/
-inline double db_RobImageHomography_Jacobians(double JtJ[81],double min_Jtf[9],double H[9],int point_count,double *x_i,double *xp_i,double one_over_scale2)
+inline float db_RobImageHomography_Jacobians(float JtJ[81],float min_Jtf[9],float H[9],int point_count,float *x_i,float *xp_i,float one_over_scale2)
 {
-    double back,Jf_dx[18],f[2],temp,temp2;
+    float back,Jf_dx[18],f[2],temp,temp2;
     int i;
 
     db_Zero(JtJ,81);
@@ -190,9 +190,9 @@ inline double db_RobImageHomography_Jacobians(double JtJ[81],double min_Jtf[9],d
 }
 
 /*Compute min_Jtf and upper right of JtJ. Return cost*/
-inline double db_RobCamRotation_Jacobians(double JtJ[9],double min_Jtf[3],double H[9],int point_count,double *x_i,double *xp_i,double one_over_scale2)
+inline float db_RobCamRotation_Jacobians(float JtJ[9],float min_Jtf[3],float H[9],int point_count,float *x_i,float *xp_i,float one_over_scale2)
 {
-    double back,Jf_dx[6],f[2];
+    float back,Jf_dx[6],f[2];
     int i,j;
 
     db_Zero(JtJ,9);
@@ -223,12 +223,12 @@ inline double db_RobCamRotation_Jacobians(double JtJ[9],double min_Jtf[3],double
     return(back);
 }
 
-void db_RobCamRotation_Polish(double H[9],int point_count,double *x_i,double *xp_i,double one_over_scale2,
-                               int max_iterations,double improvement_requirement)
+void db_RobCamRotation_Polish(float H[9],int point_count,float *x_i,float *xp_i,float one_over_scale2,
+                               int max_iterations,float improvement_requirement)
 {
     int i,update,stop;
-    double lambda,cost,current_cost;
-    double JtJ[9],min_Jtf[3],dx[3],H_p_dx[9];
+    float lambda,cost,current_cost;
+    float JtJ[9],min_Jtf[3],dx[3],H_p_dx[9];
 
     lambda=0.001;
     for(update=1,stop=0,i=0;(stop<2) && (i<max_iterations);i++)
@@ -278,10 +278,10 @@ void db_RobCamRotation_Polish(double H[9],int point_count,double *x_i,double *xp
     }
 }
 
-inline void db_RobImageHomographyFetchJacobian(double **JtJ_ref,double *min_Jtf,double **JtJ_temp_ref,double *min_Jtf_temp,int n,int *fetch_vector)
+inline void db_RobImageHomographyFetchJacobian(float **JtJ_ref,float *min_Jtf,float **JtJ_temp_ref,float *min_Jtf_temp,int n,int *fetch_vector)
 {
     int i,j,t;
-    double *t1,*t2;
+    float *t1,*t2;
 
     for(i=0;i<n;i++)
     {
@@ -296,9 +296,9 @@ inline void db_RobImageHomographyFetchJacobian(double **JtJ_ref,double *min_Jtf,
     }
 }
 
-inline void db_RobImageHomographyMultiplyJacobian(double **JtJ_ref,double *min_Jtf,double **JtJ_temp_ref,double *min_Jtf_temp,double **JE_dx_ref,int n)
+inline void db_RobImageHomographyMultiplyJacobian(float **JtJ_ref,float *min_Jtf,float **JtJ_temp_ref,float *min_Jtf_temp,float **JE_dx_ref,int n)
 {
-    double JtJ_JE[72],*JtJ_JE_ref[9];
+    float JtJ_JE[72],*JtJ_JE_ref[9];
 
     db_SetupMatrixRefs(JtJ_JE_ref,9,8,JtJ_JE);
 
@@ -308,7 +308,7 @@ inline void db_RobImageHomographyMultiplyJacobian(double **JtJ_ref,double *min_J
     db_MultiplyMatrixVectorAtb(min_Jtf,JE_dx_ref,min_Jtf_temp,n,9);
 }
 
-inline void db_RobImageHomographyJH_Js(double **JE_dx_ref,int j,double H[9])
+inline void db_RobImageHomographyJH_Js(float **JE_dx_ref,int j,float H[9])
 {
     /*Update of upper 2x2 is multiplication by
     [s 0][ cos(theta) sin(theta)]
@@ -324,7 +324,7 @@ inline void db_RobImageHomographyJH_Js(double **JE_dx_ref,int j,double H[9])
     JE_dx_ref[8][j]=0;
 }
 
-inline void db_RobImageHomographyJH_JR(double **JE_dx_ref,int j,double H[9])
+inline void db_RobImageHomographyJH_JR(float **JE_dx_ref,int j,float H[9])
 {
     /*Update of upper 2x2 is multiplication by
     [s 0][ cos(theta) sin(theta)]
@@ -340,7 +340,7 @@ inline void db_RobImageHomographyJH_JR(double **JE_dx_ref,int j,double H[9])
     JE_dx_ref[8][j]=0;
 }
 
-inline void db_RobImageHomographyJH_Jt(double **JE_dx_ref,int j,int k,double H[9])
+inline void db_RobImageHomographyJH_Jt(float **JE_dx_ref,int j,int k,float H[9])
 {
     JE_dx_ref[0][j]=0;
     JE_dx_ref[1][j]=0;
@@ -363,10 +363,10 @@ inline void db_RobImageHomographyJH_Jt(double **JE_dx_ref,int j,int k,double H[9
     JE_dx_ref[8][k]=0;
 }
 
-inline void db_RobImageHomographyJH_dRotFocal(double **JE_dx_ref,int j,int k,int l,int m,double H[9])
+inline void db_RobImageHomographyJH_dRotFocal(float **JE_dx_ref,int j,int k,int l,int m,float H[9])
 {
-    double f,fi,fi2;
-    double R[9],J[9];
+    float f,fi,fi2;
+    float R[9],J[9];
 
     /*Updated matrix is diag(f+df,f+df)*dR*R*diag(1/(f+df),1/(f+df),1)*/
     f=db_FocalAndRotFromCamRotFocalHomography(R,H);
@@ -414,12 +414,12 @@ inline void db_RobImageHomographyJH_dRotFocal(double **JE_dx_ref,int j,int k,int
     JE_dx_ref[8][m]=0;
 }
 
-inline double db_RobImageHomography_Jacobians_Generic(double *JtJ_ref[8],double min_Jtf[8],int *num_param,int *frozen_coord,double H[9],int point_count,double *x_i,double *xp_i,int homography_type,double one_over_scale2)
+inline float db_RobImageHomography_Jacobians_Generic(float *JtJ_ref[8],float min_Jtf[8],int *num_param,int *frozen_coord,float H[9],int point_count,float *x_i,float *xp_i,int homography_type,float one_over_scale2)
 {
-    double back;
+    float back;
     int i,j,fetch_vector[8],n;
-    double JtJ_temp[81],min_Jtf_temp[9],JE_dx[72];
-    double *JE_dx_ref[9],*JtJ_temp_ref[9];
+    float JtJ_temp[81],min_Jtf_temp[9],JE_dx[72];
+    float *JE_dx_ref[9],*JtJ_temp_ref[9];
 
     /*Compute cost and JtJ,min_Jtf with respect to H*/
     back=db_RobImageHomography_Jacobians(JtJ_temp,min_Jtf_temp,H,point_count,x_i,xp_i,one_over_scale2);
@@ -510,7 +510,7 @@ inline double db_RobImageHomography_Jacobians_Generic(double *JtJ_ref[8],double 
     return(back);
 }
 
-inline void db_ImageHomographyUpdateGeneric(double H_p_dx[9],double H[9],double *dx,int homography_type,int frozen_coord)
+inline void db_ImageHomographyUpdateGeneric(float H_p_dx[9],float H[9],float *dx,int homography_type,int frozen_coord)
 {
     switch(homography_type)
     {
@@ -564,14 +564,14 @@ inline void db_ImageHomographyUpdateGeneric(double H_p_dx[9],double H[9],double 
     }
 }
 
-void db_RobCamRotation_Polish_Generic(double H[9],int point_count,int homography_type,double *x_i,double *xp_i,double one_over_scale2,
-                               int max_iterations,double improvement_requirement)
+void db_RobCamRotation_Polish_Generic(float H[9],int point_count,int homography_type,float *x_i,float *xp_i,float one_over_scale2,
+                               int max_iterations,float improvement_requirement)
 {
     int i,update,stop,n;
     int frozen_coord = 0;
-    double lambda,cost,current_cost;
-    double JtJ[72],min_Jtf[9],dx[8],H_p_dx[9];
-    double *JtJ_ref[9],d[8];
+    float lambda,cost,current_cost;
+    float JtJ[72],min_Jtf[9],dx[8],H_p_dx[9];
+    float *JtJ_ref[9],d[8];
 
     lambda=0.001;
     for(update=1,stop=0,i=0;(stop<2) && (i<max_iterations);i++)
@@ -622,22 +622,22 @@ void db_RobCamRotation_Polish_Generic(double H[9],int point_count,int homography
 }
 void db_RobImageHomography(
                               /*Best homography*/
-                              double H[9],
+                              float H[9],
                               /*2DPoint to 2DPoint constraints
                               Points are assumed to be given in
                               homogenous coordinates*/
-                              double *im, double *im_p,
+                              float *im, float *im_p,
                               /*Nr of points in total*/
                               int nr_points,
                               /*Calibration matrices
                               used to normalize the points*/
-                              double K[9],
-                              double Kp[9],
+                              float K[9],
+                              float Kp[9],
                               /*Pre-allocated space temp_d
                               should point to at least
                               12*nr_samples+10*nr_points
                               allocated positions*/
-                              double *temp_d,
+                              float *temp_d,
                               /*Pre-allocated space temp_i
                               should point to at least
                               max(nr_samples,nr_points)
@@ -647,7 +647,7 @@ void db_RobImageHomography(
                               db_Statistics *stat,
                               int max_iterations,
                               int max_points,
-                              double scale,
+                              float scale,
                               int nr_samples,
                               int chunk_size,
                               /////////////////////////////////////////////
@@ -658,11 +658,11 @@ void db_RobImageHomography(
                               // need the input
                               //////////////////////////////////////
                               // 3D coordinates
-                              double *wp,
+                              float *wp,
                               // its corresponding stereo pair's points
-                              double *im_r,
+                              float *im_r,
                               // raw image coordinates
-                              double *im_raw, double *im_raw_p,
+                              float *im_raw, float *im_raw_p,
                               // final matches
                               int *finalNumE)
 {
@@ -675,53 +675,53 @@ void db_RobImageHomography(
     int last_hyp,new_last_hyp,last_corr;
     int pos,point_pos,last_point;
     /*Accumulator*/
-    double acc;
+    float acc;
     /*Hypothesis pointer*/
-    double *hyp_point;
+    float *hyp_point;
     /*Random sample*/
     int s[4];
     /*Pivot for hypothesis pruning*/
-    double pivot;
+    float pivot;
     /*Best hypothesis position*/
     int best_pos;
     /*Best score*/
-    double lowest_cost;
+    float lowest_cost;
     /*One over the squared scale of
     Cauchy distribution*/
-    double one_over_scale2;
+    float one_over_scale2;
     /*temporary pointers*/
-    double *x_i_temp,*xp_i_temp;
+    float *x_i_temp,*xp_i_temp;
     /*Temporary space for inverse calibration matrices*/
-    double K_inv[9];
-    double Kp_inv[9];
+    float K_inv[9];
+    float Kp_inv[9];
     /*Temporary space for homography*/
-    double H_temp[9],H_temp2[9];
+    float H_temp[9],H_temp2[9];
     /*Pointers to homogenous coordinates*/
-    double *x_h_point,*xp_h_point;
+    float *x_h_point,*xp_h_point;
     /*Array of pointers to inhomogenous coordinates*/
-    double *X[3],*Xp[3];
+    float *X[3],*Xp[3];
     /*Similarity parameters*/
     int orientation_preserving,allow_scaling,allow_rotation,allow_translation,sample_size;
 
     /*Homogenous coordinates of image points in first image*/
-    double *x_h;
+    float *x_h;
     /*Homogenous coordinates of image points in second image*/
-    double *xp_h;
+    float *xp_h;
     /*Inhomogenous coordinates of image points in first image*/
-    double *x_i;
+    float *x_i;
     /*Inhomogenous coordinates of image points in second image*/
-    double *xp_i;
+    float *xp_i;
     /*Homography hypotheses*/
-    double *hyp_H_array;
+    float *hyp_H_array;
     /*Cost array*/
-    double *hyp_cost_array;
+    float *hyp_cost_array;
     /*Permutation of the hypotheses*/
     int *hyp_perm;
     /*Sample of the points*/
     int *point_perm;
     /*Temporary space for quick-select
     2*nr_samples*/
-    double *temp_select;
+    float *temp_select;
 
     /*Get inverse calibration matrices*/
     db_InvertCalibrationMatrix(K_inv,K);
@@ -744,7 +744,7 @@ void db_RobImageHomography(
     /*Prepare a randomly permuted subset of size
     point_count from the input points*/
 
-    point_count=db_mini(nr_points,(int)(chunk_size*log((double)nr_samples)/DB_LN2));
+    point_count=db_mini(nr_points,(int)(chunk_size*log((float)nr_samples)/DB_LN2));
 
     point_count_new = point_count;
 

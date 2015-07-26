@@ -32,22 +32,22 @@
  */
 /*\{*/
 
-inline void db_SetupMatrixRefs(double **ar,long rows,long cols,double *a)
+inline void db_SetupMatrixRefs(float **ar,long rows,long cols,float *a)
 {
     long i;
     for(i=0;i<rows;i++) ar[i]=&a[i*cols];
 }
 
-inline void db_SymmetricExtendUpperToLower(double **A,int rows,int cols)
+inline void db_SymmetricExtendUpperToLower(float **A,int rows,int cols)
 {
     int i,j;
     for(i=1;i<rows;i++) for(j=0;j<i;j++) A[i][j]=A[j][i];
 }
 
-void inline db_MultiplyMatrixVectorAtb(double *c,const double * const *At,const double *b,int arows,int acols)
+void inline db_MultiplyMatrixVectorAtb(float *c,const float * const *At,const float *b,int arows,int acols)
 {
     int i,j;
-    double acc;
+    float acc;
 
     for(i=0;i<arows;i++)
     {
@@ -57,10 +57,10 @@ void inline db_MultiplyMatrixVectorAtb(double *c,const double * const *At,const 
     }
 }
 
-inline void db_MultiplyMatricesAB(double **C,const double * const *A,const double * const *B,int arows,int acols,int bcols)
+inline void db_MultiplyMatricesAB(float **C,const float * const *A,const float * const *B,int arows,int acols,int bcols)
 {
     int i,j,k;
-    double acc;
+    float acc;
 
     for(i=0;i<arows;i++) for(j=0;j<bcols;j++)
     {
@@ -70,10 +70,10 @@ inline void db_MultiplyMatricesAB(double **C,const double * const *A,const doubl
     }
 }
 
-inline void db_UpperMultiplyMatricesAtB(double **Cu,const double * const *At,const double * const *B,int arows,int acols,int bcols)
+inline void db_UpperMultiplyMatricesAtB(float **Cu,const float * const *At,const float * const *B,int arows,int acols,int bcols)
 {
     int i,j,k;
-    double acc;
+    float acc;
 
     for(i=0;i<arows;i++) for(j=i;j<bcols;j++)
     {
@@ -83,17 +83,17 @@ inline void db_UpperMultiplyMatricesAtB(double **Cu,const double * const *At,con
     }
 }
 
-DB_API void db_Zero(double *d,long nr);
+DB_API void db_Zero(float *d,long nr);
 
-inline int db_MaxIndex2(double s[2])
+inline int db_MaxIndex2(float s[2])
 {
     if(s[0]>=s[1]) return(0);
     return(1);
 }
 
-inline int db_MaxIndex3(const double s[3])
+inline int db_MaxIndex3(const float s[3])
 {
-    double best;
+    float best;
     int pos;
 
     best=s[0];pos=0;
@@ -102,9 +102,9 @@ inline int db_MaxIndex3(const double s[3])
     return(pos);
 }
 
-inline int db_MaxIndex4(const double s[4])
+inline int db_MaxIndex4(const float s[4])
 {
-    double best;
+    float best;
     int pos;
 
     best=s[0];pos=0;
@@ -114,9 +114,9 @@ inline int db_MaxIndex4(const double s[4])
     return(pos);
 }
 
-inline int db_MaxIndex5(const double s[5])
+inline int db_MaxIndex5(const float s[5])
 {
-    double best;
+    float best;
     int pos;
 
     best=s[0];pos=0;
@@ -127,9 +127,9 @@ inline int db_MaxIndex5(const double s[5])
     return(pos);
 }
 
-inline int db_MaxIndex6(const double s[6])
+inline int db_MaxIndex6(const float s[6])
 {
-    double best;
+    float best;
     int pos;
 
     best=s[0];pos=0;
@@ -141,9 +141,9 @@ inline int db_MaxIndex6(const double s[6])
     return(pos);
 }
 
-inline int db_MaxIndex7(const double s[7])
+inline int db_MaxIndex7(const float s[7])
 {
-    double best;
+    float best;
     int pos;
 
     best=s[0];pos=0;
@@ -156,9 +156,9 @@ inline int db_MaxIndex7(const double s[7])
     return(pos);
 }
 
-inline int db_MinIndex7(const double s[7])
+inline int db_MinIndex7(const float s[7])
 {
-    double best;
+    float best;
     int pos;
 
     best=s[0];pos=0;
@@ -171,9 +171,9 @@ inline int db_MinIndex7(const double s[7])
     return(pos);
 }
 
-inline int db_MinIndex9(const double s[9])
+inline int db_MinIndex9(const float s[9])
 {
-    double best;
+    float best;
     int pos;
 
     best=s[0];pos=0;
@@ -188,9 +188,9 @@ inline int db_MinIndex9(const double s[9])
     return(pos);
 }
 
-inline int db_MaxAbsIndex3(const double *s)
+inline int db_MaxAbsIndex3(const float *s)
 {
-    double t,best;
+    float t,best;
     int pos;
 
     best=fabs(s[0]);pos=0;
@@ -199,9 +199,9 @@ inline int db_MaxAbsIndex3(const double *s)
     return(pos);
 }
 
-inline int db_MaxAbsIndex9(const double *s)
+inline int db_MaxAbsIndex9(const float *s)
 {
-    double t,best;
+    float t,best;
     int pos;
 
     best=fabs(s[0]);pos=0;
@@ -236,12 +236,12 @@ is thus around 100 microseconds
 
 Does the same operation as std::nth_element().
 */
-DB_API double db_LeanQuickSelect(const double *s,long nr_elements,long pos,double *temp);
+DB_API float db_LeanQuickSelect(const float *s,long nr_elements,long pos,float *temp);
 
 /*!
- Median of 3 doubles
+ Median of 3 floats
  */
-inline double db_TripleMedian(double a,double b,double c)
+inline float db_TripleMedian(float a,float b,float c)
 {
     if(a>b)
     {

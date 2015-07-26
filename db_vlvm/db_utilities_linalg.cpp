@@ -28,9 +28,9 @@
 /*Cholesky-factorize symmetric positive definite 6 x 6 matrix A. Upper
 part of A is used from the input. The Cholesky factor is output as
 subdiagonal part in A and diagonal in d, which is 6-dimensional*/
-void db_CholeskyDecomp6x6(double A[36],double d[6])
+void db_CholeskyDecomp6x6(float A[36],float d[6])
 {
-    double s,temp;
+    float s,temp;
 
     /*[50 mult 35 add 6sqrt=85flops 6func]*/
     /*i=0*/
@@ -77,11 +77,11 @@ void db_CholeskyDecomp6x6(double A[36],double d[6])
 above diagonal of A is used from the input, diagonal of A is assumed to
 be stored in d. The Cholesky factor is output as
 subdiagonal part in A and diagonal in d, which is n-dimensional*/
-void db_CholeskyDecompSeparateDiagonal(double **A,double *d,int n)
+void db_CholeskyDecompSeparateDiagonal(float **A,float *d,int n)
 {
     int i,j,k;
-    double s;
-    double temp = 0.0;
+    float s;
+    float temp = 0.0;
 
     for(i=0;i<n;i++) for(j=i;j<n;j++)
     {
@@ -99,10 +99,10 @@ void db_CholeskyDecompSeparateDiagonal(double **A,double *d,int n)
 
 /*Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of an n x n matrix and the right hand side b. The vector b is unchanged*/
-void db_CholeskyBacksub(double *x,const double * const *A,const double *d,int n,const double *b)
+void db_CholeskyBacksub(float *x,const float * const *A,const float *d,int n,const float *b)
 {
     int i,k;
-    double s;
+    float s;
 
     for(i=0;i<n;i++)
     {
@@ -120,9 +120,9 @@ void db_CholeskyBacksub(double *x,const double * const *A,const double *d,int n,
 above diagonal of A is used from the input, diagonal of A is assumed to
 be stored in d. The Cholesky factor is output as subdiagonal part in A
 and diagonal in d, which is 3-dimensional*/
-void db_CholeskyDecomp3x3SeparateDiagonal(double A[9],double d[3])
+void db_CholeskyDecomp3x3SeparateDiagonal(float A[9],float d[3])
 {
-    double s,temp;
+    float s,temp;
 
     /*i=0*/
     s=d[0];
@@ -142,7 +142,7 @@ void db_CholeskyDecomp3x3SeparateDiagonal(double A[9],double d[3])
 
 /*Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of a 3 x 3 matrix and the right hand side b. The vector b is unchanged*/
-void db_CholeskyBacksub3x3(double x[3],const double A[9],const double d[3],const double b[3])
+void db_CholeskyBacksub3x3(float x[3],const float A[9],const float d[3],const float b[3])
 {
     /*[42 mult 30 add=72flops]*/
     x[0]=db_SafeDivision(b[0],d[0]);
@@ -155,7 +155,7 @@ void db_CholeskyBacksub3x3(double x[3],const double A[9],const double d[3],const
 
 /*Backsubstitute L%transpose(L)*x=b for x given the Cholesky decomposition
 of a 6 x 6 matrix and the right hand side b. The vector b is unchanged*/
-void db_CholeskyBacksub6x6(double x[6],const double A[36],const double d[6],const double b[6])
+void db_CholeskyBacksub6x6(float x[6],const float A[36],const float d[6],const float b[6])
 {
     /*[42 mult 30 add=72flops]*/
     x[0]=db_SafeDivision(b[0],d[0]);
@@ -173,10 +173,10 @@ void db_CholeskyBacksub6x6(double x[6],const double A[36],const double d[6],cons
 }
 
 
-void db_Orthogonalize6x7(double A[42],int orthonormalize)
+void db_Orthogonalize6x7(float A[42],int orthonormalize)
 {
     int i;
-    double ss[6];
+    float ss[6];
 
     /*Compute square sums of rows*/
     ss[0]=db_SquareSum7(A);
@@ -230,10 +230,10 @@ void db_Orthogonalize6x7(double A[42],int orthonormalize)
     }
 }
 
-void db_Orthogonalize8x9(double A[72],int orthonormalize)
+void db_Orthogonalize8x9(float A[72],int orthonormalize)
 {
     int i;
-    double ss[8];
+    float ss[8];
 
     /*Compute square sums of rows*/
     ss[0]=db_SquareSum9(A);
@@ -312,11 +312,11 @@ void db_Orthogonalize8x9(double A[72],int orthonormalize)
     }
 }
 
-void db_NullVectorOrthonormal6x7(double x[7],const double A[42])
+void db_NullVectorOrthonormal6x7(float x[7],const float A[42])
 {
     int i;
-    double omss[7];
-    const double *B;
+    float omss[7];
+    const float *B;
 
     /*Pivot by choosing row of the identity matrix
     (the one corresponding to column of A with smallest square sum)*/
@@ -341,11 +341,11 @@ void db_NullVectorOrthonormal6x7(double x[7],const double A[42])
     db_MultiplyScalar7(x,db_SafeSqrtReciprocal(1.0-omss[i]));
 }
 
-void db_NullVectorOrthonormal8x9(double x[9],const double A[72])
+void db_NullVectorOrthonormal8x9(float x[9],const float A[72])
 {
     int i;
-    double omss[9];
-    const double *B;
+    float omss[9];
+    const float *B;
 
     /*Pivot by choosing row of the identity matrix
     (the one corresponding to column of A with smallest square sum)*/

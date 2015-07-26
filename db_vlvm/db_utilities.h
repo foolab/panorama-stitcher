@@ -56,9 +56,9 @@
 /*\{*/
 
 /*!
- * Round double into int using fld and fistp instructions.
+ * Round float into int using fld and fistp instructions.
  */
-inline int db_roundi (double x) {
+inline int db_roundi (float x) {
 #ifdef WIN32_ASM
     int n;
     __asm
@@ -73,9 +73,9 @@ inline int db_roundi (double x) {
 }
 
 /*!
- * Square a double.
+ * Square a float.
  */
-inline double db_sqr(double a)
+inline float db_sqr(float a)
 {
     return(a*a);
 }
@@ -97,17 +97,17 @@ inline long db_sqr(int a)
 }
 
 /*!
- * Maximum of two doubles.
+ * Maximum of two floats.
  */
-inline double db_maxd(double a,double b)
+inline float db_maxd(float a,float b)
 {
     if(b>a) return(b);
     else return(a);
 }
 /*!
- * Minumum of two doubles.
+ * Minumum of two floats.
  */
-inline double db_mind(double a,double b)
+inline float db_mind(float a,float b)
 {
     if(b<a) return(b);
     else return(a);
@@ -153,7 +153,7 @@ inline long db_minl(long a,long b)
  * Sign of a number.
  * \return -1.0 if negative, 1.0 if positive.
  */
-inline double db_sign(double x)
+inline float db_sign(float x)
 {
     if(x>=0.0) return(1.0);
     else return(-1.0);
@@ -178,7 +178,7 @@ inline float db_absf(float a)
 /*!
  * Absolute value.
  */
-inline double db_absd(double a)
+inline float db_absd(float a)
 {
     if(a<0) return(-a);
     else return(a);
@@ -188,7 +188,7 @@ inline double db_absd(double a)
  * Reciprocal (1/a). Prevents divide by 0.
  * \return 1/a if a != 0. 1.0 otherwise.
  */
-inline double db_SafeReciprocal(double a)
+inline float db_SafeReciprocal(float a)
 {
     return((a!=0.0)?(1.0/a):1.0);
 }
@@ -197,7 +197,7 @@ inline double db_SafeReciprocal(double a)
  * Division. Prevents divide by 0.
  * \return a/b if b!=0. a otherwise.
  */
-inline double db_SafeDivision(double a,double b)
+inline float db_SafeDivision(float a,float b)
 {
     return((b!=0.0)?(a/b):a);
 }
@@ -206,7 +206,7 @@ inline double db_SafeDivision(double a,double b)
  * Square root. Prevents imaginary output.
  * \return sqrt(a) if a > 0.0. 0.0 otherewise.
  */
-inline double db_SafeSqrt(double a)
+inline float db_SafeSqrt(float a)
 {
     return((a>=0.0)?(sqrt(a)):0.0);
 }
@@ -215,14 +215,14 @@ inline double db_SafeSqrt(double a)
  * Square root of a reciprocal. Prevents divide by 0 and imaginary output.
  * \return sqrt(1/a) if a > 0.0. 1.0 otherewise.
  */
-inline double db_SafeSqrtReciprocal(double a)
+inline float db_SafeSqrtReciprocal(float a)
 {
     return((a>0.0)?(sqrt(1.0/a)):1.0);
 }
 /*!
  * Cube root.
  */
-inline double db_CubRoot(double x)
+inline float db_CubRoot(float x)
 {
     if(x>=0.0) return(pow(x,1.0/3.0));
     else return(-pow(-x,1.0/3.0));
@@ -230,14 +230,14 @@ inline double db_CubRoot(double x)
 /*!
  * Sum of squares of elements of x.
  */
-inline double db_SquareSum3(const double x[3])
+inline float db_SquareSum3(const float x[3])
 {
     return(db_sqr(x[0])+db_sqr(x[1])+db_sqr(x[2]));
 }
 /*!
  * Sum of squares of elements of x.
  */
-inline double db_SquareSum7(double x[7])
+inline float db_SquareSum7(float x[7])
 {
     return(db_sqr(x[0])+db_sqr(x[1])+db_sqr(x[2])+
         db_sqr(x[3])+db_sqr(x[4])+db_sqr(x[5])+
@@ -246,7 +246,7 @@ inline double db_SquareSum7(double x[7])
 /*!
  * Sum of squares of elements of x.
  */
-inline double db_SquareSum9(double x[9])
+inline float db_SquareSum9(float x[9])
 {
     return(db_sqr(x[0])+db_sqr(x[1])+db_sqr(x[2])+
         db_sqr(x[3])+db_sqr(x[4])+db_sqr(x[5])+
@@ -257,7 +257,7 @@ inline double db_SquareSum9(double x[9])
  * \param xd destination
  * \param xs source
  */
-void inline db_Copy3(double xd[3],const double xs[3])
+void inline db_Copy3(float xd[3],const float xs[3])
 {
     xd[0]=xs[0];xd[1]=xs[1];xd[2]=xs[2];
 }
@@ -266,7 +266,7 @@ void inline db_Copy3(double xd[3],const double xs[3])
  * \param xd destination
  * \param xs source
  */
-void inline db_Copy6(double xd[6],const double xs[6])
+void inline db_Copy6(float xd[6],const float xs[6])
 {
     xd[0]=xs[0];xd[1]=xs[1];xd[2]=xs[2];
     xd[3]=xs[3];xd[4]=xs[4];xd[5]=xs[5];
@@ -276,7 +276,7 @@ void inline db_Copy6(double xd[6],const double xs[6])
  * \param xd destination
  * \param xs source
  */
-void inline db_Copy9(double xd[9],const double xs[9])
+void inline db_Copy9(float xd[9],const float xs[9])
 {
     xd[0]=xs[0];xd[1]=xs[1];xd[2]=xs[2];
     xd[3]=xs[3];xd[4]=xs[4];xd[5]=xs[5];
@@ -286,14 +286,14 @@ void inline db_Copy9(double xd[9],const double xs[9])
 /*!
  * Scalar product: Transpose(A)*B.
  */
-inline double db_ScalarProduct4(const double A[4],const double B[4])
+inline float db_ScalarProduct4(const float A[4],const float B[4])
 {
     return(A[0]*B[0]+A[1]*B[1]+A[2]*B[2]+A[3]*B[3]);
 }
 /*!
  * Scalar product: Transpose(A)*B.
  */
-inline double db_ScalarProduct7(const double A[7],const double B[7])
+inline float db_ScalarProduct7(const float A[7],const float B[7])
 {
     return(A[0]*B[0]+A[1]*B[1]+A[2]*B[2]+
         A[3]*B[3]+A[4]*B[4]+A[5]*B[5]+
@@ -302,7 +302,7 @@ inline double db_ScalarProduct7(const double A[7],const double B[7])
 /*!
  * Scalar product: Transpose(A)*B.
  */
-inline double db_ScalarProduct9(const double A[9],const double B[9])
+inline float db_ScalarProduct9(const float A[9],const float B[9])
 {
     return(A[0]*B[0]+A[1]*B[1]+A[2]*B[2]+
         A[3]*B[3]+A[4]*B[4]+A[5]*B[5]+
@@ -311,7 +311,7 @@ inline double db_ScalarProduct9(const double A[9],const double B[9])
 /*!
  * Vector addition: S=A+B.
  */
-inline void db_AddVectors6(double S[6],const double A[6],const double B[6])
+inline void db_AddVectors6(float S[6],const float A[6],const float B[6])
 {
     S[0]=A[0]+B[0]; S[1]=A[1]+B[1]; S[2]=A[2]+B[2]; S[3]=A[3]+B[3]; S[4]=A[4]+B[4];
     S[5]=A[5]+B[5];
@@ -319,13 +319,13 @@ inline void db_AddVectors6(double S[6],const double A[6],const double B[6])
 /*!
  * Multiplication: C(3x1)=A(3x3)*B(3x1).
  */
-inline void db_Multiply3x3_3x1(double y[3],const double A[9],const double x[3])
+inline void db_Multiply3x3_3x1(float y[3],const float A[9],const float x[3])
 {
     y[0]=A[0]*x[0]+A[1]*x[1]+A[2]*x[2];
     y[1]=A[3]*x[0]+A[4]*x[1]+A[5]*x[2];
     y[2]=A[6]*x[0]+A[7]*x[1]+A[8]*x[2];
 }
-inline void db_Multiply3x3_3x3(double C[9], const double A[9],const double B[9])
+inline void db_Multiply3x3_3x3(float C[9], const float A[9],const float B[9])
 {
     C[0]=A[0]*B[0]+A[1]*B[3]+A[2]*B[6];
     C[1]=A[0]*B[1]+A[1]*B[4]+A[2]*B[7];
@@ -342,7 +342,7 @@ inline void db_Multiply3x3_3x3(double C[9], const double A[9],const double B[9])
 /*!
  * Multiplication: C(4x1)=A(4x4)*B(4x1).
  */
-inline void db_Multiply4x4_4x1(double y[4],const double A[16],const double x[4])
+inline void db_Multiply4x4_4x1(float y[4],const float A[16],const float x[4])
 {
     y[0]=A[0]*x[0]+A[1]*x[1]+A[2]*x[2]+A[3]*x[3];
     y[1]=A[4]*x[0]+A[5]*x[1]+A[6]*x[2]+A[7]*x[3];
@@ -352,7 +352,7 @@ inline void db_Multiply4x4_4x1(double y[4],const double A[16],const double x[4])
 /*!
  * Scalar multiplication in place: A(3)=mult*A(3).
  */
-inline void db_MultiplyScalar3(double *A,double mult)
+inline void db_MultiplyScalar3(float *A,float mult)
 {
     (*A++) *= mult; (*A++) *= mult; (*A++) *= mult;
 }
@@ -360,7 +360,7 @@ inline void db_MultiplyScalar3(double *A,double mult)
 /*!
  * Scalar multiplication: A(3)=mult*B(3).
  */
-inline void db_MultiplyScalarCopy3(double *A,const double *B,double mult)
+inline void db_MultiplyScalarCopy3(float *A,const float *B,float mult)
 {
     (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult;
 }
@@ -368,14 +368,14 @@ inline void db_MultiplyScalarCopy3(double *A,const double *B,double mult)
 /*!
  * Scalar multiplication: A(4)=mult*B(4).
  */
-inline void db_MultiplyScalarCopy4(double *A,const double *B,double mult)
+inline void db_MultiplyScalarCopy4(float *A,const float *B,float mult)
 {
     (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult;
 }
 /*!
  * Scalar multiplication: A(7)=mult*B(7).
  */
-inline void db_MultiplyScalarCopy7(double *A,const double *B,double mult)
+inline void db_MultiplyScalarCopy7(float *A,const float *B,float mult)
 {
     (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult;
     (*A++)=(*B++)*mult; (*A++)=(*B++)*mult;
@@ -383,7 +383,7 @@ inline void db_MultiplyScalarCopy7(double *A,const double *B,double mult)
 /*!
  * Scalar multiplication: A(9)=mult*B(9).
  */
-inline void db_MultiplyScalarCopy9(double *A,const double *B,double mult)
+inline void db_MultiplyScalarCopy9(float *A,const float *B,float mult)
 {
     (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult;
     (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult; (*A++)=(*B++)*mult;
@@ -456,7 +456,7 @@ DB_API void db_FreeImage_u(unsigned char **img,int h);
  */
 DB_API void db_CopyImage_u(unsigned char **d,const unsigned char * const *s,int w,int h,int over_allocation=0);
 
-DB_API inline unsigned char db_BilinearInterpolation(double y, double x, const unsigned char * const * v)
+DB_API inline unsigned char db_BilinearInterpolation(float y, float x, const unsigned char * const * v)
 {
     int floor_x=(int) x;
     int floor_y=(int) y;
@@ -469,8 +469,8 @@ DB_API inline unsigned char db_BilinearInterpolation(double y, double x, const u
     unsigned char f10 = v[ceil_y][floor_x];
     unsigned char f11 = v[ceil_y][ceil_x];
 
-    double xl = x-floor_x;
-    double yl = y-floor_y;
+    float xl = x-floor_x;
+    float yl = y-floor_y;
 
     return (unsigned char)(f00*(1-yl)*(1-xl) + f10*yl*(1-xl) + f01*(1-yl)*xl + f11*yl*xl);
 }
@@ -479,9 +479,9 @@ DB_API inline unsigned char db_BilinearInterpolation(double y, double x, const u
  * \ingroup LMRotation
  * Compute an incremental rotation matrix using the update dx=[sin(phi) sin(ohm) sin(kap)]
  */
-inline void db_IncrementalRotationMatrix(double R[9],const double dx[3])
+inline void db_IncrementalRotationMatrix(float R[9],const float dx[3])
 {
-    double sp,so,sk,om_sp2,om_so2,om_sk2,cp,co,ck,sp_so,cp_so;
+    float sp,so,sk,om_sp2,om_so2,om_sk2,cp,co,ck,sp_so,cp_so;
 
     /*Store sines*/
     sp=dx[0]; so=dx[1]; sk=dx[2];
@@ -502,28 +502,28 @@ inline void db_IncrementalRotationMatrix(double R[9],const double dx[3])
 /*!
  * Zero out 2 vector in place.
  */
-void inline db_Zero2(double x[2])
+void inline db_Zero2(float x[2])
 {
     x[0]=x[1]=0;
 }
 /*!
  * Zero out 3 vector in place.
  */
-void inline db_Zero3(double x[3])
+void inline db_Zero3(float x[3])
 {
     x[0]=x[1]=x[2]=0;
 }
 /*!
  * Zero out 4 vector in place.
  */
-void inline db_Zero4(double x[4])
+void inline db_Zero4(float x[4])
 {
     x[0]=x[1]=x[2]=x[3]=0;
 }
 /*!
  * Zero out 9 vector in place.
  */
-void inline db_Zero9(double x[9])
+void inline db_Zero9(float x[9])
 {
     x[0]=x[1]=x[2]=x[3]=x[4]=x[5]=x[6]=x[7]=x[8]=0;
 }
@@ -552,8 +552,8 @@ void inline db_Zero9(double x[9])
 DB_API void db_WarpImageLut_u(const unsigned char * const * src,unsigned char ** dst, int w, int h,
                                const float * const * lut_x, const float * const * lut_y, int type=DB_WARP_BILINEAR);
 
-DB_API void db_PrintDoubleVector(double *a,long size);
-DB_API void db_PrintDoubleMatrix(double *a,long rows,long cols);
+DB_API void db_PrintDoubleVector(float *a,long size);
+DB_API void db_PrintDoubleMatrix(float *a,long rows,long cols);
 
 #include "db_utilities_constants.h"
 #include "db_utilities_algebra.h"

@@ -25,10 +25,10 @@
 *    Lean and mean begins here                                   *
 *****************************************************************/
 
-inline void db_RotationFromMOuterProductSum(double R[9],double *score,double M[9])
+inline void db_RotationFromMOuterProductSum(float R[9],float *score,float M[9])
 {
-    double N[16],q[4],lambda[4],lambda_max;
-    double y[4];
+    float N[16],q[4],lambda[4],lambda_max;
+    float y[4];
     int nr_roots;
 
     N[0]=   M[0]+M[4]+M[8];
@@ -77,14 +77,14 @@ inline void db_RotationFromMOuterProductSum(double R[9],double *score,double M[9
     }
 }
 
-void db_StitchSimilarity3DRaw(double *scale,double R[9],double t[3],
-                            double **Xp,double **X,int nr_points,int orientation_preserving,
+void db_StitchSimilarity3DRaw(float *scale,float R[9],float t[3],
+                            float **Xp,float **X,int nr_points,int orientation_preserving,
                             int allow_scaling,int allow_rotation,int allow_translation)
 {
     int i;
-    double c[3],cp[3],r[3],rp[3],M[9],s,sp,sc;
-    double Rr[9],score_p,score_r;
-    double *temp,*temp_p;
+    float c[3],cp[3],r[3],rp[3],M[9],s,sp,sc;
+    float Rr[9],score_p,score_r;
+    float *temp,*temp_p;
 
     if(allow_translation)
     {

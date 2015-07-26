@@ -99,7 +99,7 @@
 
 #define VP_MAX_MOTION_PAR 16
 
-typedef double VP_PAR;
+typedef float VP_PAR;
 typedef VP_PAR VP_TRS[VP_MAX_MOTION_PAR];
 
 /* Do not add any motion models before VP_MOTION_PROJECTIVE */
@@ -273,8 +273,8 @@ void vp_copy_motion  (const VP_MOTION *src, VP_MOTION *dst);
 int vp_invert_motion(const VP_MOTION* in,VP_MOTION* out);
 int vp_cascade_motion(const VP_MOTION* InAB, const VP_MOTION* InBC,VP_MOTION* OutAC);
 int vp_zoom_motion2d(VP_MOTION* in, VP_MOTION* out,
-              int n, int w, int h, double zoom);
-double vp_motion_cornerdiff(const VP_MOTION *mot_a, const VP_MOTION *mot_b,
+              int n, int w, int h, float zoom);
+float vp_motion_cornerdiff(const VP_MOTION *mot_a, const VP_MOTION *mot_b,
                      int xo, int yo, int w, int h);
 
 #endif /* VP_MOTIONMODEL_H */

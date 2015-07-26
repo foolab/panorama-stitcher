@@ -39,9 +39,9 @@
 
 /* Static Functions */
 static
-double Det3(double m[3][3])
+float Det3(float m[3][3])
 {
-  double result;
+  float result;
 
   result =
     m[0][0]*m[1][1]*m[2][2] + m[0][1]*m[1][2]*m[2][0] +
@@ -51,15 +51,15 @@ double Det3(double m[3][3])
   return(result);
 }
 
-typedef double MATRIX[4][4];
+typedef float MATRIX[4][4];
 
 static
-double Det4(MATRIX m)
+float Det4(MATRIX m)
 {
     /* ==> This is a poor implementation of determinant.
        Writing the formula out in closed form is unnecessarily complicated
        and mistakes are easy to make. */
-  double result;
+  float result;
 
   result=
     m[0][3] *m[1][2] *m[2][1] *m[3][0] - m[0][2] *m[1][3] *m[2][1] *m[3][0] - m[0][3] *m[1][1] *m[2][2] *m[3][0] +
@@ -96,7 +96,7 @@ int inv4Mat(const VP_MOTION* in, VP_MOTION* out)
 
   MATRIX inmat,outmat;
   int i, j, k, l, m, n,ntemp;
-  double mat[3][3], indet, temp;
+  float mat[3][3], indet, temp;
 
   /* check for non-empty structures structure */
   if (((VP_MOTION *) NULL == in) || ((VP_MOTION *) NULL == out)) {
@@ -105,7 +105,7 @@ int inv4Mat(const VP_MOTION* in, VP_MOTION* out)
 
   for(k=0,i=0;i<4;i++)
     for(j=0;j<4;j++,k++)
-      inmat[i][j]=(double)in->par[k];
+      inmat[i][j]=(float)in->par[k];
 
   indet = Det4(inmat);
   if (indet==0) return(-1);
@@ -308,12 +308,12 @@ void vp_copy_motion  (const VP_MOTION *src, VP_MOTION *dst)
 } /* vp_copy_motion() */
 
 #define VP_SQR(x)   ( (x)*(x) )
-double vp_motion_cornerdiff(const VP_MOTION *mot_a, const VP_MOTION *mot_b,
+float vp_motion_cornerdiff(const VP_MOTION *mot_a, const VP_MOTION *mot_b,
                      int xo, int yo, int w, int h)
 {
-  double ax1, ay1, ax2, ay2, ax3, ay3, ax4, ay4;
-  double bx1, by1, bx2, by2, bx3, by3, bx4, by4;
-  double err;
+  float ax1, ay1, ax2, ay2, ax3, ay3, ax4, ay4;
+  float bx1, by1, bx2, by2, bx3, by3, bx4, by4;
+  float err;
 
   /*lint -e639 -e632 -e633 */
   VP_WARP_POINT_2D(xo, yo,         *mot_a, ax1, ay1);
@@ -336,7 +336,7 @@ double vp_motion_cornerdiff(const VP_MOTION *mot_a, const VP_MOTION *mot_b,
 }
 
 int vp_zoom_motion2d(VP_MOTION* in, VP_MOTION* out,
-                 int n, int w, int h, double zoom)
+                 int n, int w, int h, float zoom)
 {
   int ii;
   VP_PAR inv_zoom;

@@ -43,7 +43,7 @@ public:
   ///// Settings for feature-based alignment
   // Number of features to use from corner detection
   static const int DEFAULT_NR_CORNERS=750;
-  static const double DEFAULT_MAX_DISPARITY=0.1;//0.4;
+  static const float DEFAULT_MAX_DISPARITY=0.1;//0.4;
   // Type of homography to model
   static const int DEFAULT_MOTION_MODEL=DB_HOMOGRAPHY_TYPE_R_T;
 // static const int DEFAULT_MOTION_MODEL=DB_HOMOGRAPHY_TYPE_PROJECTIVE;
@@ -64,7 +64,7 @@ public:
   int addFrame(ImageType image);
 
   // Obtain the TRS matrix from the last two frames
-  int getLastTRS(double trs[3][3]);
+  int getLastTRS(float trs[3][3]);
   char* getRegProfileString();
 
 protected:
@@ -73,12 +73,12 @@ protected:
 
   int frame_number;
 
-  double Hcurr[9];   // Homography from the alignment reference to the frame-t
-  double Hprev[9];   // Homography from frame-0 to the frame-(t-1)
+  float Hcurr[9];   // Homography from the alignment reference to the frame-t
+  float Hprev[9];   // Homography from frame-0 to the frame-(t-1)
 
   int reference_frame_index; // Index of the reference frame from all captured frames
   int num_frames_captured; // Total number of frames captured (different from frame_number)
-  double average_tx_per_frame; // Average pixel translation per captured frame
+  float average_tx_per_frame; // Average pixel translation per captured frame
 
   int width,height;
 

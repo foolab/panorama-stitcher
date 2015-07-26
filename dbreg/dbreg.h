@@ -74,7 +74,7 @@
     const unsigned char * const * image_storage;
 
     // The 3x3 frame to reference registration parameters
-    double frame_to_ref_homography[9];
+    float frame_to_ref_homography[9];
 
     // a counter to count the number of frames processed.
     unsigned long frame_counter;
@@ -156,14 +156,14 @@ public:
           int       max_iterations = DB_DEFAULT_MAX_ITERATIONS,
           bool      linear_polish = false,
           bool   quarter_resolution = true,
-          double  scale = DB_POINT_STANDARDDEV,
+          float  scale = DB_POINT_STANDARDDEV,
           unsigned int reference_update_period = 3,
           bool   do_motion_smoothing = false,
-          double motion_smoothing_gain = 0.75,
+          float motion_smoothing_gain = 0.75,
           int   nr_samples = DB_DEFAULT_NR_SAMPLES,
           int   chunk_size = DB_DEFAULT_CHUNK_SIZE,
           int    cd_target_nr_corners = 500,
-          double cm_max_disparity = 0.2,
+          float cm_max_disparity = 0.2,
           bool   cm_use_smaller_matching_window = false,
           int    cd_nr_horz_blocks = 5,
           int    cd_nr_vert_blocks = 5);
@@ -186,7 +186,7 @@ public:
      * \param H             computed transformation from reference to inspection coordinate frame. Identity is returned if no reference frame was set.
      * \param force_reference   make this the new reference image
      */
-    int AddFrame(const unsigned char * const * im, double H[9], bool force_reference=false, bool prewarp=false);
+    int AddFrame(const unsigned char * const * im, float H[9], bool force_reference=false, bool prewarp=false);
 
     /*!
      * Returns true if Init() was run.
@@ -209,13 +209,13 @@ public:
     unsigned char ** GetReferenceImage() { return m_reference_image; }
 
     /*!
-     * Returns the pointer reference to the double array containing the homogeneous coordinates for the matched reference image corners.
+     * Returns the pointer reference to the float array containing the homogeneous coordinates for the matched reference image corners.
     */
-    double * GetRefCorners() { return m_corners_ref; }
+    float * GetRefCorners() { return m_corners_ref; }
     /*!
-     * Returns the pointer reference to the double array containing the homogeneous coordinates for the matched inspection image corners.
+     * Returns the pointer reference to the float array containing the homogeneous coordinates for the matched inspection image corners.
     */
-    double * GetInsCorners() { return m_corners_ins; }
+    float * GetInsCorners() { return m_corners_ins; }
     /*!
      * Returns the number of correspondences between the reference and inspection images.
     */
@@ -261,16 +261,16 @@ public:
     /*!
      * Returns the transformation from the display reference to the alignment reference frame
     */
-    void Get_H_dref_to_ref(double H[9]);
+    void Get_H_dref_to_ref(float H[9]);
     /*!
      * Returns the transformation from the display reference to the inspection reference frame
     */
-    void Get_H_dref_to_ins(double H[9]);
+    void Get_H_dref_to_ins(float H[9]);
     /*!
      * Set the transformation from the display reference to the inspection reference frame
      * \param H the transformation to set
     */
-    void Set_H_dref_to_ins(double H[9]);
+    void Set_H_dref_to_ins(float H[9]);
 
     /*!
      * Reset the display reference to the current frame.
@@ -281,7 +281,7 @@ public:
      * Estimate a secondary motion model starting from the specified transformation.
      * \param H the primary motion model to start from
     */
-    void EstimateSecondaryModel(double H[9]);
+    void EstimateSecondaryModel(float H[9]);
 
     /*!
      *
@@ -300,23 +300,23 @@ protected:
     // RANSAC and refinement parameters:
     int m_homography_type;
     int     m_max_iterations;
-    double  m_scale;
+    float  m_scale;
     int     m_nr_samples;
     int     m_chunk_size;
-    double  m_outlier_t2;
+    float  m_outlier_t2;
 
     // Whether to fit a linear model to just the inliers at the end
     bool   m_linear_polish;
-    double m_polish_C[36];
-    double m_polish_D[6];
+    float m_polish_C[36];
+    float m_polish_D[6];
 
     // local state
     bool m_current_is_reference;
     bool m_initialized;
 
     // inspection to reference homography:
-    double m_H_ref_to_ins[9];
-    double m_H_dref_to_ref[9];
+    float m_H_ref_to_ins[9];
+    float m_H_dref_to_ref[9];
 
     // feature extraction and matching:
     db_CornerDetector_u m_cd;
@@ -326,13 +326,13 @@ protected:
     unsigned long m_max_nr_corners;
 
     // corner locations of reference image features:
-    double * m_x_corners_ref;
-    double * m_y_corners_ref;
+    float * m_x_corners_ref;
+    float * m_y_corners_ref;
     int  m_nr_corners_ref;
 
     // corner locations of inspection image features:
-    double * m_x_corners_ins;
-    double * m_y_corners_ins;
+    float * m_x_corners_ins;
+    float * m_y_corners_ins;
     int      m_nr_corners_ins;
 
     // length of match index arrays:
@@ -356,24 +356,24 @@ protected:
     unsigned char** m_horz_smooth_subsample_image;
 
     // temporary space for homography computation:
-    double * m_temp_double;
+    float * m_temp_float;
     int * m_temp_int;
 
     // homogenous image point arrays:
-    double * m_corners_ref;
-    double * m_corners_ins;
+    float * m_corners_ref;
+    float * m_corners_ins;
 
     // Indices of the points within the match lists
     int * m_inlier_indices;
     int m_num_inlier_indices;
 
-    //void ComputeInliers(double H[9], std::vector<int> &inlier_indices);
-    void ComputeInliers(double H[9]);
+    //void ComputeInliers(float H[9], std::vector<int> &inlier_indices);
+    void ComputeInliers(float H[9]);
 
     // cost arrays:
     void ComputeCostArray();
     bool m_sq_cost_computed;
-    double * m_sq_cost;
+    float * m_sq_cost;
 
     // cost histogram:
     void ComputeCostHistogram();
@@ -385,7 +385,7 @@ protected:
     void SmoothMotion(void);
 
 private:
-    double m_K[9];
+    float m_K[9];
     const int m_over_allocation;
 
     bool m_reference_set;
@@ -413,8 +413,8 @@ private:
     // boolean to control whether motion smoothing occurs (or not)
     bool m_do_motion_smoothing;
 
-    // double to set the gain for motion smoothing
-    double m_motion_smoothing_gain;
+    // float to set the gain for motion smoothing
+    float m_motion_smoothing_gain;
 };
 /*!
  Create look-up tables to undistort images. Only Bougeut (Matlab toolkit)
@@ -429,17 +429,17 @@ private:
  \param h       height
  \param H       image homography from source to destination
  */
-inline void db_GenerateHomographyLut(float ** lut_x,float ** lut_y,int w,int h,const double H[9])
+inline void db_GenerateHomographyLut(float ** lut_x,float ** lut_y,int w,int h,const float H[9])
 {
     assert(lut_x && lut_y);
-    double x[3] = {0.0,0.0,1.0};
-    double xb[3];
+    float x[3] = {0.0,0.0,1.0};
+    float xb[3];
 
 /*
-    double xl[3];
+    float xl[3];
 
     // Determine the output coordinate system ROI
-    double Hinv[9];
+    float Hinv[9];
     db_InvertAffineTransform(Hinv,H);
     db_Multiply3x3_3x1(xl, Hinv, x);
     xl[0] = db_SafeDivision(xl[0],xl[2]);
@@ -449,8 +449,8 @@ inline void db_GenerateHomographyLut(float ** lut_x,float ** lut_y,int w,int h,c
     for ( int i = 0; i < w; ++i )
         for ( int j = 0; j < h; ++j )
         {
-            x[0] = double(i);
-            x[1] = double(j);
+            x[0] = float(i);
+            x[1] = float(j);
             db_Multiply3x3_3x1(xb, H, x);
             xb[0] = db_SafeDivision(xb[0],xb[2]);
             xb[1] = db_SafeDivision(xb[1],xb[2]);
@@ -504,7 +504,7 @@ inline void db_WarpImageLutFast_rgb(const unsigned char * const * src, unsigned 
         }
 }
 
-inline unsigned char db_BilinearInterpolationRGB(double y, double x, const unsigned char * const * v, int offset)
+inline unsigned char db_BilinearInterpolationRGB(float y, float x, const unsigned char * const * v, int offset)
 {
          int floor_x=(int) x;
          int floor_y=(int) y;
@@ -517,8 +517,8 @@ inline unsigned char db_BilinearInterpolationRGB(double y, double x, const unsig
          unsigned char f10 = v[ceil_y][3*floor_x+offset];
          unsigned char f11 = v[ceil_y][3*ceil_x+offset];
 
-         double xl = x-floor_x;
-         double yl = y-floor_y;
+         float xl = x-floor_x;
+         float yl = y-floor_y;
 
          return (unsigned char)(f00*(1-yl)*(1-xl) + f10*yl*(1-xl) + f01*(1-yl)*xl + f11*yl*xl);
 }
@@ -527,13 +527,13 @@ inline void db_WarpImageLutBilinear_rgb(const unsigned char * const * src, unsig
                                   const float * const * lut_x, const float * const * lut_y)
 {
     assert(src && dst);
-    double xd=0.0, yd=0.0;
+    float xd=0.0, yd=0.0;
 
     for ( int i = 0; i < w; ++i )
         for ( int j = 0; j < h; ++j )
         {
-            xd = static_cast<double>(lut_x[j][i]);
-            yd = static_cast<double>(lut_y[j][i]);
+            xd = static_cast<float>(lut_x[j][i]);
+            yd = static_cast<float>(lut_y[j][i]);
             if ( xd > w-2 || yd > h-2 ||
                  xd < 0.0 || yd < 0.0)
             {
@@ -550,9 +550,9 @@ inline void db_WarpImageLutBilinear_rgb(const unsigned char * const * src, unsig
         }
 }
 
-inline double SquaredInhomogenousHomographyError(double y[3],double H[9],double x[3]){
-    double x0,x1,x2,mult;
-    double sd;
+inline float SquaredInhomogenousHomographyError(float y[3],float H[9],float x[3]){
+    float x0,x1,x2,mult;
+    float sd;
 
     x0=H[0]*x[0]+H[1]*x[1]+H[2];
     x1=H[3]*x[0]+H[4]*x[1]+H[5];
@@ -568,14 +568,14 @@ inline double SquaredInhomogenousHomographyError(double y[3],double H[9],double 
 #if PROFILE
 
 /* return current time in milliseconds */
-static double
+static float
 now_ms(void)
 {
     //struct timespec res;
     struct timeval res;
     //clock_gettime(CLOCK_REALTIME, &res);
     gettimeofday(&res, NULL);
-    return 1000.0*res.tv_sec + (double)res.tv_usec/1e3;
+    return 1000.0*res.tv_sec + (float)res.tv_usec/1e3;
 }
 
 #endif

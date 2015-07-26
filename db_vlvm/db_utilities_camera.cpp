@@ -26,15 +26,15 @@
 *    Lean and mean begins here                                   *
 *****************************************************************/
 
-void db_Approx3DCalMat(double K[9],double Kinv[9],int im_width,int im_height,double f_correction,int field)
+void db_Approx3DCalMat(float K[9],float Kinv[9],int im_width,int im_height,float f_correction,int field)
 {
-    double iw,ih,av_size,field_fact;
+    float iw,ih,av_size,field_fact;
 
     if(field) field_fact=2.0;
     else field_fact=1.0;
 
-    iw=(double)im_width;
-    ih=(double)(im_height*field_fact);
+    iw=(float)im_width;
+    ih=(float)(im_height*field_fact);
     av_size=(iw+ih)/2.0;
     K[0]=f_correction*av_size;
     K[1]=0;

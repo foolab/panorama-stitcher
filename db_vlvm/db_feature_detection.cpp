@@ -1276,7 +1276,7 @@ void db_MaxSuppressFilter_5x5_Aligned16_f(float **sf,float **s,int left,int top,
 
 /*Extract corners from the chunk (left,top) to (right,bottom). Store in x_temp,y_temp and s_temp
 which should point to space of at least as many positions as there are pixels in the chunk*/
-inline int db_CornersFromChunk(float **strength,int left,int top,int right,int bottom,float threshold,double *x_temp,double *y_temp,double *s_temp)
+inline int db_CornersFromChunk(float **strength,int left,int top,int right,int bottom,float threshold,float *x_temp,float *y_temp,float *s_temp)
 {
     int i,j,nr;
     float s;
@@ -1293,9 +1293,9 @@ inline int db_CornersFromChunk(float **strength,int left,int top,int right,int b
             s>strength[i+1][j-2] && s>strength[i+1][j-1] && s>strength[i+1][j] && s>strength[i+1][j+1] && s>strength[i+1][j+2] &&
             s>strength[i+2][j-2] && s>strength[i+2][j-1] && s>strength[i+2][j] && s>strength[i+2][j+1] && s>strength[i+2][j+2])
         {
-            x_temp[nr]=(double) j;
-            y_temp[nr]=(double) i;
-            s_temp[nr]=(double) s;
+            x_temp[nr]=(float) j;
+            y_temp[nr]=(float) i;
+            s_temp[nr]=(float) s;
             nr++;
         }
     }
@@ -1304,7 +1304,7 @@ inline int db_CornersFromChunk(float **strength,int left,int top,int right,int b
 
 
 //Sub-pixel accuracy using 2D quadratic interpolation.(YCJ)
-inline void db_SubPixel(float **strength, const double xd, const double yd, double &xs, double &ys)
+inline void db_SubPixel(float **strength, const float xd, const float yd, float &xs, float &ys)
 {
     int x = (int) xd;
     int y = (int) yd;
@@ -1350,11 +1350,11 @@ The pointer temp_d should point to at least 5*bw*bh positions.
 area_factor holds how many corners max to extract per 10000 pixels*/
 void db_ExtractCornersSaturated(float **strength,int left,int top,int right,int bottom,
                                 int bw,int bh,unsigned long area_factor,
-                                float threshold,double *temp_d,
-                                double *x_coord,double *y_coord,int *nr_corners)
+                                float threshold,float *temp_d,
+                                float *x_coord,float *y_coord,int *nr_corners)
 {
-    double *x_temp,*y_temp,*s_temp,*select_temp;
-    double loc_thresh;
+    float *x_temp,*y_temp,*s_temp,*select_temp;
+    float loc_thresh;
     unsigned long bwbh,area,saturation;
     int x,next_x,last_x;
     int y,next_y,last_y;
@@ -1457,7 +1457,7 @@ void db_CornerDetector_u::Clean()
 
 unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr_corners,
                             int nr_horizontal_blocks,int nr_vertical_blocks,
-                            double absolute_threshold,double relative_threshold)
+                            float absolute_threshold,float relative_threshold)
 {
     int block_width,block_height;
     unsigned long area_factor;
@@ -1468,8 +1468,8 @@ unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr
     block_width=db_maxi(1,active_width/nr_horizontal_blocks);
     block_height=db_maxi(1,active_height/nr_vertical_blocks);
 
-    area_factor=db_minl(1000,db_maxl(1,(long)(10000.0*((double)target_nr_corners)/
-        (((double)active_width)*((double)active_height)))));
+    area_factor=db_minl(1000,db_maxl(1,(long)(10000.0*((float)target_nr_corners)/
+        (((float)active_width)*((float)active_height)))));
 
     return(Start(im_width,im_height,block_width,block_height,area_factor,
         16.0*absolute_threshold,relative_threshold));
@@ -1477,7 +1477,7 @@ unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr
 
 unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
                              int block_width,int block_height,unsigned long area_factor,
-                             double absolute_threshold,double relative_threshold)
+                             float absolute_threshold,float relative_threshold)
 {
     Clean();
 
@@ -1491,13 +1491,13 @@ unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
     m_max_nr=db_maxl(1,1+(m_w*m_h*m_area_factor)/10000);
 
     m_temp_i=new int[18*128];
-    m_temp_d=new double[5*m_bw*m_bh];
+    m_temp_d=new float[5*m_bw*m_bh];
     m_strength=db_AllocStrengthImage_f(&m_strength_mem,m_w,m_h);
 
     return(m_max_nr);
 }
 
-void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,double *x_coord,double *y_coord,int *nr_corners,
+void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,float *x_coord,float *y_coord,int *nr_corners,
                                         const unsigned char * const *msk, unsigned char fgnd) const
 {
     float max_val,threshold;
@@ -1536,7 +1536,7 @@ void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,double 
     }
 }
 
-void db_CornerDetector_u::ExtractCorners(float ** strength, double *x_coord, double *y_coord, int *nr_corners) {
+void db_CornerDetector_u::ExtractCorners(float ** strength, float *x_coord, float *y_coord, int *nr_corners) {
     if ( m_w!=0 )
         db_ExtractCornersSaturated(strength,BORDER,BORDER,m_w-BORDER-1,m_h-BORDER-1,m_bw,m_bh,m_area_factor,float(m_a_thresh),
             m_temp_d,x_coord,y_coord,nr_corners);
