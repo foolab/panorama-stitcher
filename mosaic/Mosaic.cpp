@@ -26,7 +26,7 @@
 #include "Mosaic.h"
 #include "trsMatrix.h"
 
-#include "Log.h"
+#include "log/log.h"
 #define LOG_TAG "MOSAIC"
 
 Mosaic::Mosaic()

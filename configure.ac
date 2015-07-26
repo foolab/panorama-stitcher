@@ -25,5 +25,5 @@ esac],[debug=gprof])
 AM_CONDITIONAL([GPROF], [test x$gprof = xtrue])
 
 LT_INIT
-AC_CONFIG_FILES([Makefile db_vlvm/Makefile dbreg/Makefile mosaic/Makefile stitcher/Makefile])
+AC_CONFIG_FILES([Makefile log/Makefile db_vlvm/Makefile dbreg/Makefile mosaic/Makefile stitcher/Makefile])
 AC_OUTPUT

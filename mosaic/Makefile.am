@@ -12,7 +12,6 @@ libmosaic_la_SOURCES = \
 	Blend.cpp \
 	Delaunay.cpp \
 	ImageUtils.cpp \
-	Log.cpp \
 	Mosaic.cpp \
 	Pyramid.cpp \
 	trsMatrix.cpp
@@ -26,7 +25,6 @@ noinst_HEADERS = \
 	Geometry.h \
 	ImageUtils.h \
 	Interp.h \
-	Log.h \
 	MatrixUtils.h \
 	Mosaic.h \
 	MosaicTypes.h \

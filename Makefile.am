@@ -5,10 +5,11 @@ endif
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = db_vlvm dbreg mosaic stitcher
+SUBDIRS = log db_vlvm dbreg mosaic stitcher
 
 lib_LTLIBRARIES = libpanorama-stitcher.la
 libpanorama_stitcher_la_LIBADD = \
+	log/liblog.la \
 	db_vlvm/libdb_vlvm.la \
 	dbreg/libdbreg.la \
 	mosaic/libmosaic.la \

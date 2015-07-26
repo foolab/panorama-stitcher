@@ -26,7 +26,7 @@
 #include "Geometry.h"
 #include "trsMatrix.h"
 
-#include "Log.h"
+#include "log/log.h"
 #define LOG_TAG "BLEND"
 
 Blend::Blend()

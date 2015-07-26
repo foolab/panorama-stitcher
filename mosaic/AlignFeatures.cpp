@@ -26,7 +26,7 @@
 #include "trsMatrix.h"
 #include "MatrixUtils.h"
 #include "AlignFeatures.h"
-#include "Log.h"
+#include "log/log.h"
 
 #define LOG_TAG "AlignFeatures"
 
