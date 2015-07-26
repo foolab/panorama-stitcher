@@ -24,7 +24,7 @@
 #define ALIGN_H
 
 #include "dbreg/dbreg.h"
-#include <db_utilities_camera.h>
+#include "db_vlvm/db_utilities_camera.h"
 #include "ImageUtils.h"
 #include "MatrixUtils.h"
 

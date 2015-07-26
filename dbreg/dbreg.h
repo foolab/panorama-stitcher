@@ -32,9 +32,9 @@
 
 #include "dbstabsmooth.h"
 
-#include <db_feature_detection.h>
-#include <db_feature_matching.h>
-#include <db_rob_image_homography.h>
+#include "db_vlvm/db_feature_detection.h"
+#include "db_vlvm/db_feature_matching.h"
+#include "db_vlvm/db_rob_image_homography.h"
 
 #if PROFILE
     #include <sys/time.h>
