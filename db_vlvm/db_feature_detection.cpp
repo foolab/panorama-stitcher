@@ -55,7 +55,7 @@ template<typename T> void db_FreeImage(T **im, int h)
 
 /*Compute derivatives Ix,Iy for a subrow of img with upper left (i,j) and width 128
 Memory references occur one pixel outside the subrow*/
-inline void db_IxIyRow_u(int *dxx,const unsigned char * const *img,int i,int j,int nc)
+inline void db_CornerDetector_u::db_IxIyRow_u(const unsigned char * const *img,int i,int j,int nc)
 {
 #ifdef DB_USE_MMX
     const unsigned char *r1,*r2,*r3;
@@ -172,22 +172,22 @@ loopstart:
     }
 
 #else
-    int c;
     int Ix,Iy;
 
-    for(c=0;c<nc;c++)
-    {
-        Ix=(img[i][j+c-1]-img[i][j+c+1])>>1;
-        Iy=(img[i-1][j+c]-img[i+1][j+c])>>1;
-        dxx[c]=Ix*Ix;
-        dxx[c+128]=Ix*Iy;
-        dxx[c+256]=Iy*Iy;
+    for(int c = 0; c < nc; c++) {
+      Ix=(img[i][j+c-1]-img[i][j+c+1])>>1;
+      Iy=(img[i-1][j+c]-img[i+1][j+c])>>1;
+      m_ix[i][c] = Ix;
+      m_iy[i][c] = Iy;
+      m_ix2[i][c] = Ix*Ix;
+      m_iy2[i][c] = Iy*Iy;
+      m_ixy[i][c] = Ix*Iy;
     }
 #endif /*DB_USE_MMX*/
 }
 
 /*Filter vertically five rows of derivatives of length 128 into gxx,gxy,gyy*/
-inline void db_gxx_gxy_gyy_row_s(int *g,int *d0,int *d1,int *d2,int *d3,int *d4,int nc)
+inline void db_CornerDetector_u::db_gxx_gxy_gyy_row_s(int i, int nc)
 {
 #ifdef DB_USE_MMX
     int c;
@@ -268,26 +268,18 @@ loopstart:
     }
 
 #else
-    int c,dd;
-
-    for(c=0;c<nc;c++)
-    {
-        /*Filter vertically*/
-        dd=d2[c];
-        g[c]=d0[c]+(d1[c]<<2)+(dd<<2)+(dd<<1)+(d3[c]<<2)+d4[c];
-
-        dd=d2[c+128];
-        g[c+128]=d0[c+128]+(d1[c+128]<<2)+(dd<<2)+(dd<<1)+(d3[c+128]<<2)+d4[c+128];
-
-        dd=d2[c+256];
-        g[c+256]=d0[c+256]+(d1[c+256]<<2)+(dd<<2)+(dd<<1)+(d3[c+256]<<2)+d4[c+256];
+    for(int c = 0; c < nc; c++) {
+      /* Filter vertically */
+      m_gx2[i-2][c] = m_ix2[i-4][c] + (m_ix2[i-3][c]<<2) + (m_ix2[i-2][c]<<2) + (m_ix2[i-2][c]<<1) + (m_ix2[i-1][c]<<2) + m_ix2[i][c];
+      m_gxy[i-2][c] = m_ixy[i-4][c] + (m_ixy[i-3][c]<<2) + (m_ixy[i-2][c]<<2) + (m_ixy[i-2][c]<<1) + (m_ixy[i-1][c]<<2) + m_ixy[i][c];
+      m_gy2[i-2][c] = m_iy2[i-4][c] + (m_iy2[i-3][c]<<2) + (m_iy2[i-2][c]<<2) + (m_iy2[i-2][c]<<1) + (m_iy2[i-1][c]<<2) + m_iy2[i][c];
     }
 #endif /*DB_USE_MMX*/
 }
 
 /*Filter g of length 128 in place with 14641. Output is shifted two steps
 and of length 124*/
-inline void db_Filter14641_128_i(int *g,int nc)
+inline void db_CornerDetector_u::db_Filter14641_128_i(int *g, int nc)
 {
 #ifdef DB_USE_MMX
     int mask;
@@ -397,15 +389,15 @@ loopstart:
 /*Filter horizontally the three rows gxx,gxy,gyy of length 128 into the strength subrow s
 of length 124. gxx,gxy and gyy are assumed to be starting at (i,j-2) if s[i][j] is sought.
 s should be 16 byte aligned*/
-inline void db_HarrisStrength_row_s(float *s,int *gxx,int *gxy,int *gyy,int nc)
+inline void db_CornerDetector_u::db_HarrisStrength_row_s(float *s, int i, int nc)
 {
     float k;
 
     k=0.06f;
 
-    db_Filter14641_128_i(gxx,nc);
-    db_Filter14641_128_i(gxy,nc);
-    db_Filter14641_128_i(gyy,nc);
+    db_Filter14641_128_i(m_gx2[i], nc);
+    db_Filter14641_128_i(m_gxy[i], nc);
+    db_Filter14641_128_i(m_gy2[i], nc);
 
 #ifdef DB_USE_SIMD
 
@@ -503,15 +495,14 @@ loopstart:
     int c;
 
     //for(c=0;c<124;c++)
-    for(c=0;c<nc-4;c++)
-    {
-        Gxx=(float)gxx[c];
-        Gxy=(float)gxy[c];
-        Gyy=(float)gyy[c];
+    for(c=0;c<nc-4;c++) {
+      Gxx=(float)m_gx2[i][c];
+      Gxy=(float)m_gxy[i][c];
+      Gyy=(float)m_gy2[i][c];
 
-        det=Gxx*Gyy-Gxy*Gxy;
-        trc=Gxx+Gyy;
-        s[c]=det-k*trc*trc;
+      det=Gxx*Gyy-Gxy*Gxy;
+      trc=Gxx+Gyy;
+      s[c]=det-k*trc*trc;
     }
 #endif /*DB_USE_SIMD*/
 }
@@ -520,41 +511,27 @@ loopstart:
 store it into the corresponding region of s. left and top have to be at least 3 and
 right and bottom have to be at most width-4,height-4. The left of the region in s should
 be 16 byte aligned*/
-inline void db_HarrisStrengthChunk_u(float **s,const unsigned char * const *img,int left,int top,int bottom,
+inline void db_CornerDetector_u::db_HarrisStrengthChunk_u(float **s,const unsigned char * const *img,int left,int top,int bottom,
                                       /*temp should point to at least
                                       18*128 of allocated memory*/
                                       int *temp, int nc)
 {
-    int *Ixx[5],*Ixy[5],*Iyy[5];
-    int *gxx,*gxy,*gyy;
-    int i;
+  /* Fill four rows of the wrap-around derivative buffers */
+  for(int i=top-2;i<top+2;i++) {
+    db_IxIyRow_u(img, i, left-2, nc);
+  }
 
-    gxx=temp;
-    gxy=gxx+128;
-    gyy=gxy+128;
-    for(i=0;i<5;i++)
-    {
-        Ixx[i]=gyy+(3*i+1)*128;
-        Ixy[i]=gyy+(3*i+2)*128;
-        Iyy[i]=gyy+(3*i+3)*128;
-    }
+  /* For each output row */
+  for(int i = top; i <= bottom; i++) {
+    /* Step the derivative buffers */
+    db_IxIyRow_u(img, i+2, left-2, nc);
 
-    /*Fill four rows of the wrap-around derivative buffers*/
-    for(i=top-2;i<top+2;i++) db_IxIyRow_u(Ixx[i%5],img,i,left-2,nc);
+    /* Filter Ix2,IxIy,Iy2 vertically into gxx,gxy,gyy */
+    db_gxx_gxy_gyy_row_s(i+2, nc);
 
-    /*For each output row*/
-    for(i=top;i<=bottom;i++)
-    {
-        /*Step the derivative buffers*/
-        db_IxIyRow_u(Ixx[(i+2)%5],img,(i+2),left-2,nc);
-
-        /*Filter Ix2,IxIy,Iy2 vertically into gxx,gxy,gyy*/
-        db_gxx_gxy_gyy_row_s(gxx,Ixx[(i-2)%5],Ixx[(i-1)%5],Ixx[i%5],Ixx[(i+1)%5],Ixx[(i+2)%5],nc);
-
-        /*Filter gxx,gxy,gyy horizontally and compute corner response s*/
-        db_HarrisStrength_row_s(s[i]+left,gxx,gxy,gyy,nc);
-    }
-
+    /* Filter gxx,gxy,gyy horizontally and compute corner response s */
+    db_HarrisStrength_row_s(s[i]+left, i, nc);
+  }
 }
 
 /*Compute Harris corner strength of img. Strength is returned for the region
@@ -562,26 +539,17 @@ with (3,3) as upper left and (w-4,h-4) as lower right, positioned in the
 same place in s. In other words,image should be at least 7 pixels wide and 7 pixels high
 for a meaningful result.Moreover, the image should be overallocated by 256 bytes.
 s[i][3] should by 16 byte aligned for any i*/
-void db_HarrisStrength_u(float **s, const unsigned char * const *img,int w,int h,
+void db_CornerDetector_u::db_HarrisStrength_u(float **s, const unsigned char * const *img,int w,int h,
                                     /*temp should point to at least
                                     18*128 of allocated memory*/
                                     int *temp)
 {
-    int x,next_x,last;
-    int nc;
 
-    last=w-4;
-    for(x=3;x<=last;x=next_x)
-    {
-        next_x=x+124;
+  int x = 3;
+  int last = w - 4 - x + 1;
 
-        // mayban: to revert to the original full chunks state, change the line below to: nc = 128;
-        nc = db_mini(128,last-x+1);
-        //nc = 128;
-
-        /*Compute the Harris strength of a chunk*/
-        db_HarrisStrengthChunk_u(s,img,x,3,h-4,temp,nc);
-    }
+  /* Compute the Harris strength of a chunk */
+  db_HarrisStrengthChunk_u(s, img, x, 3, h-4, temp, last);
 }
 
 inline float db_Max_128Aligned16_f(float *v)
@@ -1436,7 +1404,15 @@ void db_CornerDetector_u::Clean()
     {
         delete [] m_temp_i;
         delete [] m_temp_d;
-        db_FreeImage(m_strength,m_h);
+        db_FreeImage(m_strength, m_h);
+	db_FreeImage(m_ix, m_h);
+	db_FreeImage(m_iy, m_h);
+	db_FreeImage(m_ix2, m_h);
+	db_FreeImage(m_iy2, m_h);
+	db_FreeImage(m_ixy, m_h);
+	db_FreeImage(m_gx2, m_h);
+	db_FreeImage(m_gy2, m_h);
+	db_FreeImage(m_gxy, m_h);
     }
     m_w=0; m_h=0;
 }
@@ -1478,13 +1454,21 @@ unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
 
     m_temp_i=new int[18*128];
     m_temp_d=new float[5*m_bw*m_bh];
-    m_strength=db_AllocImage<float>(m_w,m_h);
+    m_strength = db_AllocImage<float>(m_w, m_h);
+    m_ix = db_AllocImage<int>(m_w, m_h);
+    m_iy = db_AllocImage<int>(m_w, m_h);
+    m_ix2 = db_AllocImage<int>(m_w, m_h);
+    m_iy2 = db_AllocImage<int>(m_w, m_h);
+    m_ixy = db_AllocImage<int>(m_w, m_h);
+    m_gx2 = db_AllocImage<int>(m_w, m_h);
+    m_gy2 = db_AllocImage<int>(m_w, m_h);
+    m_gxy = db_AllocImage<int>(m_w, m_h);
 
     return(m_max_nr);
 }
 
 void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,float *x_coord,float *y_coord,int *nr_corners,
-                                        const unsigned char * const *msk, unsigned char fgnd) const
+                                        const unsigned char * const *msk, unsigned char fgnd)
 {
     float max_val,threshold;
 

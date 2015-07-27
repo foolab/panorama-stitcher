@@ -81,7 +81,7 @@ public:
      * \param fgnd      foreground value in the mask
      */
     virtual void DetectCorners(const unsigned char * const *img,float *x_coord,float *y_coord,int *nr_corners,
-        const unsigned char * const * msk=NULL, unsigned char fgnd=255) const;
+        const unsigned char * const * msk=NULL, unsigned char fgnd=255);
 
     /*!
      Set absolute feature threshold
@@ -102,11 +102,22 @@ public:
     virtual void ExtractCorners(float ** strength, float *x_coord, float *y_coord, int *nr_corners);
 protected:
     virtual void Clean();
+
     /*The absolute threshold to this function should be 16.0 times
     normal*/
     unsigned long Start(int im_width,int im_height,
             int block_width,int block_height,unsigned long area_factor,
             float absolute_threshold,float relative_threshold);
+
+    void db_HarrisStrength_u(float **s, const unsigned char * const *img,
+			     int w, int h, int *temp);
+    inline void db_HarrisStrengthChunk_u(float **s, const unsigned char * const *img,
+				  int left, int top, int bottom,
+				  int *temp, int nc);
+    inline void db_IxIyRow_u(const unsigned char * const *img,int i,int j,int nc);
+    inline void db_gxx_gxy_gyy_row_s(int i, int nc);
+    inline void db_HarrisStrength_row_s(float *s, int i, int nc);
+    inline void db_Filter14641_128_i(int *g, int nc);
 
     int m_w,m_h,m_bw,m_bh;
     /*Area factor holds the maximum number of corners to detect
@@ -115,6 +126,16 @@ protected:
     float m_a_thresh,m_r_thresh;
     int *m_temp_i;
     float *m_temp_d;
+
+    int **m_ix;
+    int **m_iy;
+    int **m_ix2;
+    int **m_iy2;
+    int **m_ixy;
+    int **m_gx2;
+    int **m_gy2;
+    int **m_gxy;
+
     float **m_strength;
 };
 
