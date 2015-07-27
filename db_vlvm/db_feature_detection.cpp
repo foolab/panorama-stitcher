@@ -27,44 +27,30 @@
 #endif
 #include <float.h>
 #include "log/log.h"
+#include <malloc.h>
 
 #define DB_SUB_PIXEL
 
 #define BORDER 10 // 5
 
-float** db_AllocStrengthImage_f(float **im,int w,int h)
+float** db_AllocStrengthImage_f(int w, int h)
 {
-    int i,n,aw;
-    long c,size;
-    float **img,*aim,*p;
+  float **im = new float *[h];
 
-    /*Determine number of 124 element chunks needed*/
-    n=(db_maxi(1,w-6)+123)/124;
-    /*Determine the total allocation width aw*/
-    aw=n*124+8;
-    /*Allocate*/
-    size=aw*h+16;
-    *im=new float [size];
-    /*Clean up*/
-    p=(*im);
-    for(c=0;c<size;c++) p[c]=0.0;
-    /*Get a 16 byte aligned pointer*/
-    aim=db_AlignPointer_f(*im,16);
-    /*Allocate pointer table*/
-    img=new float* [h];
-    /*Initialize the pointer table*/
-    for(i=0;i<h;i++)
-    {
-        img[i]=aim+aw*i+1;
-    }
+  for(int i = 0; i < h; i++) {
+    im[i] = (float *)memalign(16, w*sizeof(float));
+  }
 
-    return(img);
+  return im;
 }
 
-void db_FreeStrengthImage_f(float *im,float **img,int h)
+void db_FreeStrengthImage_f(float **im, int h)
 {
-    delete [] im;
-    delete [] img;
+  for (int x = 0; x < h; x++) {
+    free((void *)im[h]);
+  }
+
+  delete [] im;
 }
 
 /*Compute derivatives Ix,Iy for a subrow of img with upper left (i,j) and width 128
@@ -1450,7 +1436,7 @@ void db_CornerDetector_u::Clean()
     {
         delete [] m_temp_i;
         delete [] m_temp_d;
-        db_FreeStrengthImage_f(m_strength_mem,m_strength,m_h);
+        db_FreeStrengthImage_f(m_strength,m_h);
     }
     m_w=0; m_h=0;
 }
@@ -1492,7 +1478,7 @@ unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
 
     m_temp_i=new int[18*128];
     m_temp_d=new float[5*m_bw*m_bh];
-    m_strength=db_AllocStrengthImage_f(&m_strength_mem,m_w,m_h);
+    m_strength=db_AllocStrengthImage_f(m_w,m_h);
 
     return(m_max_nr);
 }

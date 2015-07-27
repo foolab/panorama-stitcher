@@ -115,7 +115,7 @@ protected:
     float m_a_thresh,m_r_thresh;
     int *m_temp_i;
     float *m_temp_d;
-    float **m_strength,*m_strength_mem;
+    float **m_strength;
 };
 
 #endif /*DB_FEATURE_DETECTION_H*/
