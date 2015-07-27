@@ -33,18 +33,18 @@
 
 #define BORDER 10 // 5
 
-float** db_AllocStrengthImage_f(int w, int h)
+template <typename T> T** db_AllocImage(int w, int h)
 {
-  float **im = new float *[h];
+  T **im = new T *[h];
 
   for(int i = 0; i < h; i++) {
-    im[i] = (float *)memalign(16, w*sizeof(float));
+    im[i] = (T *)memalign(16, w*sizeof(T));
   }
 
   return im;
 }
 
-void db_FreeStrengthImage_f(float **im, int h)
+template<typename T> void db_FreeImage(T **im, int h)
 {
   for (int x = 0; x < h; x++) {
     free((void *)im[h]);
@@ -1436,7 +1436,7 @@ void db_CornerDetector_u::Clean()
     {
         delete [] m_temp_i;
         delete [] m_temp_d;
-        db_FreeStrengthImage_f(m_strength,m_h);
+        db_FreeImage(m_strength,m_h);
     }
     m_w=0; m_h=0;
 }
@@ -1478,7 +1478,7 @@ unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
 
     m_temp_i=new int[18*128];
     m_temp_d=new float[5*m_bw*m_bh];
-    m_strength=db_AllocStrengthImage_f(m_w,m_h);
+    m_strength=db_AllocImage<float>(m_w,m_h);
 
     return(m_max_nr);
 }
