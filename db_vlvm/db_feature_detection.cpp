@@ -62,8 +62,11 @@ inline void db_CornerDetector_u::db_IxIyRow_u(const unsigned char * const *img,i
   for(int c = 0; c < nc; c++) {
     Ix=(img[i][j+c-1]-img[i][j+c+1])>>1;
     Iy=(img[i-1][j+c]-img[i+1][j+c])>>1;
+
+#ifdef DEBUG
     m_ix[i][c] = Ix;
     m_iy[i][c] = Iy;
+#endif
     m_ix2[i][c] = Ix*Ix;
     m_iy2[i][c] = Iy*Iy;
     m_ixy[i][c] = Ix*Iy;
@@ -496,8 +499,10 @@ void db_CornerDetector_u::Clean()
     {
         delete [] m_temp_d;
         db_FreeImage(m_strength, m_h);
+#ifdef DEBUG
 	db_FreeImage(m_ix, m_h);
 	db_FreeImage(m_iy, m_h);
+#endif
 	db_FreeImage(m_ix2, m_h);
 	db_FreeImage(m_iy2, m_h);
 	db_FreeImage(m_ixy, m_h);
@@ -545,8 +550,10 @@ unsigned long db_CornerDetector_u::Start(int im_width,int im_height,
 
     m_temp_d=new float[5*m_bw*m_bh];
     m_strength = db_AllocImage<float>(m_w, m_h);
+#ifdef DEBUG
     m_ix = db_AllocImage<int>(m_w, m_h);
     m_iy = db_AllocImage<int>(m_w, m_h);
+#endif
     m_ix2 = db_AllocImage<int>(m_w, m_h);
     m_iy2 = db_AllocImage<int>(m_w, m_h);
     m_ixy = db_AllocImage<int>(m_w, m_h);

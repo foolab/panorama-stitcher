@@ -127,8 +127,10 @@ protected:
     float m_a_thresh,m_r_thresh;
     float *m_temp_d;
 
+#ifdef DEBUG
     int **m_ix;
     int **m_iy;
+#endif
     int **m_ix2;
     int **m_iy2;
     int **m_ixy;
