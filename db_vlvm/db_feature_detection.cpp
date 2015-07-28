@@ -38,7 +38,7 @@ template <typename T> T** db_AllocImage(int w, int h)
   T **im = new T *[h];
 
   for(int i = 0; i < h; i++) {
-    im[i] = (T *)memalign(16, w*sizeof(T));
+    im[i] = (T *)memalign(32, w*sizeof(T));
   }
 
   return im;
