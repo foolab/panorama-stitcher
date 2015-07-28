@@ -106,25 +106,25 @@ protected:
     /*The absolute threshold to this function should be 16.0 times
     normal*/
     unsigned long Start(int im_width,int im_height,
-            int block_width,int block_height,unsigned long area_factor,
-            float absolute_threshold,float relative_threshold);
+			int block_width, int block_height,
+			unsigned long area_factor,
+			float absolute_threshold,
+			float relative_threshold);
 
     void db_HarrisStrength_u(float **s, const unsigned char * const *img,
-			     int w, int h, int *temp);
+			     int w, int h);
     inline void db_HarrisStrengthChunk_u(float **s, const unsigned char * const *img,
-				  int left, int top, int bottom,
-				  int *temp, int nc);
+					 int left, int top, int bottom, int nc);
     inline void db_IxIyRow_u(const unsigned char * const *img,int i,int j,int nc);
     inline void db_gxx_gxy_gyy_row_s(int i, int nc);
     inline void db_HarrisStrength_row_s(float *s, int i, int nc);
     inline void db_Filter14641_128_i(int *g, int nc);
 
-    int m_w,m_h,m_bw,m_bh;
+    int m_w, m_h, m_bw, m_bh;
     /*Area factor holds the maximum number of corners to detect
     per 10000 pixels*/
     unsigned long m_area_factor,m_max_nr;
     float m_a_thresh,m_r_thresh;
-    int *m_temp_i;
     float *m_temp_d;
 
     int **m_ix;
