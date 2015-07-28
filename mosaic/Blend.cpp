@@ -248,17 +248,12 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
     }
 
     LOGI("Allocate mosaic image for blending - size: %d x %d", Mwidth, Mheight);
-    YUVinfo *imgMos = YUVinfo::allocateImage(Mwidth, Mheight);
+    YUVinfo *imgMos = new YUVinfo(Mwidth, Mheight);
     if (imgMos == NULL)
     {
         LOGE("RunBlend: aborting - couldn't alloc %d x %d mosaic image", Mwidth, Mheight);
         return BLEND_RET_ERROR_MEMORY;
     }
-
-    // Set the Y image to 255 so we can distinguish when frame idx are written to it
-    memset(imgMos->Y.ptr[0], 255, (imgMos->Y.width * imgMos->Y.height));
-    // Set the v and u images to black
-    memset(imgMos->V.ptr[0], 128, (imgMos->V.width * imgMos->V.height) << 1);
 
     // Do the triangulation.  It returns a sorted list of edges
     SEdgeVector *edge;

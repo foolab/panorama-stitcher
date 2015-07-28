@@ -19,71 +19,8 @@
 // $Id: ImageUtils.cpp,v 1.12 2011/06/17 13:35:48 mbansal Exp $
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-
+#include <string.h>
 #include "ImageUtils.h"
-
-ImageType ImageUtils::rgb2gray(ImageType in, int width, int height)
-{
-  int r,g,b, nr, ng, nb, val;
-  ImageType gray = NULL;
-  ImageType image = in;
-  ImageType out = ImageUtils::allocateImage(width, height, 1);
-  ImageType outCopy = out;
-
-  for (int ii = 0; ii < height; ii++) {
-    for (int ij = 0; ij < width; ij++) {
-      r = (*image++);
-      g = (*image++);
-      b = (*image++);
-
-      if (r < 0) r = 0;
-      if (r > 255) r = 255;
-      if (g < 0) g = 0;
-      if (g > 255) g = 255;
-      if (b < 0) b = 0;
-      if (b > 255) b = 255;
-
-      (*outCopy) = ( 0.3*r + 0.59*g + 0.11*b);
-
-      outCopy++;
-    }
-  }
-
-  return out;
-}
-
-ImageType ImageUtils::rgb2gray(ImageType out, ImageType in, int width, int height)
-{
-  int r,g,b, nr, ng, nb, val;
-  ImageType gray = out;
-  ImageType image = in;
-  ImageType outCopy = out;
-
-  for (int ii = 0; ii < height; ii++) {
-    for (int ij = 0; ij < width; ij++) {
-      r = (*image++);
-      g = (*image++);
-      b = (*image++);
-
-      if (r < 0) r = 0;
-      if (r > 255) r = 255;
-      if (g < 0) g = 0;
-      if (g > 255) g = 255;
-      if (b < 0) b = 0;
-      if (b > 255) b = 255;
-
-      (*outCopy) = ( 0.3*r + 0.59*g + 0.11*b);
-
-      outCopy++;
-    }
-  }
-
-  return out;
-
-}
 
 ImageType *ImageUtils::imageTypeToRowPointers(ImageType in, int width, int height)
 {
@@ -144,51 +81,6 @@ void ImageUtils::yvu2rgb(ImageType out, ImageType in, int width, int height)
   }
 }
 
-void ImageUtils::yvu2bgr(ImageType out, ImageType in, int width, int height)
-{
-  int y,v,u, r, g, b;
-  unsigned char *yimg = in;
-  unsigned char *vimg = yimg + width*height;
-  unsigned char *uimg = vimg + width*height;
-  unsigned char *image = out;
-
-  for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
-
-      y = (*yimg);
-      v = (*vimg);
-      u = (*uimg);
-
-      if (y < 0) y = 0;
-      if (y > 255) y = 255;
-      if (u < 0) u = 0;
-      if (u > 255) u = 255;
-      if (v < 0) v = 0;
-      if (v > 255) v = 255;
-
-      b = (int) ( 1.164*(y - 16) + 2.018*(u-128));
-      g = (int) ( 1.164*(y - 16) - 0.813*(v-128) - 0.391*(u-128));
-      r = (int) ( 1.164*(y - 16) + 1.596*(v-128));
-
-      if (r < 0) r = 0;
-      if (r > 255) r = 255;
-      if (g < 0) g = 0;
-      if (g > 255) g = 255;
-      if (b < 0) b = 0;
-      if (b > 255) b = 255;
-
-      *(image++) = b;
-      *(image++) = g;
-      *(image++) = r;
-
-      yimg++;
-      uimg++;
-      vimg++;
-
-    }
-  }
-}
-
 ImageType ImageUtils::allocateImage(int width, int height, int numChannels)
 {
  return (ImageType) calloc(width*height*numChannels, sizeof(ImageTypeBase));
@@ -200,67 +92,32 @@ void ImageUtils::freeImage(ImageType image)
   free(image);
 }
 
+YUVinfo::YUVinfo(int width, int height) {
+  Y.width = V.width = U.width = width;
+  Y.height = V.height = U.height = height;
 
-// allocation of one color image used for tmp buffers, etc.
-// format of contiguous memory block:
-//    YUVInfo struct (type + BimageInfo for Y,U, and V),
-//    Y row pointers
-//    U row pointers
-//    V row pointers
-//    Y image pixels
-//    U image pixels
-//    V image pixels
-YUVinfo *YUVinfo::allocateImage(unsigned short width, unsigned short height)
-{
-    unsigned short heightUV, widthUV;
+  data = new unsigned char[width * height * 3];
 
-    widthUV = width;
-    heightUV = height;
+  // Set the Y image to 255 so we can distinguish when frame idx are written to it
+  memset(data, 255, width * height * sizeof(unsigned char));
 
-    // figure out how much space to hold all pixels...
-    int size = ((width * height * 3) + 8);
-    unsigned char *position = 0;
+  // Set the v and u images to black
+  memset(&data[width * height], 128, width * height * 2 * sizeof(unsigned char));
 
-    // VC 8 does not like calling free on yuv->Y.ptr since it is in
-    // the middle of a block.  So rearrange the memory layout so after
-    // calling mapYUVInforToImage yuv->Y.ptr points to the begginning
-    // of the calloc'ed block.
-    YUVinfo *yuv = (YUVinfo *) calloc(sizeof(YUVinfo), 1);
-    if (yuv) {
-        yuv->Y.width  = yuv->Y.pitch = width;
-        yuv->Y.height = height;
-        yuv->Y.border = yuv->U.border = yuv->V.border = (unsigned short) 0;
-        yuv->U.width  = yuv->U.pitch = yuv->V.width = yuv->V.pitch = widthUV;
-        yuv->U.height = yuv->V.height = heightUV;
+  Y.ptr = new unsigned char *[height];
+  V.ptr = new unsigned char *[height];
+  U.ptr = new unsigned char *[height];
 
-        unsigned char* block = (unsigned char*) calloc(
-                sizeof(unsigned char *) * (height + heightUV + heightUV) +
-                sizeof(unsigned char) * size, 1);
-
-        position = block;
-        unsigned char **y = (unsigned char **) (block + size);
-
-        /* Initialize and assign row pointers */
-        yuv->Y.ptr = y;
-        yuv->V.ptr = &y[height];
-        yuv->U.ptr = &y[height + heightUV];
-    }
-    if (size)
-        mapYUVInfoToImage(yuv, position);
-    return yuv;
+  for (int x = 0; x < height; x++) {
+    Y.ptr[x] = &data[x * width];
+    V.ptr[x] = &data[width*height + x*width];
+    U.ptr[x] = &data[width*height*2 + x*width];
+  }
 }
 
-// wrap YUVInfo row pointers around 3 contiguous image (color component) planes.
-// position = starting pixel in image.
-void YUVinfo::mapYUVInfoToImage(YUVinfo *img, unsigned char *position)
-{
-    int i;
-    for (i = 0; i < img->Y.height; i++, position += img->Y.width)
-        img->Y.ptr[i] = position;
-    for (i = 0; i < img->V.height; i++, position += img->V.width)
-        img->V.ptr[i] = position;
-    for (i = 0; i < img->U.height; i++, position += img->U.width)
-        img->U.ptr[i] = position;
+YUVinfo::~YUVinfo() {
+  delete[] data;
+  delete[] Y.ptr;
+  delete[] V.ptr;
+  delete[] U.ptr;
 }
-
-

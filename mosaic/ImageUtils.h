@@ -56,22 +56,6 @@ public:
    *    height: Height of input image
    */
   static void yvu2rgb(ImageType out, ImageType in, int width, int height);
-  static void yvu2bgr(ImageType out, ImageType in, int width, int height);
-
-  /**
-   *  Convert image from BGR to grayscale
-   *
-   *  Arguments:
-   *    in: Input image
-   *    width: Width of input image
-   *    height: Height of input image
-   *
-   *  Return:
-   *    Pointer to resulting image (allocation is done here, free
-   *    must be done by caller)
-   */
-  static ImageType rgb2gray(ImageType in, int width, int height);
-  static ImageType rgb2gray(ImageType out, ImageType in, int width, int height);
 
   /**
    *  Allocate space for a standard image.
@@ -111,11 +95,9 @@ protected:
  * Used in YUVinfo to store separate YVU image planes.
  */
 typedef struct {
-  ImageType *ptr;
+  unsigned char **ptr;
   unsigned short width;
   unsigned short height;
-  unsigned short border;
-  unsigned short pitch;
 } BimageInfo;
 
 /**
@@ -123,8 +105,8 @@ typedef struct {
  */
 class YUVinfo {
 public:
-  static YUVinfo *allocateImage(unsigned short width, unsigned short height);
-  static void mapYUVInfoToImage(YUVinfo *img, unsigned char *position);
+  YUVinfo(int width, int height);
+  ~YUVinfo();
 
   /**
   * Y Plane
@@ -140,6 +122,11 @@ public:
   *  U (1st color) plane
   */
   BimageInfo U;
+
+  /**
+   * Actual data
+   */
+  unsigned char *data;
 };
 
 #endif
