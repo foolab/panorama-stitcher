@@ -288,7 +288,7 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
 
     m_Triangulator.freeMemory();    // note: can be called even if delaunay_alloc() wasn't successful
 
-    imageMosaicYVU = imgMos->Y.ptr[0];
+    imageMosaicYVU = imgMos->data;
 
 
     if (m_wb.blendingType == BLEND_TYPE_HORZ)
