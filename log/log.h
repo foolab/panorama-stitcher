@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef LOG_H_
+#ifndef LOG_H
 #define LOG_H
 
 typedef enum {
@@ -28,4 +28,4 @@ void __log (LogLevel level, ...);
 #define LOGI(...) __log(LOG_INFO, __VA_ARGS__)
 #define LOGE(...) __log(LOG_ERROR, __VA_ARGS__)
 
-#endif
+#endif /* LOG_H */
