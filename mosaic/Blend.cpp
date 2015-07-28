@@ -847,24 +847,22 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
     else if (t >= dptr->height + BORDER)
         t = dptr->height + BORDER - 1;
 
+    t = t < imgMos.Y.height ? t : imgMos.Y.height;
+    r = r < imgMos.Y.width ? r : imgMos.Y.width;
+
     // Walk the Region of interest and populate the pyramid
-    for (int j = b; j <= t; j++)
+    for (int j = b < 0 ? 0 : b; j < t; j++)
     {
         int jj = j;
         float sj = jj + rect.top;
 
-        for (int i = l; i <= r; i++)
+	for (int i = l < 0 ? 0 : l; i < r; i++)
         {
             int ii = i;
             // project point and then triangulate to neighbors
             float si = ii + rect.left;
 
             float dself = hypotSq(csite->getVCenter().x - si, csite->getVCenter().y - sj);
-            int inMask = ((unsigned) ii < imgMos.Y.width &&
-                    (unsigned) jj < imgMos.Y.height) ? 1 : 0;
-
-            if(!inMask)
-                continue;
 
             // scan the neighbors to see if this is a valid position
             unsigned char mask = (unsigned char) 255;
