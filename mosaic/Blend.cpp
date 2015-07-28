@@ -31,6 +31,7 @@
 
 Blend::Blend()
 {
+  imgMos = 0;
   m_wb.blendingType = BLEND_TYPE_NONE;
 }
 
@@ -39,6 +40,7 @@ Blend::~Blend()
     if (m_pFrameVPyr) free(m_pFrameVPyr);
     if (m_pFrameUPyr) free(m_pFrameUPyr);
     if (m_pFrameYPyr) free(m_pFrameYPyr);
+    if (imgMos) delete imgMos;
 }
 
 int Blend::initialize(int blendingType, int stripType, int frame_width, int frame_height)
@@ -248,7 +250,8 @@ int Blend::runBlend(MosaicFrame **oframes, MosaicFrame **rframes,
     }
 
     LOGI("Allocate mosaic image for blending - size: %d x %d", Mwidth, Mheight);
-    YUVinfo *imgMos = new YUVinfo(Mwidth, Mheight);
+    if (imgMos) delete imgMos;
+    imgMos = new YUVinfo(Mwidth, Mheight);
     if (imgMos == NULL)
     {
         LOGE("RunBlend: aborting - couldn't alloc %d x %d mosaic image", Mwidth, Mheight);

@@ -123,6 +123,8 @@ private:
    static const float LIMIT_HEIGHT_MULTIPLIER = 2.5f;
    int MosaicSizeCheck(float sizeMultiplier, float heightMultiplier);
    void RoundingCroppingSizeToMultipleOf8(MosaicRect& rect);
+
+   YUVinfo *imgMos;
 };
 
 #endif
