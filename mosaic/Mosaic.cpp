@@ -31,6 +31,7 @@
 
 Mosaic::Mosaic()
 {
+    blender = 0;
     initialized = false;
     imageMosaicYVU = NULL;
     frames_size = 0;
@@ -95,6 +96,8 @@ int Mosaic::initialize(int blendingType, int stripType, int width, int height, i
 
     aligner = new Align();
     aligner->initialize(width, height,quarter_res,thresh_still);
+
+    if (blender) delete blender;
 
     if (blendingType == Blend::BLEND_TYPE_FULL ||
             blendingType == Blend::BLEND_TYPE_PAN ||
