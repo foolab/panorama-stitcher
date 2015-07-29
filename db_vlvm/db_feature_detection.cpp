@@ -78,18 +78,20 @@ inline void db_CornerDetector_u::db_gxx_gxy_gyy_row_s(int i, int nc)
 {
   for(int c = 0; c < nc; c++) {
     /* Filter vertically */
-    m_gx2[i-2][c] = m_ix2[i-4][c] + (m_ix2[i-3][c]<<2) + (m_ix2[i-2][c]<<2) + (m_ix2[i-2][c]<<1) + (m_ix2[i-1][c]<<2) + m_ix2[i][c];
-    m_gxy[i-2][c] = m_ixy[i-4][c] + (m_ixy[i-3][c]<<2) + (m_ixy[i-2][c]<<2) + (m_ixy[i-2][c]<<1) + (m_ixy[i-1][c]<<2) + m_ixy[i][c];
-    m_gy2[i-2][c] = m_iy2[i-4][c] + (m_iy2[i-3][c]<<2) + (m_iy2[i-2][c]<<2) + (m_iy2[i-2][c]<<1) + (m_iy2[i-1][c]<<2) + m_iy2[i][c];
+    m_gx2[i][c] = m_ix2[i-2][c] + (m_ix2[i-1][c]<<2) + (m_ix2[i][c]<<2) + (m_ix2[i][c]<<1) + (m_ix2[i+1][c]<<2) + m_ix2[i+2][c];
+    m_gxy[i][c] = m_ixy[i-2][c] + (m_ixy[i-1][c]<<2) + (m_ixy[i][c]<<2) + (m_ixy[i][c]<<1) + (m_ixy[i+1][c]<<2) + m_ixy[i+2][c];
+    m_gy2[i][c] = m_iy2[i-2][c] + (m_iy2[i-1][c]<<2) + (m_iy2[i][c]<<2) + (m_iy2[i][c]<<1) + (m_iy2[i+1][c]<<2) + m_iy2[i+2][c];
   }
 }
 
 /*Filter g of length 128 in place with 14641. Output is shifted two steps
 and of length 124*/
-inline void db_CornerDetector_u::db_Filter14641_128_i(int *g, int nc)
+inline void db_CornerDetector_u::db_Filter14641_128_i(int i, int nc)
 {
   for(int c = 0; c < nc - 4; c++) {
-    g[c]=g[c]+(g[c+1]<<2)+(g[c+2]<<2)+(g[c+2]<<1)+(g[c+3]<<2)+g[c+4];
+    m_gx2[i][c] = m_gx2[i][c] + (m_gx2[i][c+1]<<2) + (m_gx2[i][c+2]<<2) + (m_gx2[i][c+2]<<1) + (m_gx2[i][c+3]<<2) + m_gx2[i][c+4];
+    m_gxy[i][c] = m_gxy[i][c] + (m_gxy[i][c+1]<<2) + (m_gxy[i][c+2]<<2) + (m_gxy[i][c+2]<<1) + (m_gxy[i][c+3]<<2) + m_gxy[i][c+4];
+    m_gy2[i][c] = m_gy2[i][c] + (m_gy2[i][c+1]<<2) + (m_gy2[i][c+2]<<2) + (m_gy2[i][c+2]<<1) + (m_gy2[i][c+3]<<2) + m_gy2[i][c+4];
   }
 }
 
@@ -102,9 +104,7 @@ inline void db_CornerDetector_u::db_HarrisStrength_row_s(float *s, int i, int nc
 
   k=0.06f;
 
-  db_Filter14641_128_i(m_gx2[i], nc);
-  db_Filter14641_128_i(m_gxy[i], nc);
-  db_Filter14641_128_i(m_gy2[i], nc);
+  db_Filter14641_128_i(i, nc);
 
   float Gxx,Gxy,Gyy,det,trc;
 
@@ -130,10 +130,13 @@ inline void db_CornerDetector_u::db_HarrisStrengthChunk_u(float **s,const unsign
     db_IxIyRow_u(img, i, left-2, nc);
   }
 
+  db_HarrisStrength_row_s(s[top]+left, top, nc);
+  db_HarrisStrength_row_s(s[top+1]+left, top+1, nc);
+
   /* For each output row */
-  for (int i = top; i <= bottom; i++) {
+  for (int i = top + 2; i <= bottom; i++) {
     /* Filter Ix2,IxIy,Iy2 vertically into gxx,gxy,gyy */
-    db_gxx_gxy_gyy_row_s(i+2, nc);
+    db_gxx_gxy_gyy_row_s(i, nc);
 
     /* Filter gxx,gxy,gyy horizontally and compute corner response s */
     db_HarrisStrength_row_s(s[i]+left, i, nc);

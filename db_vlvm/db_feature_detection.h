@@ -118,7 +118,7 @@ protected:
     inline void db_IxIyRow_u(const unsigned char * const *img,int i,int j,int nc);
     inline void db_gxx_gxy_gyy_row_s(int i, int nc);
     inline void db_HarrisStrength_row_s(float *s, int i, int nc);
-    inline void db_Filter14641_128_i(int *g, int nc);
+    inline void db_Filter14641_128_i(int i, int nc);
 
     int m_w, m_h, m_bw, m_bh;
     /*Area factor holds the maximum number of corners to detect

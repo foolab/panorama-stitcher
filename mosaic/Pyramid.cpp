@@ -149,7 +149,7 @@ void PyramidShort::BorderExpandOdd(PyramidShort *in, PyramidShort *out, PyramidS
         int mode)
 {
     int i,j;
-    int off = in->border / 2;
+    int off = in->border >> 1;
 
     // Vertical Filter
     for (j = -off; j < in->height + off; j++) {
