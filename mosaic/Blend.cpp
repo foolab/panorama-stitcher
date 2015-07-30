@@ -366,10 +366,11 @@ int Blend::FillFramePyramid(MosaicFrame *mb)
     }
 
     // Spread the image through the border
+#if 0
     PyramidShort::BorderSpread(m_pFrameYPyr, BORDER, BORDER, BORDER, BORDER);
     PyramidShort::BorderSpread(m_pFrameUPyr, BORDER, BORDER, BORDER, BORDER);
     PyramidShort::BorderSpread(m_pFrameVPyr, BORDER, BORDER, BORDER, BORDER);
-
+#endif
     // Generate Laplacian pyramids
     if (!PyramidShort::BorderReduce(m_pFrameYPyr, m_wb.nlevs) || !PyramidShort::BorderExpand(m_pFrameYPyr, m_wb.nlevs, -1) ||
             !PyramidShort::BorderReduce(m_pFrameUPyr, m_wb.nlevsC) || !PyramidShort::BorderExpand(m_pFrameUPyr, m_wb.nlevsC, -1) ||
