@@ -104,8 +104,6 @@ inline void db_CornerDetector_u::db_HarrisStrength_row_s(float *s, int i, int nc
 
   k=0.06f;
 
-  db_Filter14641_128_i(i, nc);
-
   float Gxx,Gxy,Gyy,det,trc;
 
   for(int c = 0; c < nc - 4; c++) {
@@ -138,7 +136,10 @@ inline void db_CornerDetector_u::db_HarrisStrengthChunk_u(float **s,const unsign
     /* Filter Ix2,IxIy,Iy2 vertically into gxx,gxy,gyy */
     db_gxx_gxy_gyy_row_s(i, nc);
 
-    /* Filter gxx,gxy,gyy horizontally and compute corner response s */
+    /* Filter gxx,gxy,gyy horizontally */
+    db_Filter14641_128_i(i, nc);
+
+    /* compute corner response s */
     db_HarrisStrength_row_s(s[i]+left, i, nc);
   }
 }
