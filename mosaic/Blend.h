@@ -106,7 +106,8 @@ protected:
 
   int  DoMergeAndBlend(MosaicFrame **frames, int nsite,  int width, int height, YUVinfo &imgMos, MosaicRect &rect, MosaicRect &cropping_rect, float &progress, bool &cancelComputation);
   void ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, int site_idx);
-  void ProcessPyramidForThisFrame(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, float trs[3][3], int site_idx);
+  void ProcessPyramidForThisFrameWide(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, float trs[3][3], int site_idx);
+  void ProcessPyramidForThisFrameNarrow(CSite *csite, BlendRect &vcrect, BlendRect &brect, MosaicRect &rect, YUVinfo &imgMos, float trs[3][3], int site_idx);
 
   int  FillFramePyramid(MosaicFrame *mb);
 
