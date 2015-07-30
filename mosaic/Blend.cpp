@@ -28,6 +28,9 @@
 
 #include "log/log.h"
 #define LOG_TAG "BLEND"
+#ifdef __arm__
+#include <arm_neon.h>
+#endif
 
 Blend::Blend()
 {
@@ -334,20 +337,32 @@ int Blend::FillFramePyramid(MosaicFrame *mb)
     mbU = mb->getU();
     mbV = mb->getV();
 
-    int h, w;
-
-    for(h=0; h<height; h++)
-    {
+    for(int h=0; h<height; h++) {
         ImageTypeShort yptr = m_pFrameYPyr->ptr[h];
         ImageTypeShort uptr = m_pFrameUPyr->ptr[h];
         ImageTypeShort vptr = m_pFrameVPyr->ptr[h];
 
-        for(w=0; w<width; w++)
-        {
-            yptr[w] = (short) ((*(mbY++)) << 3);
+#ifdef __arm__
+	// Y
+	for (int w = 0; w < width; w += 8) {
+	  uint8x8_t y = vld1_u8(&mbY[width * h + w]);
+	  uint16x8_t ys = vshll_n_u8(y, 3);
+	  vst1q_u16 ((unsigned short *)&yptr[w], ys);
+	}
+
+	// U and V
+	// TODO:
+        for(int w=0; w<width; w++) {
+	  uptr[w] = (short) (mbU[(h / 2) * (width / 2) + (w / 2)] << 3);
+	  vptr[w] = (short) (mbV[(h / 2) * (width / 2) + (w / 2)] << 3);
+        }
+#else
+        for(int w=0; w<width; w++) {
+            yptr[w] = (short) (mbY[width * h + w] << 3);
             uptr[w] = (short) (mbU[(h / 2) * (width / 2) + (w / 2)] << 3);
             vptr[w] = (short) (mbV[(h / 2) * (width / 2) + (w / 2)] << 3);
         }
+#endif
     }
 
     // Spread the image through the border
