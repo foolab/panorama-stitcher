@@ -568,7 +568,7 @@ int Blend::DoMergeAndBlend(MosaicFrame **frames, int nsite,
     site_idx = 0;
     for(CSite *csite = m_AllSites; csite < esite; csite++)
     {
-        if(cancelComputation)
+        if (cancelComputation)
         {
             if (m_pMosaicVPyr) free(m_pMosaicVPyr);
             if (m_pMosaicUPyr) free(m_pMosaicUPyr);
@@ -578,8 +578,7 @@ int Blend::DoMergeAndBlend(MosaicFrame **frames, int nsite,
 
         mb = csite->getMb();
 
-
-        if(FillFramePyramid(mb)!=BLEND_RET_OK)
+        if (FillFramePyramid(mb)!=BLEND_RET_OK)
             return BLEND_RET_ERROR;
 
 	if (m_wb.stripType == STRIP_TYPE_WIDE)
@@ -870,18 +869,17 @@ void Blend::ComputeMask(CSite *csite, BlendRect &vcrect, BlendRect &brect, Mosai
     for (int j = b < 0 ? 0 : b; j < t; j++)
     {
         int jj = j;
-        float sj = jj + rect.top;
+        int sj = jj + rect.top;
 
 	for (int i = l < 0 ? 0 : l; i < r; i++)
         {
             int ii = i;
             // project point and then triangulate to neighbors
-            float si = ii + rect.left;
+            int si = ii + rect.left;
 
             float dself = hypotSq(csite->getVCenter().x - si, csite->getVCenter().y - sj);
 
             // scan the neighbors to see if this is a valid position
-            unsigned char mask = (unsigned char) 255;
             SEdgeVector *ce;
             int ecnt;
             for (ce = csite->getNeighbor(), ecnt = csite->getNumNeighbors(); ecnt--; ce++)
@@ -1131,68 +1129,38 @@ void Blend::ProcessPyramidForThisFrameNarrow(CSite *csite, BlendRect &vcrect, Bl
         for (int j = b; j <= t; j++)
         {
             int jj = (j << dscale);
-            float sj = jj + rect.top;
+            int sj = jj + rect.top;
 
             for (int i = l; i <= r; i++)
             {
                 int ii = (i << dscale);
+
                 // project point and then triangulate to neighbors
-                float si = ii + rect.left;
+                int si = ii + rect.left;
 
                 int inMask = ((unsigned) ii < imgMos.Y.width &&
                         (unsigned) jj < imgMos.Y.height) ? 1 : 0;
 
-                if(inMask && imgMos.Y.ptr[jj][ii] != site_idx &&
-                        imgMos.V.ptr[jj][ii] != site_idx &&
-                        imgMos.Y.ptr[jj][ii] != 255)
+                if (inMask && imgMos.Y.ptr[jj][ii] != site_idx &&
+		    imgMos.V.ptr[jj][ii] != site_idx &&
+		    imgMos.Y.ptr[jj][ii] != 255)
                     continue;
-
-                // Setup weights for cross-fading
-                // Weight of the intensity already in the output pixel
-                float wt0 = 0.0;
-                // Weight of the intensity from the input pixel (current frame)
-                float wt1 = 1.0;
-
-                if (m_wb.stripType == STRIP_TYPE_WIDE)
-                {
-                    if(inMask && imgMos.Y.ptr[jj][ii] != 255)
-                    {
-                        // If not on a seam OR pyramid level exceeds
-                        // maximum level for cross-fading.
-                        if((imgMos.V.ptr[jj][ii] == 128) ||
-                            (dscale > STRIP_CROSS_FADE_MAX_PYR_LEVEL))
-                        {
-                            wt0 = 0.0;
-                            wt1 = 1.0;
-                        }
-                        else
-                        {
-                            wt0 = 1.0;
-                            wt1 = ((imgMos.Y.ptr[jj][ii] == site_idx) ?
-                                    (float)imgMos.U.ptr[jj][ii] / 100.0 :
-                                    1.0 - (float)imgMos.U.ptr[jj][ii] / 100.0);
-                        }
-                    }
-                }
 
                 // Project this mosaic point into the original frame coordinate space
                 float xx, yy;
 
                 MosaicToFrame(inv_trs, si, sj, xx, yy);
 
-                if (xx < 0.0 || yy < 0.0 || xx > width - 1.0 || yy > height - 1.0)
+                if (xx < 0.0f || yy < 0.0f || xx > width - 1.0f || yy > height - 1.0f)
                 {
                     if(inMask)
                     {
                         imgMos.Y.ptr[jj][ii] = 255;
-                        wt0 = 0.0f;
-                        wt1 = 1.0f;
                     }
                 }
 
                 xx /= (1 << dscale);
                 yy /= (1 << dscale);
-
 
                 int x1 = (xx >= 0.0) ? (int) xx : (int) floorf(xx);
                 int y1 = (yy >= 0.0) ? (int) yy : (int) floorf(yy);
@@ -1204,14 +1172,11 @@ void Blend::ProcessPyramidForThisFrameNarrow(CSite *csite, BlendRect &vcrect, Bl
                 {
                     float xfrac = xx - x1;
                     float yfrac = yy - y1;
-                    dptr->ptr[j][i] = (short) (wt0 * dptr->ptr[j][i] + .5 +
-                            wt1 * ciCalc(sptr, x1, y1, xfrac, yfrac));
+                    dptr->ptr[j][i] = (short) (0.5 + ciCalc(sptr, x1, y1, xfrac, yfrac));
                     if (dvptr >= m_pMosaicVPyr && nC > 0)
                     {
-                        duptr->ptr[j][i] = (short) (wt0 * duptr->ptr[j][i] + .5 +
-                                wt1 * ciCalc(suptr, x1, y1, xfrac, yfrac));
-                        dvptr->ptr[j][i] = (short) (wt0 * dvptr->ptr[j][i] + .5 +
-                                wt1 * ciCalc(svptr, x1, y1, xfrac, yfrac));
+                        duptr->ptr[j][i] = (short) (0.5 + ciCalc(suptr, x1, y1, xfrac, yfrac));
+                        dvptr->ptr[j][i] = (short) (0.5 + ciCalc(svptr, x1, y1, xfrac, yfrac));
                     }
                 }
 #else
@@ -1250,14 +1215,10 @@ void Blend::ProcessPyramidForThisFrameNarrow(CSite *csite, BlendRect &vcrect, Bl
                     clipToSegment(x1, sptr->width, BORDER);
                     clipToSegment(y1, sptr->height, BORDER);
 
-                    dptr->ptr[j][i] = (short) (wt0 * dptr->ptr[j][i] + 0.5 +
-                            wt1 * sptr->ptr[y1][x1] );
-                    if (dvptr >= m_pMosaicVPyr && nC > 0)
-                    {
-                        dvptr->ptr[j][i] = (short) (wt0 * dvptr->ptr[j][i] +
-                                0.5 + wt1 * svptr->ptr[y1][x1] );
-                        duptr->ptr[j][i] = (short) (wt0 * duptr->ptr[j][i] +
-                                0.5 + wt1 * suptr->ptr[y1][x1] );
+                    dptr->ptr[j][i] = (short) (0.5 + sptr->ptr[y1][x1]);
+                    if (dvptr >= m_pMosaicVPyr && nC > 0) {
+                        dvptr->ptr[j][i] = (short) (0.5 + svptr->ptr[y1][x1]);
+                        duptr->ptr[j][i] = (short) (0.5 + suptr->ptr[y1][x1]);
                     }
                 }
             }
@@ -1265,7 +1226,7 @@ void Blend::ProcessPyramidForThisFrameNarrow(CSite *csite, BlendRect &vcrect, Bl
     }
 }
 
-void Blend::MosaicToFrame(float trs[3][3], float x, float y, float &wx, float &wy)
+void Blend::MosaicToFrame(float trs[3][3], int x, int y, float &wx, float &wy)
 {
     float X, Y, z;
     if (m_wb.theta == 0.0)
@@ -1293,6 +1254,7 @@ void Blend::MosaicToFrame(float trs[3][3], float x, float y, float &wx, float &w
         Y = length * sinTheta + m_wb.y;
         X = length * cosTheta + m_wb.x;
     }
+
     z = ProjZ(trs, X, Y, 1.0);
     wx = ProjX(trs, X, Y, z, 1.0);
     wy = ProjY(trs, X, Y, z, 1.0);

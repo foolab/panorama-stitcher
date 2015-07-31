@@ -99,7 +99,7 @@ protected:
 
   // Helper functions
   void FrameToMosaic(float trs[3][3], float x, float y, float &wx, float &wy);
-  void MosaicToFrame(float trs[3][3], float x, float y, float &wx, float &wy);
+  void MosaicToFrame(float trs[3][3], int x, int y, float &wx, float &wy);
   void FrameToMosaicRect(int width, int height, float trs[3][3], BlendRect &brect);
   void ClipBlendRect(CSite *csite, BlendRect &brect);
   void AlignToMiddleFrame(MosaicFrame **frames, int frames_size);
