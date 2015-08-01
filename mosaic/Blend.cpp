@@ -350,6 +350,12 @@ int Blend::FillFramePyramid(MosaicFrame *mb)
 	  vst1q_u16 ((unsigned short *)&yptr[w], ys);
 	}
 
+	// leftover
+	int start = (width >> 3) << 3;
+	for (int w = start; w < width; w++) {
+	  yptr[w] = (short) (mbY[width * h + w] << 3);
+	}
+
 	// U and V
 	// TODO:
         for(int w=0; w<width; w++) {
