@@ -19,7 +19,7 @@ public:
 
   bool isInitialized() const;
 
-  Return addFrame(unsigned char *frame);
+  Return addFrame(unsigned char *frame, float *xTranslation = 0, float *yTranslation = 0);
 
 private:
   Align *m_aligner;

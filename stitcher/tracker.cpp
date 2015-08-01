@@ -24,10 +24,24 @@ Tracker::~Tracker() {
   m_frames.clear();
 }
 
-Tracker::Return Tracker::addFrame(unsigned char *frame) {
+Tracker::Return Tracker::addFrame(unsigned char *frame, float *xTranslation, float *yTranslation) {
   Tracker::Return ret = (Tracker::Return) m_aligner->addFrame(frame);
   if (ret >= 0) {
     m_frames.push_back(frame);
+  }
+
+  if (xTranslation || yTranslation) {
+    float trs[3][3];
+
+    m_aligner->getLastTRS(trs);
+
+    if (xTranslation) {
+      *xTranslation = trs[0][2];
+    }
+
+    if (yTranslation) {
+      *yTranslation = trs[1][2];
+    }
   }
 
   return ret;

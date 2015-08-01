@@ -534,7 +534,7 @@ unsigned long db_CornerDetector_u::Init(int im_width,int im_height,int target_nr
         (((float)active_width)*((float)active_height)))));
 
     return(Start(im_width,im_height,block_width,block_height,area_factor,
-        16.0*absolute_threshold,relative_threshold));
+        16.0f*absolute_threshold,relative_threshold));
 }
 
 unsigned long db_CornerDetector_u::Start(int im_width,int im_height,

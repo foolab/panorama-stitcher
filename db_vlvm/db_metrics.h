@@ -124,7 +124,7 @@ inline float db_SquaredReprojectionErrorHomography(const float y[2],const float 
     x0=H[0]*x[0]+H[1]*x[1]+H[2]*x[2];
     x1=H[3]*x[0]+H[4]*x[1]+H[5]*x[2];
     x2=H[6]*x[0]+H[7]*x[1]+H[8]*x[2];
-    mult=1.0/((x2!=0.0)?x2:1.0);
+    mult=1.0f/((x2!=0.0f)?x2:1.0f);
     sd=db_sqr((y[0]-x0*mult))+db_sqr((y[1]-x1*mult));
 
     return(sd);

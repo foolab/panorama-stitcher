@@ -210,7 +210,7 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
 
   // initialize feature detection and matching:
   //m_max_nr_corners = m_cd.Init(m_im_width,m_im_height,cd_target_nr_corners,cd_nr_horz_blocks,cd_nr_vert_blocks,0.0,0.0);
-  m_max_nr_corners = m_cd.Init(m_im_width,m_im_height,cd_target_nr_corners,cd_nr_horz_blocks,cd_nr_vert_blocks,DB_DEFAULT_ABS_CORNER_THRESHOLD/500.0,0.0);
+  m_max_nr_corners = m_cd.Init(m_im_width,m_im_height,cd_target_nr_corners,cd_nr_horz_blocks,cd_nr_vert_blocks,DB_DEFAULT_ABS_CORNER_THRESHOLD/500.0f,0.0f);
 
     int use_21 = 0;
   m_max_nr_matches = m_cm.Init(m_im_width,m_im_height,cm_max_disparity,m_max_nr_corners,DB_DEFAULT_NO_DISPARITY,cm_use_smaller_matching_window,use_21);

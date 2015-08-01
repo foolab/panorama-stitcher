@@ -38,17 +38,17 @@
 #define DB_DEFAULT_IMP_REQ 0.001
 
 /*Feature standard deviation parameters*/
-#define DB_POINT_STANDARDDEV (1.0/(826.0)) /*1 pixel for CIF (fraction of (image width+image height)/2)*/
-#define DB_OUTLIER_THRESHOLD 3.0 /*In number of DB_POINT_STANDARDDEV's*/
-#define DB_WORST_CASE 50.0 /*In number of DB_POINT_STANDARDDEV's*/
+#define DB_POINT_STANDARDDEV (1.0f/(826.0f)) /*1 pixel for CIF (fraction of (image width+image height)/2)*/
+#define DB_OUTLIER_THRESHOLD 3.0f /*In number of DB_POINT_STANDARDDEV's*/
+#define DB_WORST_CASE 50.0f /*In number of DB_POINT_STANDARDDEV's*/
 
 /*Front-end parameters*/
 #define DB_DEFAULT_TARGET_NR_CORNERS 5000
 #define DB_DEFAULT_NR_FEATURE_BLOCKS 10
-#define DB_DEFAULT_ABS_CORNER_THRESHOLD 50000000.0
-#define DB_DEFAULT_REL_CORNER_THRESHOLD 0.00005
-#define DB_DEFAULT_MAX_DISPARITY 0.1
-#define DB_DEFAULT_NO_DISPARITY -1.0
+#define DB_DEFAULT_ABS_CORNER_THRESHOLD 50000000.0f
+#define DB_DEFAULT_REL_CORNER_THRESHOLD 0.00005f
+#define DB_DEFAULT_MAX_DISPARITY 0.1f
+#define DB_DEFAULT_NO_DISPARITY -1.0f
 #define DB_DEFAULT_MAX_TRACK_LENGTH 300
 
 #define DB_DEFAULT_MAX_NR_CAMERAS 1000
