@@ -1,6 +1,6 @@
 bin_PROGRAMS = dbregtest
 
-AM_CXXFLAGS = -I$(top_builddir)
+AM_CXXFLAGS = -I$(top_srcdir)
 
 dbregtest_SOURCES = \
 	dbregtest.cpp \
