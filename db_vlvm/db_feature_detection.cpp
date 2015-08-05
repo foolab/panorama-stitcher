@@ -32,6 +32,8 @@
 #define DB_SUB_PIXEL
 
 #define BORDER 10 // 5
+#define K            6
+#define SCALE_FACTOR 100
 
 template <typename T> T** db_AllocImage(int w, int h)
 {
@@ -100,20 +102,16 @@ of length 124. gxx,gxy and gyy are assumed to be starting at (i,j-2) if s[i][j] 
 s should be 16 byte aligned*/
 inline void db_CornerDetector_u::db_HarrisStrength_row_s(float *s, int i, int nc)
 {
-  float k;
-
-  k=0.06f;
-
-  float Gxx,Gxy,Gyy,det,trc;
+  int Gxx,Gxy,Gyy,det,trc;
 
   for(int c = 0; c < nc - 4; c++) {
-    Gxx=(float)m_gx2[i][c];
-    Gxy=(float)m_gxy[i][c];
-    Gyy=(float)m_gy2[i][c];
+    Gxx=(int)m_gx2[i][c];
+    Gxy=(int)m_gxy[i][c];
+    Gyy=(int)m_gy2[i][c];
 
-    det=Gxx*Gyy-Gxy*Gxy;
+    det=(Gxx*Gyy-Gxy*Gxy)*SCALE_FACTOR;
     trc=Gxx+Gyy;
-    s[c]=det-k*trc*trc;
+    s[c]=det-K*trc*trc*SCALE_FACTOR;
   }
 }
 
@@ -583,7 +581,7 @@ void db_CornerDetector_u::DetectCorners(const unsigned char * const *img,float *
     }
     else threshold= (float) m_a_thresh;
 
-    db_ExtractCornersSaturated(m_strength,BORDER,BORDER,m_w-BORDER-1,m_h-BORDER-1,m_bw,m_bh,m_area_factor,threshold,
+    db_ExtractCornersSaturated(m_strength,BORDER,BORDER,m_w-BORDER-1,m_h-BORDER-1,m_bw,m_bh,m_area_factor,threshold*SCALE_FACTOR,
         m_temp_d,x_coord,y_coord,nr_corners);
 
     LOGV("Detected corners: %d", *nr_corners);
