@@ -21,9 +21,8 @@
 
 
 #if PROFILE
+#include <iostream>
 #endif
-
-//#include <iostream>
 
 db_FrameToReferenceRegistration::db_FrameToReferenceRegistration() :
   m_initialized(false),m_nr_matches(0),m_over_allocation(256),m_nr_bins(20),m_max_cost_pix(30), m_quarter_resolution(false)
@@ -67,8 +66,6 @@ db_FrameToReferenceRegistration::db_FrameToReferenceRegistration() :
 
   m_reference_update_period = 0;
   m_nr_frames_processed = 0;
-
-  return;
 }
 
 db_FrameToReferenceRegistration::~db_FrameToReferenceRegistration()
@@ -209,7 +206,6 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
   m_aligned_ins_image = db_AllocImage_u(m_im_width,m_im_height,m_over_allocation);
 
   // initialize feature detection and matching:
-  //m_max_nr_corners = m_cd.Init(m_im_width,m_im_height,cd_target_nr_corners,cd_nr_horz_blocks,cd_nr_vert_blocks,0.0,0.0);
   m_max_nr_corners = m_cd.Init(m_im_width,m_im_height,cd_target_nr_corners,cd_nr_horz_blocks,cd_nr_vert_blocks,DB_DEFAULT_ABS_CORNER_THRESHOLD/500.0f,0.0f);
 
     int use_21 = 0;
@@ -247,7 +243,6 @@ void db_FrameToReferenceRegistration::Init(int width, int height,
 }
 
 
-#define MB 0
 // Save the reference image, detect features and update the dref-to-ref transformation
 int db_FrameToReferenceRegistration::UpdateReference(const unsigned char * const * im, bool subsample, bool detect_corners)
 {
@@ -268,23 +263,7 @@ int db_FrameToReferenceRegistration::UpdateReference(const unsigned char * const
 
   if(detect_corners)
   {
-    #if MB
     m_cd.DetectCorners(imptr, m_x_corners_ref,m_y_corners_ref,&m_nr_corners_ref);
-    int nr = 0;
-    for(int k=0; k<m_nr_corners_ref; k++)
-    {
-        if(m_x_corners_ref[k]>m_im_width/3)
-        {
-            m_x_corners_ref[nr] = m_x_corners_ref[k];
-            m_y_corners_ref[nr] = m_y_corners_ref[k];
-            nr++;
-        }
-
-    }
-    m_nr_corners_ref = nr;
-    #else
-    m_cd.DetectCorners(imptr, m_x_corners_ref,m_y_corners_ref,&m_nr_corners_ref);
-    #endif
   }
   else
   {
@@ -485,40 +464,25 @@ int db_FrameToReferenceRegistration::AddFrame(const unsigned char * const * im, 
   if(m_do_motion_smoothing)
     SmoothMotion();
 
-   // Disable debug printing
-   // db_PrintDoubleMatrix(m_H_ref_to_ins,3,3);
-
   db_Copy9(H, m_H_ref_to_ins);
 
   m_nr_frames_processed++;
-{
+  {
   if ( (m_nr_frames_processed % m_reference_update_period) == 0 )
   {
-    //UpdateReference(imptr,false, false);
-
-    #if MB
-    UpdateReference(imptr,false, true);
-    #else
     UpdateReference(imptr,false, false);
-    #endif
   }
-
-
   }
-
-
 
   return 1;
 }
 
-//void db_FrameToReferenceRegistration::ComputeInliers(float H[9],std::vector<int> &inlier_indices)
 void db_FrameToReferenceRegistration::ComputeInliers(float H[9])
 {
   float totnummatches = m_nr_matches;
   int inliercount=0;
 
   m_num_inlier_indices = 0;
-//  inlier_indices.clear();
 
   for(int c=0; c < totnummatches; c++ )
     {
@@ -533,7 +497,6 @@ void db_FrameToReferenceRegistration::ComputeInliers(float H[9])
   float frac=inliercount/totnummatches;
 }
 
-//void db_FrameToReferenceRegistration::Polish(std::vector<int> &inlier_indices)
 void db_FrameToReferenceRegistration::Polish(int *inlier_indices, int &num_inlier_indices)
 {
   db_Zero(m_polish_C,36);
@@ -579,13 +542,6 @@ void db_FrameToReferenceRegistration::Polish(int *inlier_indices, int &num_inlie
 
 void db_FrameToReferenceRegistration::EstimateSecondaryModel(float H[9])
 {
-  /*      if ( m_current_is_reference )
-      {
-      db_Identity3x3(H);
-      return;
-      }
-  */
-
   // select the outliers of the current model:
   SelectOutliers();
 
@@ -644,12 +600,6 @@ void db_FrameToReferenceRegistration::ComputeCostHistogram()
       else
     m_cost_histogram[m_nr_bins-1]++;
     }
-
-/*
-  for ( int i = 0; i < m_nr_bins; ++i )
-    std::cout << m_cost_histogram[i] << " ";
-  std::cout << std::endl;
-*/
 }
 
 void db_FrameToReferenceRegistration::SetOutlierThreshold()
@@ -664,8 +614,6 @@ void db_FrameToReferenceRegistration::SetOutlierThreshold()
       last = m_cost_histogram[i];
     }
 
-  //std::cout << "I " <<  i << std::endl;
-
   int max = m_cost_histogram[i];
 
   for (; i < m_nr_bins-1; ++i )
@@ -675,11 +623,8 @@ void db_FrameToReferenceRegistration::SetOutlierThreshold()
     break;
       last = m_cost_histogram[i];
     }
-  //std::cout << "J " <<  i << std::endl;
 
   m_outlier_t2 = db_sqr(i*m_max_cost_pix/m_nr_bins);
-
-  //std::cout << "m_outlier_t2 " <<  m_outlier_t2 << std::endl;
 }
 
 void db_FrameToReferenceRegistration::SmoothMotion(void)
@@ -721,11 +666,7 @@ void db_FrameToReferenceRegistration::SmoothMotion(void)
     h = h*2;
     }
 
-#if 0
-    m_stab_smoother.smoothMotionAdaptive(w,h,&inmot,&outmot);
-#else
     m_stab_smoother.smoothMotion(&inmot,&outmot);
-#endif
 
     H[0] = MXX(outmot);
     H[1] = MXY(outmot);

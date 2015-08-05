@@ -38,19 +38,6 @@
 #define         FALSE           0
 #define         TRUE            1
 
-#if 0 /* Moved mottomat.c and mattomot_d.c from vpmotion.h to vpcompat.h
-     in order to remove otherwise unnecessary dependency of vpmotion,
-     vpwarp, and newvpio on vpmath */
-#ifndef VPMATH_H
-#include "vpmath.h"
-#endif
-#endif
-
-#if 0
-#ifndef VP_WARP_H
-#include "vp_warp.h"
-#endif
-#endif
 /*
 
 #htmlstart
