@@ -28,9 +28,6 @@
 #include <float.h>
 #include "log/log.h"
 #include <malloc.h>
-#if defined(__arm__)
-#include <arm_neon.h>
-#endif
 
 #define DB_SUB_PIXEL
 
@@ -103,27 +100,10 @@ of length 124. gxx,gxy and gyy are assumed to be starting at (i,j-2) if s[i][j] 
 s should be 16 byte aligned*/
 inline void db_CornerDetector_u::db_HarrisStrength_row_s(float *s, int i, int nc)
 {
-  float k = 0.06f;
+  float k;
 
-#if defined(__arm__)
-  // We don't care much about the leftovers.
-  int c;
-  int size = nc - 4;
-  float *dest = s;
+  k=0.06f;
 
-  for(c = 0; c < size; c += 4) {
-    // load and convert to floats
-    float32x4_t gxxv = vcvtq_f32_s32(vld1q_s32(&m_gx2[i][c]));
-    float32x4_t gxyv = vcvtq_f32_s32(vld1q_s32(&m_gxy[i][c]));
-    float32x4_t gyyv = vcvtq_f32_s32(vld1q_s32(&m_gy2[i][c]));
-
-    float32x4_t detv = vsubq_f32(vmulq_f32(gxxv, gyyv), vmulq_f32(gxyv, gxyv));
-    float32x4_t trc = vmulq_f32(vaddq_f32(gxxv, gyyv), vaddq_f32(gxxv, gyyv));
-    float32x4_t res = vsubq_f32(detv, vmulq_n_f32(trc, 0.06f));
-    vst1q_f32(dest, res);
-    dest += 4;
-  }
-#else
   float Gxx,Gxy,Gyy,det,trc;
 
   for(int c = 0; c < nc - 4; c++) {
@@ -135,7 +115,6 @@ inline void db_CornerDetector_u::db_HarrisStrength_row_s(float *s, int i, int nc
     trc=Gxx+Gyy;
     s[c]=det-k*trc*trc;
   }
-#endif
 }
 
 /*Compute the Harris corner strength of the chunk [left,top,left+123,bottom] of img and
