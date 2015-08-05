@@ -33,33 +33,6 @@ void db_SignedSquareNormCorr11x11_PreAlign_u(short *patch,const unsigned char * 
 float db_SignedSquareNormCorr21x21Aligned_Post_s(const short *f_patch,const short *g_patch,float fsum_gsum,float f_recip_g_recip);
 float db_SignedSquareNormCorr11x11Aligned_Post_s(const short *f_patch,const short *g_patch,float fsum_gsum,float f_recip_g_recip);
 
-class db_PointInfo_f
-{
-public:
-    /*Coordinates of point*/
-    int x;
-    int y;
-    /*Id nr of point*/
-    int id;
-    /*Best match score*/
-    float s;
-    /*Best match candidate*/
-    db_PointInfo_f *pir;
-    /*Precomputed coefficients
-    of image patch*/
-    float sum;
-    float recip;
-    /*Pointer to patch layout*/
-    const float *patch;
-};
-
-class db_Bucket_f
-{
-public:
-    db_PointInfo_f *ptr;
-    int nr;
-};
-
 class db_PointInfo_u
 {
 public:
@@ -86,70 +59,7 @@ public:
     db_PointInfo_u *ptr;
     int nr;
 };
-/*!
- * \class db_Matcher_f
- * \ingroup FeatureMatching
- * \brief Feature matcher for float images.
- *
- * Normalized correlation feature matcher for <b>float</b> images.
- * Correlation window size is constant and set to 11x11.
- * See \ref FeatureDetection to detect Harris corners.
- * Images are managed with functions in \ref LMImageBasicUtilities.
- */
-class db_Matcher_f
-{
-public:
-    db_Matcher_f();
-    ~db_Matcher_f();
 
-    /*!
-     * Set parameters and pre-allocate memory. Return an upper bound
-     * on the number of matches.
-     * \param im_width          width
-     * \param im_height         height
-     * \param max_disparity     maximum distance (as fraction of image size) between matches
-     * \param target_nr_corners maximum number of matches
-     * \return maximum number of matches
-     */
-    unsigned long Init(int im_width,int im_height,
-        float max_disparity=DB_DEFAULT_MAX_DISPARITY,
-        int target_nr_corners=DB_DEFAULT_TARGET_NR_CORNERS);
-
-    /*!
-     * Match two sets of features.
-     * If the prewarp H is not NULL it will be applied to the features
-     * in the right image before matching.
-     * Parameters id_l and id_r must point to arrays of size target_nr_corners
-     * (returned by Init()).
-     * The results of matching are in id_l and id_r.
-     * Interpretaqtion of results: if id_l[i] = m and id_r[i] = n,
-     * feature at (x_l[m],y_l[m]) matched to (x_r[n],y_r[n]).
-     * \param l_img     left image
-     * \param r_img     right image
-     * \param x_l       left x coordinates of features
-     * \param y_l       left y coordinates of features
-     * \param nr_l      number of features in left image
-     * \param x_r       right x coordinates of features
-     * \param y_r       right y coordinates of features
-     * \param nr_r      number of features in right image
-     * \param id_l      indices of left features that matched
-     * \param id_r      indices of right features that matched
-     * \param nr_matches    number of features actually matched
-     * \param H         image homography (prewarp) to be applied to right image features
-     */
-    void Match(const float * const *l_img,const float * const *r_img,
-        const float *x_l,const float *y_l,int nr_l,const float *x_r,const float *y_r,int nr_r,
-        int *id_l,int *id_r,int *nr_matches,const float H[9]=0);
-
-protected:
-    void Clean();
-
-    int m_w,m_h,m_bw,m_bh,m_nr_h,m_nr_v,m_bd,m_target;
-    unsigned long m_kA,m_kB;
-    db_Bucket_f **m_bp_l;
-    db_Bucket_f **m_bp_r;
-    float *m_patch_space,*m_aligned_patch_space;
-};
 /*!
  * \class db_Matcher_u
  * \ingroup FeatureMatching
