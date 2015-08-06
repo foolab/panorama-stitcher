@@ -49,7 +49,7 @@ template <typename T> T** db_AllocImage(int w, int h)
 template<typename T> void db_FreeImage(T **im, int h)
 {
   for (int x = 0; x < h; x++) {
-    free((void *)im[h]);
+    free((void *)im[x]);
   }
 
   delete [] im;
