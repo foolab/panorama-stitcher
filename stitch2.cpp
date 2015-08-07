@@ -244,9 +244,14 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+#if LIBAVUTIL_VERSION_MAJOR >= 52
+  enum AVPixelFormat fmt = AV_PIX_FMT_GRAY8;
+#else
+  enum PixelFormat fmt = PIX_FMT_GRAY8;
+#endif
   // scalar
-  struct SwsContext *scalar = sws_getContext(src_width, src_height, AV_PIX_FMT_GRAY8,
-					     tracker_width, tracker_height, AV_PIX_FMT_GRAY8,
+  struct SwsContext *scalar = sws_getContext(src_width, src_height, fmt,
+					     tracker_width, tracker_height, fmt,
 					     SWS_BICUBIC, NULL, NULL, NULL);
 
   if (!scalar) {
