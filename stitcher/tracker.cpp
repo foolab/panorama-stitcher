@@ -2,17 +2,10 @@
 #include "mosaic/AlignFeatures.h"
 #include <iostream>
 
-Tracker::Tracker(int width, int height, int maxFrames, float stillCameraTranslationThreshold) :
-  m_aligner(new Align) {
+Tracker::Tracker(int maxFrames) :
+  m_aligner(0) {
 
-  if (m_aligner->initialize(width, height, false, stillCameraTranslationThreshold) ==
-      Align::ALIGN_RET_ERROR) {
-    std::cerr << "Tracker: Failed to initialize aligner" << std::endl;
-    delete m_aligner;
-    m_aligner = 0;
-  } else {
-    m_frames.reserve(maxFrames);
-  }
+  m_frames.reserve(maxFrames);
 }
 
 Tracker::~Tracker() {
@@ -22,6 +15,25 @@ Tracker::~Tracker() {
   }
 
   m_frames.clear();
+}
+
+bool Tracker::initialize(int width, int height, float stillCameraTranslationThreshold) {
+  if (m_aligner) {
+    return false;
+  }
+
+  m_aligner = new Align;
+
+  if (m_aligner->initialize(width, height, false, stillCameraTranslationThreshold) ==
+      Align::ALIGN_RET_ERROR) {
+    std::cerr << "Tracker: Failed to initialize aligner" << std::endl;
+    delete m_aligner;
+    m_aligner = 0;
+
+    return false;
+  }
+
+  return true;
 }
 
 Tracker::Return Tracker::addFrame(unsigned char *frame, float *xTranslation, float *yTranslation) {

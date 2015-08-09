@@ -14,11 +14,11 @@ public:
     FewInliers = 1,
   } Return;
 
-  Tracker(int width, int height, int maxFrames, float stillCameraTranslationThreshold = 0.5);
+  Tracker(int maxFrames);
   virtual ~Tracker();
 
   bool isInitialized() const;
-
+  bool initialize(int width, int height, float stillCameraTranslationThreshold = 0.5);
   Return addFrame(unsigned char *frame, float *xTranslation = 0, float *yTranslation = 0);
 
 private:

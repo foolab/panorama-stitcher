@@ -238,8 +238,8 @@ int main(int argc, char *argv[]) {
   }
 
   // create tracker
-  Tracker tracker(tracker_width, tracker_height, frames);
-  if (!tracker.isInitialized()) {
+  Tracker tracker(frames);
+  if (!tracker.initialize(tracker_width, tracker_height)) {
     close(fd);
     return 1;
   }
