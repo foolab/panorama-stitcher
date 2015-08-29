@@ -18,7 +18,7 @@ public:
   virtual ~Tracker();
 
   bool isInitialized() const;
-  bool initialize(int width, int height, float stillCameraTranslationThreshold = 0.5);
+  bool initialize(int width, int height, float stillCameraTranslationThreshold = 5.0f);
   Return addFrame(unsigned char *frame, float *xTranslation = 0, float *yTranslation = 0);
 
 private:
